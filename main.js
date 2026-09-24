@@ -121,6 +121,7 @@ ZONES.forEach(z=>{
   });
   const foot = el("p",{class:"tile-foot",text:"Working hours 10:00–19:00 IST · 08:30–17:30 Dubai · 07:30–16:30 Riyadh"});
   root.appendChild(foot);
+  root.appendChild(el("p",{class:"tile-foot",id:"overlap",text:""}));
 })();
 function tick(){
   const now = new Date();
@@ -136,8 +137,13 @@ function tick(){
     const day = (h>=7 && h<19);
     node.dataset.daypart = day ? "day" : "night";
     const ic = node.querySelector(".clock-icon");
-    if(ic) ic.innerHTML = day ? ICONS.sun : ICONS.moon;
+    if(ic && ic.dataset.p!==node.dataset.daypart){ ic.dataset.p=node.dataset.daypart; ic.innerHTML = day ? ICONS.sun : ICONS.moon; }
   });
+  const ov=document.getElementById("overlap");
+  if(ov){ let dh=12; try{dh=parseInt(fmt["Asia/Dubai"].hour.format(now),10);}catch(e){}
+    let ih=12; try{ih=parseInt(fmt["Asia/Kolkata"].hour.format(now),10);}catch(e){}
+    const gulf=dh>=9&&dh<18, me=ih>=10&&ih<19;
+    ov.textContent = (gulf&&me) ? "Overlap now: Gulf business hours ✓" : "Outside shared hours — replies within a day"; }
   // availability dot
   let istH = 12;
   try{ istH = parseInt(fmt["Asia/Kolkata"].hour.format(now),10); }catch(e){}
@@ -173,7 +179,7 @@ document.addEventListener("visibilitychange", function(){ if(!document.hidden) t
 /* ---------- GitHub ---------- */
 const LANG_COLORS = {"Python":"#3572A5","TypeScript":"#3178C6","JavaScript":"#F1E05A","Jupyter Notebook":"#DA5B0B","Solidity":"#AA6746"};
 async function loadGitHub(){
-  const KEY="gh_cache_v1", TTL=6*3600*1000;
+  const KEY="gh_cache_v2", TTL=6*3600*1000;
   try{
     const c = JSON.parse(localStorage.getItem(KEY)||"null");
     if(c && Date.now()-c.t<TTL) return c.d;
@@ -185,7 +191,8 @@ async function loadGitHub(){
     ]);
     if(!u.ok || !r.ok) throw new Error("rate-limited or unavailable");
     const user = await u.json();
-    const repos = (await r.json()).filter(x=>!x.fork);
+    const HIDE=/^(paint-github|ibabarhashmi\.github\.io$)/;
+    const repos = (await r.json()).filter(x=>!x.fork && !x.archived && x.description && !HIDE.test(x.name));
     const langs = {};
     repos.forEach(x=>{ if(x.language) langs[x.language]=(langs[x.language]||0)+1; });
     const d = {
@@ -352,7 +359,7 @@ async function loadGitHub(){
   const c = document.getElementById("tile-contact");
   c.appendChild(el("h2",{class:"eyebrow",id:"h-contact",text:"CONTACT"}));
   c.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
-  c.appendChild(el("p",{text:"Available remote — globally. Based in Bangalore, open to relocation. CV on request — grab the PDF or just say hi."}));
+  c.appendChild(el("p",{text:"Available remote — globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
   const row = el("div",{class:"actions"});
   const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; row.appendChild(b1);
   const b2 = extLink(SITE.links.telegram,"Telegram"); b2.className="btn btn-secondary"; row.appendChild(b2);

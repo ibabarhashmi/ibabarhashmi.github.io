@@ -1,11 +1,11 @@
 :root{
   --bg:#FCFBF9;--surface:#FFFFFF;--surface-2:#F6F4F0;--border:#ECE9E3;
-  --text:#1A1A1A;--text-2:#5C5A55;--text-3:#8E8B85;
+  --text:#1A1A1A;--text-2:#5C5A55;--text-3:#6F6C66;
   --accent:#1487FA;--accent-soft:#E8F3FF;
   --accent-ink:#0F6BDA;
   --success:#16A34A;--success-soft:#E9F7EF;
   --success-ink:#15803D;
-  --amber:#D97706;--amber-soft:#FEF3E2;
+  --amber:#B45309;--amber-soft:#FEF3E2;
   --shadow-rest:0 1px 2px rgba(20,20,15,.04),0 1px 1px rgba(20,20,15,.03);
   --shadow-hover:0 8px 24px rgba(20,20,15,.08),0 2px 6px rgba(20,20,15,.05);
 }
@@ -47,7 +47,8 @@ a:hover{text-decoration:underline}
 .grid{display:grid;gap:16px;grid-template-columns:repeat(4,1fr);grid-auto-flow:dense;padding:24px 0 8px}
 .contents{display:contents}
 .span-2{grid-column:span 2}.span-4{grid-column:1/-1}.row-2{grid-row:span 2}
-.tile{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow-rest);transition:transform 200ms ease-out,box-shadow 200ms ease-out,border-color 200ms;opacity:0;transform:translateY(8px);min-width:0}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow-rest);transition:transform 200ms ease-out,box-shadow 200ms ease-out,border-color 200ms;min-width:0}
+.js .tile:not(.in){opacity:0;transform:translateY(8px)}
 .tile.in{opacity:1;transform:none;transition:opacity 400ms cubic-bezier(.2,.8,.2,1),transform 400ms cubic-bezier(.2,.8,.2,1),box-shadow 200ms ease-out,border-color 200ms;transition-delay:calc(var(--i,0)*40ms),calc(var(--i,0)*40ms),0ms,0ms}
 a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
 .tile.in:hover{transition-delay:0ms}
@@ -149,3 +150,5 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 @media(max-width:1023px){.grid{grid-template-columns:repeat(2,1fr)}.span-4{grid-column:1/-1}.row-2{grid-row:span 1}.stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:639px){.container{padding:0 16px}.grid{grid-template-columns:1fr;gap:12px}.span-2{grid-column:1/-1}.tile{padding:16px}.profile{flex-direction:column}.avatar{width:72px;height:72px}.profile h1{font-size:32px}.contact-title{font-size:24px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}.tile{opacity:1;transform:none}html{scroll-behavior:auto}}
+
+[data-theme="dark"] .btn-primary,[data-theme="dark"] .btn-primary:hover{color:#0F0F0E}

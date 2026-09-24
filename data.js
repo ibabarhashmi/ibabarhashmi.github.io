@@ -10,8 +10,8 @@ window.SITE = {
   avatar: "assets/avatar.png",
   avatarFallback: "https://avatars.githubusercontent.com/u/112765907?v=4",
   resume: "assets/resume.pdf",
-  now: "Founding AI R&D Hire (MTS), Research Engineering track — building agentic systems 0→1.",
-  bio: "AI Engineer with 3 years taking products from zero to one as the founding AI hire at QuillAudits (now QuillAI) — no team, no template at the start. I fine-tune LLMs for real detection tasks, design agentic workflows from scratch, and turn research into tools engineers actually use: SDKs, guardrails, and docs that keep the work honest.",
+  now: "Founding AI engineer (MTS, research engineering) at QuillAI Network — building agent systems from the first prototype to production.",
+  bio: "AI engineer with 3 years of applied ML, most of it as the first AI hire at QuillAudits (now QuillAI Network). I started with no team and no existing pipeline, and built the models, agent workflows and developer SDK that the company now ships. Day to day that means fine-tuning LLMs for detection tasks, designing agent loops, and writing the docs and tests that keep results honest.",
   links: {
     book: "https://calendar.app.google/eeGsWhoaFQDMm84g9",
     telegram: "https://t.me/HashBBR",
@@ -20,24 +20,24 @@ window.SITE = {
     x: null
   },
   impact: [
-    { value: "0→1", label: "founding AI hire — products from scratch" },
-    { value: "3 yrs", label: "applied AI at QuillAudits (now QuillAI)" },
+    { value: "+25%", label: "audit accuracy from production detection models" },
+    { value: "−60%", label: "manual review time on audits" },
     { value: "93%", label: "ERC20 predictive-check accuracy" },
     { value: "7 axes", label: "deterministic DeFi risk scorecard" },
-    { value: "QuillShield", label: "AI auditing tool — built and launched" }
+    { value: "100K+", label: "smart contracts analysed" }
   ],
   experience: [
-    { role: "AI Engineer", org: "QuillAI Network (QuillAudits)", start: "Jul 2024", end: "Aug 2026",
+    { role: "Founding AI Engineer (MTS, Research Engineering)", org: "QuillAI Network (QuillAudits)", start: "Jul 2024", end: "Present",
       points: [
         "Shipped production deep-learning models for smart-contract vulnerability detection, hardened by red-teaming — catching what automated analysis misses.",
-        "Designed agentic workflows from scratch and shipped a developer-facing SDK, with workshops and docs engineers actually use.",
+        "First AI hire: set up the research-to-production process, then designed agent workflows on the Anthropic Claude SDK and shipped a developer SDK used across 3 business units.",
         "Onboarded early users and debugged their deployments until things actually worked.",
         "Fine-tuned LLMs for real detection tasks; rebuilt ML pipelines as the problem got clearer."
       ] },
     { role: "AI/ML Researcher", org: "QuillAudits", start: "Sep 2023", end: "Jun 2024",
       points: [
-        "Built and launched QuillShield, an AI-powered smart-contract auditing tool.",
-        "Ran statistical modelling for blockchain security across large contract datasets.",
+        "Built and launched QuillShield, an AI smart-contract auditing tool, as its lead AI engineer.",
+        "Ran statistical modelling across 100K+ smart contracts for vulnerability research.",
         "Turned research into tools, including due-diligence analysis for market decisions.",
         "Delivered with cross-functional Agile teams; wrote the internal docs that kept the work honest."
       ] }
@@ -56,13 +56,19 @@ window.SITE = {
       highlights: [],
       stack: ["TypeScript"], repo: "https://github.com/ibabarhashmi/GoldenHour" },
     { name: "Guardrails", tag: "AI safety",
-      summary: "Policy and guardrail layer for LLM agents — keeps tool-calling loops grounded and safe.",
+      summary: "TODO: confirm — one line on what this repo does.",
       highlights: [],
       stack: ["Python"], repo: "https://github.com/ibabarhashmi/Guardrails" },
     { name: "DesiRAG", tag: "Voice RAG · Hindi",
       summary: "Hindi voice RAG over MSMARCO-XI with hybrid retrieval and guardrails. Built for HH Goa 2026.",
       highlights: ["Hybrid retrieval", "Guardrailed"],
       stack: ["Python", "RAG", "Voice"], repo: "https://github.com/ibabarhashmi/DesiRAG" },
+    { name: "ERC20 Attribute Predictor", tag: "Security · ML",
+      summary: "ML model that extracts attributes of ERC20 contracts from Solidity source and bytecode.",
+      highlights: [], stack: ["Python", "ML", "Solidity"], repo: "https://github.com/ibabarhashmi/ERC20-Attribute-Predictor" },
+    { name: "Vuln-Detector", tag: "Security · ML",
+      summary: "TODO: confirm — smart-contract vulnerability detection experiments.",
+      highlights: [], stack: ["Python", "Jupyter"], repo: "https://github.com/ibabarhashmi/Vuln-Detector" },
     { name: "MEP Industrial Elements Detection", tag: "Construction tech · CV",
       summary: "Open-set detection of mechanical, electrical and plumbing elements with GroundingDINO, served through a real-time AWS inference API.",
       highlights: ["Open-set detection with GroundingDINO", "Real-time AWS inference API"],
@@ -89,7 +95,7 @@ window.SITE = {
   vibe: "Agents that tell the truth.",
   workingHoursIST: [10, 19],
   githubFallback: {
-    public_repos: 18, followers: 1, stars: 6,
+    public_repos: 19, followers: 1, stars: 2,
     avatar: "https://avatars.githubusercontent.com/u/112765907?v=4",
     languages: { "TypeScript": 4, "Python": 2 },
     recent: [
