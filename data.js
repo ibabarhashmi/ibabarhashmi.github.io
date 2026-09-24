@@ -11,7 +11,7 @@ window.SITE = {
   avatarFallback: "https://avatars.githubusercontent.com/u/112765907?v=4",
   resume: "assets/resume.pdf",
   now: "Founding AI R&D Hire (MTS), Research Engineering track — building agentic systems 0→1.",
-  bio: "AI Engineer with 2+ years building production ML — deep learning, agentic AI systems, and scalable deployment. I design custom agents, fine-tune LLMs, and ship end-to-end ML pipelines with MLOps discipline: $50K+ in cost savings, 92% model accuracy, and 40% faster time-to-production.",
+  bio: "AI Engineer with 3 years taking products from zero to one as the founding AI hire at QuillAudits (now QuillAI) — no team, no template at the start. I fine-tune LLMs for real detection tasks, design agentic workflows from scratch, and turn research into tools engineers actually use: SDKs, guardrails, and docs that keep the work honest.",
   links: {
     book: "https://calendar.app.google/eeGsWhoaFQDMm84g9",
     telegram: "https://t.me/HashBBR",
@@ -20,26 +20,26 @@ window.SITE = {
     x: null
   },
   impact: [
-    { value: "$50K+", label: "cost savings delivered" },
-    { value: "92%", label: "model accuracy (CV)" },
-    { value: "+25%", label: "LLM contextual understanding" },
-    { value: "−60%", label: "manual audit review" },
-    { value: "3", label: "business units running my agentic SDK" }
+    { value: "0→1", label: "founding AI hire — products from scratch" },
+    { value: "3 yrs", label: "applied AI at QuillAudits (now QuillAI)" },
+    { value: "93%", label: "ERC20 predictive-check accuracy" },
+    { value: "7 axes", label: "deterministic DeFi risk scorecard" },
+    { value: "QuillShield", label: "AI auditing tool — built and launched" }
   ],
   experience: [
     { role: "AI Engineer", org: "QuillAI Network (QuillAudits)", start: "Jul 2024", end: "Aug 2026",
       points: [
-        "Built production deep-learning models for smart-contract vulnerability detection: +25% audit accuracy, −60% manual review.",
-        "Engineered custom agentic AI systems on the Anthropic Claude SDK (tool-calling loops, agent harness) and shipped a developer-facing SDK across 3 business units.",
-        "Partnered with C-level stakeholders on client deployments.",
-        "Fine-tuned LLMs for +25% contextual understanding."
+        "Shipped production deep-learning models for smart-contract vulnerability detection, hardened by red-teaming — catching what automated analysis misses.",
+        "Designed agentic workflows from scratch and shipped a developer-facing SDK, with workshops and docs engineers actually use.",
+        "Onboarded early users and debugged their deployments until things actually worked.",
+        "Fine-tuned LLMs for real detection tasks; rebuilt ML pipelines as the problem got clearer."
       ] },
     { role: "AI/ML Researcher", org: "QuillAudits", start: "Sep 2023", end: "Jun 2024",
       points: [
-        "Led an AI blockchain-auditing tool that lifted client engagement 30%.",
-        "Ran statistical modelling across 100K+ smart contracts, identifying 95% of vulnerabilities.",
-        "Performed due-diligence analysis on $50M+ in investments.",
-        "Drove Agile delivery 35% faster."
+        "Built and launched QuillShield, an AI-powered smart-contract auditing tool.",
+        "Ran statistical modelling for blockchain security across large contract datasets.",
+        "Turned research into tools, including due-diligence analysis for market decisions.",
+        "Delivered with cross-functional Agile teams; wrote the internal docs that kept the work honest."
       ] }
   ],
   projects: [
@@ -60,23 +60,23 @@ window.SITE = {
       highlights: [],
       stack: ["Python"], repo: "https://github.com/ibabarhashmi/Guardrails" },
     { name: "DesiRAG", tag: "Voice RAG · Hindi",
-      summary: "Hindi voice RAG over MSMARCO-XI: hybrid retrieval with guardrails and sub-20ms latency. Built for HH Goa 2026.",
-      highlights: ["Hybrid retrieval", "Sub-20ms latency", "Guardrailed"],
+      summary: "Hindi voice RAG over MSMARCO-XI with hybrid retrieval and guardrails. Built for HH Goa 2026.",
+      highlights: ["Hybrid retrieval", "Guardrailed"],
       stack: ["Python", "RAG", "Voice"], repo: "https://github.com/ibabarhashmi/DesiRAG" },
     { name: "MEP Industrial Elements Detection", tag: "Construction tech · CV",
       summary: "Open-set detection of mechanical, electrical and plumbing elements with GroundingDINO, served through a real-time AWS inference API.",
-      highlights: ["85% accuracy on 1K+ images", "500+ daily inspections", "−40% false positives"],
+      highlights: ["Open-set detection with GroundingDINO", "Real-time AWS inference API"],
       stack: ["GroundingDINO", "PyTorch", "AWS"], repo: null },
     { name: "Real-Time Pothole Detection", tag: "Public infrastructure · CV",
       summary: "YOLOv8 detector streaming through Kafka into a Streamlit dashboard, with REST APIs on AWS.",
-      highlights: ["92% accuracy", "Sub-5s processing", "1,000+ detections"],
+      highlights: ["Kafka streaming pipeline", "Streamlit dashboard + REST APIs"],
       stack: ["YOLOv8", "Kafka", "Streamlit", "AWS"], repo: null }
   ],
   stack: {
     "AI / ML": ["PyTorch", "TensorFlow", "Transformers", "Hugging Face", "Anthropic SDK", "Custom agent frameworks"],
     "Computer Vision": ["YOLOv8", "GroundingDINO", "OpenCV", "VLMs"],
     "MLOps & Cloud": ["AWS", "OCI", "Docker", "CI/CD", "Model monitoring"],
-    "Engineering": ["Python", "TypeScript", "Bun", "Solidity", "SQL/NoSQL", "TDD", "Agent harness design", "SDK design"],
+    "Engineering": ["Python", "TypeScript", "Bun", "Solidity", "SQL/NoSQL", "REST APIs", "TDD", "Agent harness design", "SDK design"],
     "Data": ["Pandas", "NumPy", "Matplotlib", "Plotly", "Streamlit"]
   },
   certifications: [
@@ -85,7 +85,7 @@ window.SITE = {
     { name: "OCI Generative AI Certified Professional", issuer: "Oracle", date: "Jul 2024" },
     { name: "Prompt & AI Engineering Certification", issuer: "MFT", date: "Jun 2024" }
   ],
-  domains: ["Blockchain / Web3 security", "Construction tech (MEP)", "Public infrastructure CV", "FinTech risk scoring"],
+  domains: ["Blockchain / Web3 security", "Construction tech (MEP)", "Public infrastructure CV", "FinTech risk scoring", "Multi-modal AI systems"],
   vibe: "Agents that tell the truth.",
   workingHoursIST: [10, 19],
   githubFallback: {
