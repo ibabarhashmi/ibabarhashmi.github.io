@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ibabarhashmi.github.io/sitemap.xml
