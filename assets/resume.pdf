@@ -12,85 +12,101 @@ endobj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
 endobj
 5 0 obj
-<< /Length 5184 >>
+<< /Length 5417 >>
 stream
 BT /F2 22 Tf 54.00 782.00 Td (Babar Hashmi) Tj ET
 BT /F2 12 Tf 54.00 756.00 Td (AI Engineer - Machine Learning Specialist) Tj ET
 BT /F1 9 Tf 0.35 g
-54.00 739.00 Td (ibabarhashmi@yahoo.com  |  linkedin.com/in/hashmi-babar  |  github.com/ibabarhashmi) Tj ET
+54.00 739.00 Td (ibabarhashmi@yahoo.com  -  LinkedIn  -  GitHub) Tj ET
 BT /F1 9 Tf 0.35 g
 54.00 726.00 Td (Bangalore, India  |  Open to Relocation) Tj ET
 BT /F2 12 Tf 54.00 699.00 Td (Professional Summary) Tj ET
 54 695 m 541 695 l S
-BT /F1 9.5 Tf 54.00 683.00 Td (AI engineer with 3 years of applied ML, most of it as the first AI hire at QuillAudits \(now) Tj ET
-BT /F1 9.5 Tf 54.00 670.50 Td (QuillAI Network\). I started with no team and no existing pipeline, and built the models, agent) Tj ET
-BT /F1 9.5 Tf 54.00 658.00 Td (workflows and developer SDK that the company now ships. Day to day that means fine-tuning LLMs) Tj ET
-BT /F1 9.5 Tf 54.00 645.50 Td (for detection tasks, designing agent loops, and writing the docs and tests that keep results) Tj ET
-BT /F1 9.5 Tf 54.00 633.00 Td (honest.) Tj ET
-BT /F2 12 Tf 54.00 610.50 Td (Professional Experience) Tj ET
-54 606 m 541 606 l S
-BT /F2 10 Tf 54.00 594.50 Td (Founding AI Engineer \(MTS, Research Engineering\) - QuillAI Network \(QuillAudits\)  |  Jul) Tj ET
-BT /F2 10 Tf 54.00 581.50 Td (2024 - Present) Tj ET
-BT /F1 9.5 Tf 54.00 568.50 Td (>  Shipped production deep-learning models for smart-contract vulnerability detection, hardened) Tj ET
-BT /F1 9.5 Tf 54.00 556.00 Td (by red-teaming - catching what automated analysis misses.) Tj ET
-BT /F1 9.5 Tf 54.00 542.50 Td (>  First AI hire: set up the research-to-production process, then designed agent workflows with) Tj ET
-BT /F1 9.5 Tf 54.00 530.00 Td (MCP tool-calling on open agent frameworks and shipped a developer SDK used across 3 business) Tj ET
-BT /F1 9.5 Tf 54.00 517.50 Td (units.) Tj ET
-BT /F1 9.5 Tf 54.00 504.00 Td (>  Onboarded early users and debugged their deployments until things actually worked.) Tj ET
-BT /F1 9.5 Tf 54.00 490.50 Td (>  Fine-tuned LLMs for real detection tasks; rebuilt ML pipelines as the problem got clearer.) Tj ET
-BT /F2 10 Tf 54.00 477.00 Td (AI/ML Researcher - QuillAudits  |  Sep 2023 - Jun 2024) Tj ET
-BT /F1 9.5 Tf 54.00 464.00 Td (>  Built and launched QuillShield, an AI smart-contract auditing tool, as its lead AI engineer.) Tj ET
-BT /F1 9.5 Tf 54.00 450.50 Td (>  Ran statistical modelling across 100K+ smart contracts for vulnerability research.) Tj ET
-BT /F1 9.5 Tf 54.00 437.00 Td (>  Turned research into tools, including due-diligence analysis for market decisions.) Tj ET
-BT /F1 9.5 Tf 54.00 423.50 Td (>  Delivered with cross-functional Agile teams; wrote the internal docs that kept the work) Tj ET
-BT /F1 9.5 Tf 54.00 411.00 Td (honest.) Tj ET
-BT /F2 12 Tf 54.00 389.50 Td (Key Projects) Tj ET
-54 386 m 541 386 l S
-BT /F2 10 Tf 54.00 373.50 Td (Financial Strategy Risk Scoring Engine \(organon\) - TypeScript) Tj ET
-BT /F1 9.5 Tf 54.00 360.50 Td (>  Deterministic scorecard over 7 risk axes from point-in-time market data; groundedness-gated) Tj ET
-BT /F1 9.5 Tf 54.00 348.00 Td (LLM; one-command verification pipeline.) Tj ET
-BT /F2 10 Tf 54.00 334.50 Td (Agentic-Auditor - AI Smart Contract Auditor \(TypeScript, Vite\)) Tj ET
-BT /F1 9.5 Tf 54.00 321.50 Td (>  User-friendly, on-the-go audit UX with AI-assisted reporting.) Tj ET
-BT /F2 10 Tf 54.00 308.00 Td (GoldenHour - First response for cyber fraud \(TypeScript\)) Tj ET
-BT /F1 9.5 Tf 54.00 295.00 Td (>  Rapid-response tooling for cyber-fraud incidents.) Tj ET
-BT /F2 10 Tf 54.00 281.50 Td (Guardrails - Policy layer for LLM agents \(Python\)) Tj ET
-BT /F1 9.5 Tf 54.00 268.50 Td (>  Policy and guardrail layer keeping tool-calling agent loops grounded and safe.) Tj ET
-BT /F2 10 Tf 54.00 255.00 Td (DesiRAG - Hindi voice RAG \(Python\)) Tj ET
-BT /F1 9.5 Tf 54.00 242.00 Td (>  Hybrid retrieval over MSMARCO-XI with guardrails. Built for HH Goa 2026.) Tj ET
-BT /F2 10 Tf 54.00 228.50 Td (ERC20 Attribute Predictor - ERC20 ML \(Python, Solidity\)) Tj ET
-BT /F1 9.5 Tf 54.00 215.50 Td (>  ML model extracting attributes of ERC20 contracts from Solidity source and bytecode.) Tj ET
-BT /F2 10 Tf 54.00 202.00 Td (Vuln-Detector - Smart-contract vulnerability detection \(Python\)) Tj ET
-BT /F1 9.5 Tf 54.00 189.00 Td (>  Smart-contract vulnerability detection experiments.) Tj ET
-BT /F2 10 Tf 54.00 175.50 Td (MEP Industrial Elements Detection \(GroundingDINO, AWS\)) Tj ET
-BT /F1 9.5 Tf 54.00 162.50 Td (>  Open-set detection of MEP elements with real-time AWS inference API.) Tj ET
-BT /F2 10 Tf 54.00 149.00 Td (Real-Time Pothole Detection \(YOLOv8, Kafka, Streamlit, AWS\)) Tj ET
-BT /F1 9.5 Tf 54.00 136.00 Td (>  YOLOv8 detector with Kafka streaming pipeline, Streamlit dashboard and REST APIs.) Tj ET
-BT /F2 12 Tf 54.00 114.50 Td (Technical Proficiencies) Tj ET
-54 110 m 541 110 l S
-BT /F1 9.5 Tf 54.00 98.50 Td (ML/AI: PyTorch, TensorFlow, Transformers, Open agent frameworks, Custom agent frameworks, LLM) Tj ET
-BT /F1 9.5 Tf 54.00 86.00 Td (fine-tuning. CV: YOLOv8, GroundingDINO, OpenCV, VLMs. Cloud/MLOps: AWS, OCI, Docker, CI/CD,) Tj ET
-BT /F1 9.5 Tf 54.00 73.50 Td (Model monitoring, Inference optimization, vLLM. Eng: Python, TypeScript, Bun, Solidity,) Tj ET
+BT /F1 9.5 Tf 54.00 683.00 Td (Results-driven AI Engineer with around 3 years of developing production-ready machine learning) Tj ET
+BT /F1 9.5 Tf 54.00 670.50 Td (solutions, focusing on deep learning, agentic AI systems, and scalable model deployment. Proven) Tj ET
+BT /F1 9.5 Tf 54.00 658.00 Td (track record delivering $50K+ cost savings, 92% model accuracy, and 40% faster time-to-) Tj ET
+BT /F1 9.5 Tf 54.00 645.50 Td (production. Expert in custom agent engineering, LLM fine-tuning, MLOps, and end-to-end ML) Tj ET
+BT /F1 9.5 Tf 54.00 633.00 Td (pipelines. Founding AI R&D Hire \(MTS\) - Research Engineering track, building agentic systems 0) Tj ET
+BT /F1 9.5 Tf 54.00 620.50 Td (to 1.) Tj ET
+BT /F2 12 Tf 54.00 598.00 Td (Core Competencies) Tj ET
+54 594 m 541 594 l S
+BT /F1 9.5 Tf 54.00 582.00 Td (>  End-to-End MLOps: Taking models from research to production-grade deployment and monitoring.) Tj ET
+BT /F1 9.5 Tf 54.00 568.50 Td (>  Agentic AI System Design: Building tool-calling agents and multi-step reasoning loops.) Tj ET
+BT /F1 9.5 Tf 54.00 555.00 Td (>  Computer Vision Pipelines: Real-time detection systems for physical-world use cases.) Tj ET
+BT /F1 9.5 Tf 54.00 541.50 Td (>  LLM Fine-Tuning and Grounding: Improving contextual accuracy and eliminating hallucination.) Tj ET
+BT /F1 9.5 Tf 54.00 528.00 Td (>  SDK and API Engineering: Designing developer-facing tools adopted across business units.) Tj ET
+BT /F1 9.5 Tf 54.00 514.50 Td (>  Cross-Functional Delivery: Partnering with stakeholders from research through client rollout.) Tj ET
+BT /F2 12 Tf 54.00 493.00 Td (Professional Experience) Tj ET
+54 489 m 541 489 l S
+BT /F2 10 Tf 54.00 477.00 Td (AI Engineer - QuillAI Network \(QuillAudits\)  |  Jul 2024 - Aug 2026) Tj ET
+BT /F1 9.5 Tf 54.00 464.00 Td (>  Architected and deployed production deep learning models for smart contract vulnerability) Tj ET
+BT /F1 9.5 Tf 54.00 451.50 Td (detection, improving audit accuracy by 25% and reducing manual review by 60%.) Tj ET
+BT /F1 9.5 Tf 54.00 438.00 Td (>  Engineered custom agentic AI systems using the Anthropic Claude SDK - designing tool-calling) Tj ET
+BT /F1 9.5 Tf 54.00 425.50 Td (loops and agent harness architecture; shipped developer-facing SDK across 3 business units.) Tj ET
+BT /F1 9.5 Tf 54.00 412.00 Td (>  Partnered with C-level stakeholders on client-facing deployment and developer integration,) Tj ET
+BT /F1 9.5 Tf 54.00 399.50 Td (delivering predictive analytics across business units.) Tj ET
+BT /F1 9.5 Tf 54.00 386.00 Td (>  Pioneered LLM fine-tuning achieving 25% improvement in contextual understanding, directly) Tj ET
+BT /F1 9.5 Tf 54.00 373.50 Td (reducing customer escalations.) Tj ET
+BT /F2 10 Tf 54.00 360.00 Td (AI/ML Researcher - QuillAudits  |  Sep 2023 - Jun 2024) Tj ET
+BT /F1 9.5 Tf 54.00 347.00 Td (>  Spearheaded development of an AI-powered blockchain auditing tool as lead AI Engineer,) Tj ET
+BT /F1 9.5 Tf 54.00 334.50 Td (increasing client engagement by 30%.) Tj ET
+BT /F1 9.5 Tf 54.00 321.00 Td (>  Implemented statistical modelling for blockchain security, processing 100K+ smart contracts) Tj ET
+BT /F1 9.5 Tf 54.00 308.50 Td (and identifying 95% of vulnerabilities.) Tj ET
+BT /F1 9.5 Tf 54.00 295.00 Td (>  Conducted advanced data analysis for market due diligence, analysing $50M+ investments using) Tj ET
+BT /F1 9.5 Tf 54.00 282.50 Td (deep learning techniques.) Tj ET
+BT /F1 9.5 Tf 54.00 269.00 Td (>  Drove Agile delivery across cross-functional teams, improving delivery speed by 35%.) Tj ET
+BT /F2 12 Tf 54.00 247.50 Td (Key Projects and Achievements) Tj ET
+54 244 m 541 244 l S
+BT /F2 10 Tf 54.00 231.50 Td (MEP Industrial Elements Detection - Vision-Language Model Integration) Tj ET
+BT /F1 9.5 Tf 54.00 218.50 Td (>  Pioneered GroundingDINO integration developing custom computer vision pipeline achieving 85%) Tj ET
+BT /F1 9.5 Tf 54.00 206.00 Td (detection accuracy across 1K+ site images.) Tj ET
+BT /F1 9.5 Tf 54.00 192.50 Td (>  Deployed MLOps infrastructure for real-time inference with AWS-based API, processing 500+) Tj ET
+BT /F1 9.5 Tf 54.00 180.00 Td (daily inspections.) Tj ET
+BT /F1 9.5 Tf 54.00 166.50 Td (>  Implemented model monitoring, reducing false positives by 40%.) Tj ET
+BT /F2 10 Tf 54.00 153.00 Td (Real-Time Pothole Detection System - Computer Vision and Production Infrastructure) Tj ET
+BT /F1 9.5 Tf 54.00 140.00 Td (>  Architected YOLOv8-based system with 92% accuracy, implementing real-time video analysis with) Tj ET
+BT /F1 9.5 Tf 54.00 127.50 Td (REST APIs and AWS-based data management supporting municipal-scale deployment.) Tj ET
+BT /F1 9.5 Tf 54.00 114.00 Td (>  Built Streamlit interface with Apache Kafka streaming, achieving sub-5-second processing with) Tj ET
+BT /F1 9.5 Tf 54.00 101.50 Td (1000+ detections.) Tj ET
+BT /F2 10 Tf 54.00 88.00 Td (Financial Strategy Risk Scoring Engine - Deterministic, Fact-Grounded Risk Verdicts) Tj ET
+BT /F1 9.5 Tf 54.00 75.00 Td (>  Built a deterministic scorecard engine rendering risk verdicts for live investment strategies) Tj ET
 endstream
 endobj
 6 0 obj
-<< /Length 1234 >>
+<< /Length 2865 >>
 stream
-BT /F1 9.5 Tf 54.00 782.00 Td (SQL/NoSQL, REST APIs, TDD, Agent harness design, SDK design, Eval and red-teaming. Data: Pandas,) Tj ET
-BT /F1 9.5 Tf 54.00 769.50 Td (NumPy, Matplotlib, Plotly, Streamlit.) Tj ET
-BT /F2 12 Tf 54.00 747.00 Td (Certifications) Tj ET
-54 743 m 541 743 l S
-BT /F1 9.5 Tf 54.00 731.00 Td (>  Agentic AI Certified Associate - Oracle - Jul 2026.) Tj ET
-BT /F1 9.5 Tf 54.00 717.50 Td (>  Copado Certified AI - Copado - Jul 2026.) Tj ET
-BT /F1 9.5 Tf 54.00 704.00 Td (>  OCI Generative AI Certified Professional - Oracle - Jul 2024.) Tj ET
-BT /F1 9.5 Tf 54.00 690.50 Td (>  Prompt & AI Engineering Certification - MFT - Jun 2024.) Tj ET
-BT /F2 12 Tf 54.00 669.00 Td (Impact Snapshot) Tj ET
-54 665 m 541 665 l S
-BT /F1 9.5 Tf 54.00 653.00 Td (+25% audit accuracy - -60% manual review - 93% ERC20 predictive-check accuracy - 7-axis) Tj ET
-BT /F1 9.5 Tf 54.00 640.50 Td (deterministic scorecard - 100K+ contracts analysed.) Tj ET
-BT /F2 12 Tf 54.00 618.00 Td (Domains of Expertise) Tj ET
-54 614 m 541 614 l S
-BT /F1 9.5 Tf 54.00 602.00 Td (>  Blockchain / Web3 security; Construction tech \(MEP\); Public infrastructure CV; FinTech risk) Tj ET
-BT /F1 9.5 Tf 54.00 589.50 Td (scoring; Multi-modal AI systems.) Tj ET
+BT /F1 9.5 Tf 54.00 782.00 Td (from real, point-in-time market data across 7 independent risk axes - never a hand-written or) Tj ET
+BT /F1 9.5 Tf 54.00 769.50 Td (model-generated verdict.) Tj ET
+BT /F1 9.5 Tf 54.00 756.00 Td (>  Engineered a groundedness-gated LLM interface where the model only routes intent and phrases) Tj ET
+BT /F1 9.5 Tf 54.00 743.50 Td (output in plain language; a verifier rejects the entire response if any claim can't be traced to) Tj ET
+BT /F1 9.5 Tf 54.00 731.00 Td (source data.) Tj ET
+BT /F1 9.5 Tf 54.00 717.50 Td (>  Validated the engine against real historical market collapses and shipped a one-command) Tj ET
+BT /F1 9.5 Tf 54.00 705.00 Td (verification pipeline that regenerates and diffs every published number against committed) Tj ET
+BT /F1 9.5 Tf 54.00 692.50 Td (evidence.) Tj ET
+BT /F2 12 Tf 54.00 671.00 Td (Technical Proficiencies) Tj ET
+54 667 m 541 667 l S
+BT /F1 9.5 Tf 54.00 655.00 Td (ML/AI Frameworks: TensorFlow, PyTorch, Transformers, Hugging Face, Anthropic SDK, custom agent) Tj ET
+BT /F1 9.5 Tf 54.00 642.50 Td (frameworks. Computer Vision: YOLOv8, GroundingDINO, OpenCV, Vision-Language Models. Cloud and) Tj ET
+BT /F1 9.5 Tf 54.00 630.00 Td (MLOps: AWS, OCI, Docker, CI/CD pipelines, model monitoring. Engineering and Dev Tools: TDD,) Tj ET
+BT /F1 9.5 Tf 54.00 617.50 Td (agent harness design, SDK design, architecture review. Programming and Runtimes: Python,) Tj ET
+BT /F1 9.5 Tf 54.00 605.00 Td (TypeScript, Bun, Solidity, SQL/NoSQL, Pandas, NumPy, Matplotlib, Plotly, Streamlit.) Tj ET
+BT /F2 12 Tf 54.00 582.50 Td (Certifications) Tj ET
+54 578 m 541 578 l S
+BT /F1 9.5 Tf 54.00 566.50 Td (>  Agentic AI Certified Associate - Oracle - Jul 2026.) Tj ET
+BT /F1 9.5 Tf 54.00 553.00 Td (>  Copado Certified AI - Copado - Jul 2026.) Tj ET
+BT /F1 9.5 Tf 54.00 539.50 Td (>  OCI: GenAI Certified Professional - Oracle - Jul 2024.) Tj ET
+BT /F1 9.5 Tf 54.00 526.00 Td (>  Prompt and AI Engineering Certification - MFT - Jun 2024.) Tj ET
+BT /F2 12 Tf 54.00 504.50 Td (Impact Snapshot) Tj ET
+54 500 m 541 500 l S
+BT /F1 9.5 Tf 54.00 488.50 Td ($50K+ cost savings - 92% model accuracy - 25% LLM improvement - 60% faster manual review -) Tj ET
+BT /F1 9.5 Tf 54.00 476.00 Td (Agentic AI systems delivered across 3 business units.) Tj ET
+BT /F2 12 Tf 54.00 453.50 Td (Domains of Expertise) Tj ET
+54 450 m 541 450 l S
+BT /F1 9.5 Tf 54.00 437.50 Td (>  Blockchain and Web3 Security: Smart contract auditing, vulnerability detection, on-chain) Tj ET
+BT /F1 9.5 Tf 54.00 425.00 Td (analytics.) Tj ET
+BT /F1 9.5 Tf 54.00 411.50 Td (>  Construction Tech: Site inspection automation, MEP element detection.) Tj ET
+BT /F1 9.5 Tf 54.00 398.00 Td (>  Public Infrastructure: Municipal-scale computer vision deployments.) Tj ET
+BT /F1 9.5 Tf 54.00 384.50 Td (>  FinTech: Deterministic, fact-grounded risk-scoring pipelines.) Tj ET
 endstream
 endobj
 7 0 obj
@@ -107,11 +123,11 @@ xref
 0000000121 00000 n 
 0000000191 00000 n 
 0000000266 00000 n 
-0000005501 00000 n 
-0000006786 00000 n 
-0000006922 00000 n 
+0000005734 00000 n 
+0000008650 00000 n 
+0000008786 00000 n 
 trailer
 << /Size 9 /Root 1 0 R >>
 startxref
-7058
+8922
 %%EOF
