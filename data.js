@@ -11,8 +11,7 @@ window.SITE = {
   avatarFallback: "https://avatars.githubusercontent.com/u/112765907?v=4",
   resume: "assets/resume.pdf",
   now: "Founding AI engineer at QuillAI Network, building agent systems from first prototype to production.",
-  bio: "First AI hire at QuillAI Network. I fine-tune LLMs for detection, design agent loops, and ship tested SDKs to production.",
-  bioLong: "AI engineer with 3 years of applied ML, most of it as the first AI hire at QuillAudits (now QuillAI Network). I started with no team and no existing pipeline, and built the models, agent workflows and developer SDK that the company now ships. Day to day that means fine-tuning LLMs for detection tasks, designing agent loops, and writing the docs and tests that keep results honest.",
+  bio: "AI engineer with 3 years of applied ML, most of it as the first AI hire at QuillAudits (now QuillAI Network). I started with no team and no existing pipeline, and built the models, agent workflows and developer SDK that the company now ships. Day to day that means fine-tuning LLMs for detection tasks, designing agent loops, and writing the docs and tests that keep results honest.",
   links: {
     book: "https://calendar.app.google/eeGsWhoaFQDMm84g9",
     telegram: "https://t.me/HashBBR",
