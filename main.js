@@ -466,41 +466,49 @@ function copyEmail(){
       H = cv.height = Math.min(900, window.innerHeight || 800);
       seed();
     }
+    const HUES = [315, 278, 190]; /* fuchsia, violet, cyan */
+    let sprites = [];
+    function makeSprite(hue){
+      const S = 560, c = document.createElement("canvas");
+      c.width = S; c.height = S;
+      const g = c.getContext("2d");
+      if(!g) return c;
+      const grad = g.createRadialGradient(S/2, S/2, 0, S/2, S/2, S/2);
+      grad.addColorStop(0, "hsla("+hue+",95%,62%,.95)");
+      grad.addColorStop(.45, "hsla("+hue+",95%,60%,.35)");
+      grad.addColorStop(.7, "hsla("+hue+",95%,60%,0)");
+      g.fillStyle = grad;
+      g.fillRect(0, 0, S, S);
+      return c;
+    }
     function seed(){
-      const n = Math.max(24, Math.min(70, Math.floor(W*H/26000)));
-      nodes = [];
-      for(let i = 0; i < n; i++) nodes.push({ x: Math.random()*W, y: Math.random()*H, vx: (Math.random()-.5)*.35, vy: (Math.random()-.5)*.35, r: 1+Math.random()*1.6 });
+      sprites = HUES.map(makeSprite);
+      nodes = [
+        { s: 0, bx: .16, by: .20, ax: .09, ay: .12, tx: 38, ty: 29, ph: 0.0, size: .62, a: .50 },
+        { s: 1, bx: .84, by: .30, ax: .10, ay: .13, tx: 46, ty: 34, ph: 2.1, size: .70, a: .45 },
+        { s: 2, bx: .55, by: .85, ax: .14, ay: .08, tx: 33, ty: 41, ph: 4.2, size: .58, a: .40 }
+      ];
     }
-    function draw(){
+    function draw(tsec){
       ctx.clearRect(0, 0, W, H);
-      const d = dark(), line = d ? "77,163,255" : "20,135,250";
-      ctx.lineWidth = 1;
-      for(let i = 0; i < nodes.length; i++){
-        const a = nodes[i];
-        for(let j = i+1; j < nodes.length; j++){
-          const b = nodes[j], dx = a.x-b.x, dy = a.y-b.y, dist = Math.sqrt(dx*dx+dy*dy);
-          if(dist < 150){
-            ctx.strokeStyle = "rgba("+line+","+(0.10*(1-dist/150)).toFixed(3)+")";
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          }
-        }
-      }
-      ctx.fillStyle = d ? "rgba(77,163,255,.35)" : "rgba(20,135,250,.28)";
-      nodes.forEach(function(p){ ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.2832); ctx.fill(); });
-    }
-    function step(){
-      nodes.forEach(function(p){
-        p.x += p.vx; p.y += p.vy;
-        if(p.x < 0 || p.x > W) p.vx *= -1;
-        if(p.y < 0 || p.y > H) p.vy *= -1;
+      const d = dark(), base = d ? .85 : .40, S = Math.max(W, H);
+      nodes.forEach(function(o){
+        const x = (o.bx + o.ax*Math.sin(6.2832*tsec/o.tx + o.ph))*W;
+        const y = (o.by + o.ay*Math.sin(6.2832*tsec/o.ty + o.ph*1.7))*H;
+        const r = o.size*S/2;
+        ctx.globalAlpha = (base*o.a).toFixed(3);
+        ctx.drawImage(sprites[o.s], x-r, y-r, 2*r, 2*r);
       });
-      draw();
+      ctx.globalAlpha = 1;
+    }
+    function step(t){
+      draw((t || 0)/1000);
       if(!calm) raf = requestAnimationFrame(step);
     }
-    function start(){ if(!raf){ resize(); step(); } }
+    function start(){ if(!raf){ resize(); raf = requestAnimationFrame(step); } }
     function stop(){ if(raf){ cancelAnimationFrame(raf); raf = 0; } }
     resize();
-    if(calm){ draw(); }
+    if(calm){ draw(14); }
     else{
       start();
       document.addEventListener("visibilitychange", function(){ if(document.hidden) stop(); else start(); });
