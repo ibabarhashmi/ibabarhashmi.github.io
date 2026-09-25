@@ -19,6 +19,7 @@ function extLink(href, text){
   return a;
 }
 const ICONS = {
+  /* Single icon family: consistent 1.75 stroke, round caps. Phosphor-style paths, inline to avoid a new dependency on this static page. */
   pin:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
   ext:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>',
   sun:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
@@ -33,47 +34,25 @@ document.querySelectorAll(".tile").forEach(markTile);
   const root = document.getElementById("tile-profile");
   if(!root) return;
   const wrap = el("div",{class:"profile"});
-  const img = el("img",{class:"avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"96",height:"96"});
+  const img = el("img",{class:"avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"96",height:"96",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
   const right = el("div",{class:"profile-text"});
   const h1 = el("h1",{id:"h-name",text:SITE.name||"Babar Hashmi"});
   const title = el("p",{class:"title",text:SITE.title||""});
   const meta = el("div",{class:"meta-row"});
   meta.insertAdjacentHTML("afterbegin", ICONS.pin);
-  meta.appendChild(document.createTextNode((SITE.location||"") + " · " + (SITE.relocation||"")));
+  meta.appendChild(document.createTextNode((SITE.location||"") + ", " + (SITE.relocation||"")));
   const badge = el("div",{class:"badge",id:"avail-badge"});
   const dot = el("span",{class:"dot","aria-hidden":"true"});
   badge.appendChild(dot);
-  badge.appendChild(document.createTextNode(SITE.availability||"Available remote — globally"));
+  badge.appendChild(document.createTextNode(SITE.availability||"Available remote - globally"));
   const bio = el("p",{class:"bio",text:SITE.bio||""});
-  const chips = el("div",{class:"chips"});
-  const all = [];
-  Object.values(SITE.stack||{}).forEach(arr=>arr.forEach(s=>all.push(s)));
-  all.slice(0,8).forEach(s=>chips.appendChild(el("span",{class:"chip",text:s})));
   const actions = el("div",{class:"actions"});
   const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn-primary";
   actions.appendChild(book);
-  const tg = extLink(SITE.links.telegram,"Telegram"); tg.className="btn btn-secondary";
-  actions.appendChild(tg);
-  const copyBtn = el("button",{class:"btn btn-secondary",type:"button",text:"EMAIL"});
-  copyBtn.setAttribute("aria-label","Copy email address to clipboard");
-  copyBtn.setAttribute("title","Click to copy");
-  copyBtn.addEventListener("click", copyEmail);
-  actions.appendChild(copyBtn);
-  const li = extLink(SITE.links.linkedin,"LinkedIn"); li.className="btn btn-secondary";
-  actions.appendChild(li);
-  const gh = extLink(SITE.links.github,"GitHub"); gh.className="btn btn-secondary";
-  actions.appendChild(gh);
-  if(SITE.resume){
-    const r = el("a",{class:"btn btn-secondary",href:SITE.resume,text:"Résumé"});
-    r.setAttribute("target","_blank"); r.setAttribute("rel","noopener noreferrer");
-    actions.appendChild(r);
-  }
-  if(SITE.phone){
-    const p = el("a",{class:"btn btn-secondary",href:"tel:"+SITE.phone.replace(/\s/g,""),text:"Phone"});
-    actions.appendChild(p);
-  }
-  right.append(h1,title,meta,badge,bio,chips,actions);
+  const work = el("a",{class:"btn btn-secondary",href:"#work-heading",text:"View work"});
+  actions.appendChild(work);
+  right.append(h1,title,meta,badge,bio,actions);
   wrap.append(img,right);
   root.appendChild(wrap);
 })();
@@ -81,7 +60,7 @@ document.querySelectorAll(".tile").forEach(markTile);
 /* ---------- NOW ---------- */
 (function(){
   const root = document.getElementById("tile-now");
-  root.appendChild(el("h2",{class:"eyebrow",id:"h-now",text:"NOW"}));
+  root.appendChild(el("h2",{class:"tile-title",id:"h-now",text:"Now"}));
   root.appendChild(el("p",{text:SITE.now||""}));
   root.lastChild.style.cssText = "font-size:17px;font-weight:500;margin:0";
 })();
@@ -102,13 +81,13 @@ ZONES.forEach(z=>{
 });
 (function(){
   const root = document.getElementById("tile-time");
-  root.appendChild(el("h2",{class:"eyebrow",id:"h-time",text:"LOCAL TIME"}));
+  root.appendChild(el("h2",{class:"tile-title",id:"h-time",text:"Local time"}));
   root.setAttribute("aria-live","off");
   ZONES.forEach(z=>{
     const row = el("div",{class:"clock-row"});
     row.setAttribute("data-clock", z.tz);
     const left = el("div",{class:"clock-left"});
-    left.appendChild(el("span",{class:"clock-label",text:z.label+" · "+z.city}));
+    left.appendChild(el("span",{class:"clock-label",text:z.label+" - "+z.city}));
     left.appendChild(el("span",{class:"clock-city",text:z.offset}));
     const right = el("div",{class:"clock-right"});
     right.appendChild(el("div",{class:"clock-time",text:"--:--:--"}));
@@ -120,7 +99,7 @@ ZONES.forEach(z=>{
     row.append(left,right);
     root.appendChild(row);
   });
-  const foot = el("p",{class:"tile-foot",text:"Working hours 10:00–19:00 IST · 08:30–17:30 Dubai · 07:30–16:30 Riyadh"});
+  const foot = el("p",{class:"tile-foot",text:"Working hours 10:00-19:00 IST (08:30-17:30 Dubai, 07:30-16:30 Riyadh)"});
   root.appendChild(foot);
   root.appendChild(el("p",{class:"tile-foot",id:"overlap",text:""}));
 })();
@@ -132,7 +111,7 @@ function tick(){
     const t = node.querySelector(".clock-time");
     const d = node.querySelector(".day");
     if(t) t.textContent = fmt[z.tz].time.format(now);
-    if(d) d.textContent = fmt[z.tz].day.format(now) + " · " + z.offset;
+    if(d) d.textContent = fmt[z.tz].day.format(now) + " (" + z.offset + ")";
     let h = 12;
     try{ h = parseInt(fmt[z.tz].hour.format(now),10); }catch(e){}
     const day = (h>=7 && h<19);
@@ -144,7 +123,7 @@ function tick(){
   if(ov){ let dh=12; try{dh=parseInt(fmt["Asia/Dubai"].hour.format(now),10);}catch(e){}
     let ih=12; try{ih=parseInt(fmt["Asia/Kolkata"].hour.format(now),10);}catch(e){}
     const gulf=dh>=9&&dh<18, me=ih>=10&&ih<19;
-    ov.textContent = (gulf&&me) ? "Overlap now: Gulf business hours ✓" : "Outside shared hours — replies within a day"; }
+    ov.textContent = (gulf&&me) ? "Overlap now: Gulf business hours" : "Outside shared hours - replies within a day"; }
   // availability dot
   let istH = 12;
   try{ istH = parseInt(fmt["Asia/Kolkata"].hour.format(now),10); }catch(e){}
@@ -153,7 +132,7 @@ function tick(){
   if(badge){
     const inside = istH>=wh[0] && istH<wh[1];
     badge.classList.toggle("off", !inside);
-    badge.title = inside ? "Within IST working hours" : "Outside IST working hours — async replies";
+    badge.title = inside ? "Within IST working hours" : "Outside IST working hours - async replies";
   }
 }
 tick();
@@ -210,7 +189,7 @@ async function loadGitHub(){
 }
 (function(){
   const root = document.getElementById("tile-github");
-  root.appendChild(el("h2",{class:"eyebrow",id:"h-github",text:"GITHUB"}));
+  root.appendChild(el("h2",{class:"tile-title",id:"h-github",text:"GitHub"}));
   const sk = el("div",{id:"gh-skel"});
   for(let i=0;i<4;i++) sk.appendChild(el("div",{class:"skel"}));
   root.appendChild(sk);
@@ -251,7 +230,7 @@ async function loadGitHub(){
       const link = extLink(repo.url, repo.name); link.className="repo-name";
       r.appendChild(link);
       if(repo.description) r.appendChild(el("div",{class:"repo-desc",text:repo.description}));
-      const meta = [repo.language, repo.stars!=null?("★ "+repo.stars):null].filter(Boolean).join(" · ");
+      const meta = [repo.language, repo.stars!=null?("Stars "+repo.stars):null].filter(Boolean).join(" - ");
       if(meta) r.appendChild(el("div",{class:"repo-meta",text:meta}));
       root.appendChild(r);
     });
@@ -265,13 +244,13 @@ async function loadGitHub(){
 /* ---------- Experience ---------- */
 (function(){
   const root = document.getElementById("tile-exp");
-  root.appendChild(el("h2",{class:"eyebrow",id:"h-exp",text:"EXPERIENCE"}));
+  root.appendChild(el("h2",{class:"tile-title",id:"h-exp",text:"Experience"}));
   const tl = el("div",{class:"timeline"});
   (SITE.experience||[]).forEach(job=>{
     const item = el("div",{class:"tl-item"});
     const top = el("div",{class:"tl-top"});
     top.appendChild(el("h3",{class:"tl-role",text:job.role}));
-    top.appendChild(el("span",{class:"tl-dates",text:job.start+" – "+job.end}));
+    top.appendChild(el("span",{class:"tl-dates",text:job.start+" - "+job.end}));
     item.appendChild(top);
     item.appendChild(el("div",{class:"tl-org",text:job.org}));
     const ul = el("ul",{});
@@ -285,24 +264,32 @@ async function loadGitHub(){
 /* ---------- Projects ---------- */
 (function(){
   const head = document.getElementById("work-heading");
-  head.textContent = "SELECTED WORK";
+  head.textContent = "Selected work";
   const slot = document.getElementById("projects-slot");
+  const SEED = {"Financial Strategy Risk Scoring Engine":"organon-risk","Agentic-Auditor":"agentic-auditor"};
   (SITE.projects||[]).forEach(p=>{
+    const featured = !!p.featured;
     let card;
     if(p.repo){
-      card = el("a",{class:"tile span-2 proj tile-linked",href:p.repo,target:"_blank",rel:"noopener noreferrer"});
+      card = el("a",{class:"tile proj tile-linked"+(featured?" span-4 proj-featured":" span-2"),href:p.repo,target:"_blank",rel:"noopener noreferrer"});
       card.setAttribute("aria-label","Open "+p.name+" repository");
     }else{
-      card = el("article",{class:"tile span-2 proj"});
+      card = el("article",{class:"tile proj"+(featured?" span-4 proj-featured":" span-2")});
     }
     markTile(card);
-    card.appendChild(el("h2",{class:"eyebrow",text:p.tag||"PROJECT"}));
+    card.appendChild(el("p",{class:"proj-tag",text:p.tag||"Project"}));
     if(p.repo){
       const s = el("span",{class:"ext","aria-hidden":"true"});
       s.innerHTML = ICONS.ext;
       card.appendChild(s);
     }
     card.appendChild(el("h3",{text:p.name}));
+    if(featured && SEED[p.name]){
+      const vis = el("div",{class:"proj-visual"});
+      const img = el("img",{src:"https://picsum.photos/seed/"+SEED[p.name]+"/800/450",alt:"Preview image for "+p.name,loading:"lazy",width:"800",height:"450"});
+      vis.appendChild(img);
+      card.appendChild(vis);
+    }
     card.appendChild(el("p",{class:"muted",text:p.summary}));
     if(p.highlights && p.highlights.length){
       const ul = el("ul",{class:"checks"});
@@ -320,7 +307,7 @@ async function loadGitHub(){
 /* ---------- Stack ---------- */
 (function(){
   const root = document.getElementById("tile-stack");
-  root.appendChild(el("h2",{class:"eyebrow",id:"h-stack",text:"STACK"}));
+  root.appendChild(el("h2",{class:"tile-title",id:"h-stack",text:"Stack"}));
   Object.entries(SITE.stack||{}).forEach(([g,items])=>{
     const grp = el("div",{class:"stack-group"});
     grp.appendChild(el("div",{class:"stack-name",text:g}));
@@ -335,11 +322,11 @@ async function loadGitHub(){
 /* ---------- Certs ---------- */
 (function(){
   const root = document.getElementById("tile-certs");
-  root.appendChild(el("h2",{class:"eyebrow",id:"h-certs",text:"CERTIFICATIONS"}));
+  root.appendChild(el("h2",{class:"tile-title",id:"h-certs",text:"Certifications"}));
   (SITE.certifications||[]).forEach(c=>{
     const r = el("div",{class:"cert-row"});
     r.appendChild(el("p",{class:"cert-name",text:c.name}));
-    r.appendChild(el("p",{class:"cert-meta",text:c.issuer+" · "+c.date}));
+    r.appendChild(el("p",{class:"cert-meta",text:c.issuer+" - "+c.date}));
     root.appendChild(r);
   });
 })();
@@ -347,28 +334,30 @@ async function loadGitHub(){
 /* ---------- Domains / Vibe / Contact ---------- */
 (function(){
   const d = document.getElementById("tile-domains");
-  d.appendChild(el("h2",{class:"eyebrow",id:"h-domains",text:"DOMAINS"}));
+  d.appendChild(el("h2",{class:"tile-title",id:"h-domains",text:"Domains"}));
   const chips = el("div",{class:"chips"});
   chips.style.margin = "0";
   (SITE.domains||[]).forEach(x=>chips.appendChild(el("span",{class:"chip",text:x})));
   d.appendChild(chips);
 
   const v = document.getElementById("tile-vibe");
-  v.appendChild(el("h2",{class:"eyebrow",id:"h-vibe",text:"VIBE"}));
+  v.appendChild(el("h2",{class:"tile-title",id:"h-vibe",text:"Note"}));
   v.appendChild(el("p",{class:"vibe-text",text:SITE.vibe||""}));
 
   const c = document.getElementById("tile-contact");
-  c.appendChild(el("h2",{class:"eyebrow",id:"h-contact",text:"CONTACT"}));
+  c.appendChild(el("h2",{class:"eyebrow",id:"h-contact",text:"Contact"}));
   c.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
-  c.appendChild(el("p",{text:"Available remote — globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
+  c.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
   const row = el("div",{class:"actions"});
   const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; row.appendChild(b1);
   const b2 = extLink(SITE.links.telegram,"Telegram"); b2.className="btn btn-secondary"; row.appendChild(b2);
-  const b3 = el("button",{class:"btn btn-secondary",type:"button",text:"EMAIL"});
+  const b3 = el("button",{class:"btn btn-secondary",type:"button",text:"Copy email"});
   b3.setAttribute("aria-label","Copy email address to clipboard");
   b3.setAttribute("title","Click to copy");
   b3.addEventListener("click", copyEmail);
   row.appendChild(b3);
+  const li = extLink(SITE.links.linkedin,"LinkedIn"); li.className="btn btn-secondary"; row.appendChild(li);
+  const gh = extLink(SITE.links.github,"GitHub"); gh.className="btn btn-secondary"; row.appendChild(gh);
   if(SITE.resume){
     const r = el("a",{class:"btn btn-secondary",href:SITE.resume,text:"Download CV"});
     r.setAttribute("target","_blank"); r.setAttribute("rel","noopener noreferrer");
@@ -425,7 +414,7 @@ function copyEmail(){
 
 /* ---------- Delight: tilt, spotlight, network canvas, count-up ---------- */
 (function(){
-  try{ console.log("%cAgents that tell the truth. — BH", "color:#1487FA;font-weight:bold"); }catch(e){}
+  try{ console.log("%cAgents that tell the truth. - BH", "color:#1487FA;font-weight:bold"); }catch(e){}
   const mqFine = window.matchMedia ? window.matchMedia("(pointer:fine)") : null;
   const mqCalm = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
   const fine = !!(mqFine && mqFine.matches);
@@ -530,9 +519,9 @@ function copyEmail(){
     if(!tile || !("IntersectionObserver" in window)) return;
     function run(){
       tile.querySelectorAll(".stat-value").forEach(function(n){
-        const m = /^([+\-−]?)(\d+(?:\.\d+)?)(.*)$/.exec(n.textContent.trim());
+        const m = /^([+\-]?)(\d+(?:\.\d+)?)(.*)$/.exec(n.textContent.trim());
         if(!m || parseFloat(m[2]) <= 0) return;
-        const sign = m[1] === "−" ? "−" : m[1], target = parseFloat(m[2]), suffix = m[3];
+        const sign = m[1], target = parseFloat(m[2]), suffix = m[3];
         const t0 = performance.now(), dur = 800;
         (function frame(t){
           const k = Math.min(1, (t-t0)/dur), e = 1-Math.pow(1-k, 4);
