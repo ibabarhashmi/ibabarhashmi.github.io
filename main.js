@@ -55,8 +55,9 @@ document.querySelectorAll(".tile").forEach(markTile);
   actions.appendChild(book);
   const tg = extLink(SITE.links.telegram,"Telegram"); tg.className="btn btn-secondary";
   actions.appendChild(tg);
-  const copyBtn = el("button",{class:"btn btn-secondary",type:"button",text:"Copy email"});
-  copyBtn.setAttribute("aria-label","Copy email address");
+  const copyBtn = el("button",{class:"btn btn-secondary",type:"button",text:"Just email"});
+  copyBtn.setAttribute("aria-label","Copy email address to clipboard");
+  copyBtn.setAttribute("title","Click to copy");
   copyBtn.addEventListener("click", copyEmail);
   actions.appendChild(copyBtn);
   const li = extLink(SITE.links.linkedin,"LinkedIn"); li.className="btn btn-secondary";
@@ -363,7 +364,9 @@ async function loadGitHub(){
   const row = el("div",{class:"actions"});
   const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; row.appendChild(b1);
   const b2 = extLink(SITE.links.telegram,"Telegram"); b2.className="btn btn-secondary"; row.appendChild(b2);
-  const b3 = el("button",{class:"btn btn-secondary",type:"button",text:"Copy email"});
+  const b3 = el("button",{class:"btn btn-secondary",type:"button",text:"Just email"});
+  b3.setAttribute("aria-label","Copy email address to clipboard");
+  b3.setAttribute("title","Click to copy");
   b3.addEventListener("click", copyEmail);
   row.appendChild(b3);
   if(SITE.resume){
