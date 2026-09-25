@@ -149,6 +149,29 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 .repo-desc,.chip,.bio{overflow-wrap:anywhere}
 @media(max-width:1023px){.grid{grid-template-columns:repeat(2,1fr)}.span-4{grid-column:1/-1}.row-2{grid-row:span 1}.stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:639px){.container{padding:0 16px}.grid{grid-template-columns:1fr;gap:12px}.span-2{grid-column:1/-1}.tile{padding:16px}.profile{flex-direction:column}.avatar{width:72px;height:72px}.profile h1{font-size:32px}.contact-title{font-size:24px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}.tile{opacity:1;transform:none}html{scroll-behavior:auto}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}.tile{opacity:1;transform:none}#tile-profile{filter:none !important}#tile-profile.tilt-live:hover::after,.proj:hover::after{opacity:0}html{scroll-behavior:auto}}
 
 [data-theme="dark"] .btn-primary,[data-theme="dark"] .btn-primary:hover{color:#0F0F0E}
+
+/* ---------- delight: backdrop, depth, sheen, pop ---------- */
+#net{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.container{position:relative;z-index:1}
+@media(pointer:fine){
+  #tile-profile{perspective:1100px;position:relative}
+  #tile-profile .profile{transform-style:preserve-3d;transition:transform 150ms ease-out;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+  #tile-profile .avatar{transform:translateZ(30px)}
+  #tile-profile .profile-text{transform:translateZ(14px)}
+  #tile-profile.tilt-live::after,.proj::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity 300ms ease-out;background:radial-gradient(480px circle at var(--mx,50%) var(--my,50%),rgba(20,135,250,.12),transparent 60%)}
+  #tile-profile.tilt-live:hover::after,.proj:hover::after{opacity:1}
+  [data-theme="dark"] #tile-profile.tilt-live::after,[data-theme="dark"] .proj::after{background:radial-gradient(480px circle at var(--mx,50%) var(--my,50%),rgba(77,163,255,.18),transparent 60%)}
+  a.tile:hover,.tile-linked:hover{transform:translateY(-2px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+}
+.js #tile-profile:not(.in){filter:blur(8px)}
+#tile-profile.tile.in{transition:opacity 400ms cubic-bezier(.2,.8,.2,1),transform 400ms cubic-bezier(.2,.8,.2,1),box-shadow 200ms ease-out,border-color 200ms,filter 600ms cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--i,0)*40ms),calc(var(--i,0)*40ms),0ms,0ms,calc(var(--i,0)*40ms)}
+#tile-vibe{background:var(--accent-ink);border-color:var(--accent-ink)}
+#tile-vibe .eyebrow{color:#fff}
+#tile-vibe .vibe-text{color:#fff}
+#tile-vibe:hover{filter:brightness(1.07)}
+[data-theme="dark"] #tile-vibe{background:var(--accent);border-color:var(--accent)}
+[data-theme="dark"] #tile-vibe .eyebrow{color:#0F0F0E}
+[data-theme="dark"] #tile-vibe .vibe-text{color:#0F0F0E}
