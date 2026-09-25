@@ -267,13 +267,12 @@ async function loadGitHub(){
   head.textContent = "Selected work";
   const slot = document.getElementById("projects-slot");
   (SITE.projects||[]).forEach(p=>{
-    const featured = !!p.featured;
     let card;
     if(p.repo){
-      card = el("a",{class:"tile proj tile-linked"+(featured?" span-4 proj-featured":" span-2"),href:p.repo,target:"_blank",rel:"noopener noreferrer"});
+      card = el("a",{class:"tile span-2 proj tile-linked",href:p.repo,target:"_blank",rel:"noopener noreferrer"});
       card.setAttribute("aria-label","Open "+p.name+" repository");
     }else{
-      card = el("article",{class:"tile proj"+(featured?" span-4 proj-featured":" span-2")});
+      card = el("article",{class:"tile span-2 proj"});
     }
     markTile(card);
     card.appendChild(el("p",{class:"proj-tag",text:p.tag||"Project"}));
