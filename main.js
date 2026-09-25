@@ -266,7 +266,6 @@ async function loadGitHub(){
   const head = document.getElementById("work-heading");
   head.textContent = "Selected work";
   const slot = document.getElementById("projects-slot");
-  const SEED = {"Financial Strategy Risk Scoring Engine":"organon-risk","Agentic-Auditor":"agentic-auditor"};
   (SITE.projects||[]).forEach(p=>{
     const featured = !!p.featured;
     let card;
@@ -284,12 +283,6 @@ async function loadGitHub(){
       card.appendChild(s);
     }
     card.appendChild(el("h3",{text:p.name}));
-    if(featured && SEED[p.name]){
-      const vis = el("div",{class:"proj-visual"});
-      const img = el("img",{src:"https://picsum.photos/seed/"+SEED[p.name]+"/800/450",alt:"Preview image for "+p.name,loading:"lazy",width:"800",height:"450"});
-      vis.appendChild(img);
-      card.appendChild(vis);
-    }
     card.appendChild(el("p",{class:"muted",text:p.summary}));
     if(p.highlights && p.highlights.length){
       const ul = el("ul",{class:"checks"});

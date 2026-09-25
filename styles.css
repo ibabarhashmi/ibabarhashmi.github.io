@@ -60,8 +60,6 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 .tile-title{font-size:15px;line-height:1.35;font-weight:600;letter-spacing:-.01em;margin:0 0 8px;color:var(--text)}
 .proj-tag{font-size:12px;line-height:1.4;font-weight:600;color:var(--accent-ink);margin:0 0 8px}
 .proj-featured{background:var(--accent-soft);border-color:var(--accent-soft)}
-.proj-visual{border-radius:12px;border:1px solid var(--border);background:var(--surface-2);margin:0 0 12px;overflow:hidden}
-.proj-visual img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover}
 .tile h3{font-size:17px;line-height:1.35;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
 .tile p{font-size:14px;line-height:1.55;margin:0 0 8px;color:var(--text)}
 .tile p.muted,.muted{color:var(--text-2)}
