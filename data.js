@@ -30,7 +30,7 @@ window.SITE = {
     { role: "Founding AI Engineer (MTS, Research Engineering)", org: "QuillAI Network (QuillAudits)", start: "Jul 2024", end: "Present",
       points: [
         "Shipped production deep-learning models for smart-contract vulnerability detection, hardened by red-teaming — catching what automated analysis misses.",
-        "First AI hire: set up the research-to-production process, then designed agent workflows on the Anthropic Claude SDK and shipped a developer SDK used across 3 business units.",
+        "First AI hire: set up the research-to-production process, then designed agent workflows with MCP tool-calling on open agent frameworks and shipped a developer SDK used across 3 business units.",
         "Onboarded early users and debugged their deployments until things actually worked.",
         "Fine-tuned LLMs for real detection tasks; rebuilt ML pipelines as the problem got clearer."
       ] },
@@ -79,10 +79,10 @@ window.SITE = {
       stack: ["YOLOv8", "Kafka", "Streamlit", "AWS"], repo: null }
   ],
   stack: {
-    "AI / ML": ["PyTorch", "TensorFlow", "Transformers", "Hugging Face", "Anthropic SDK", "Custom agent frameworks"],
+    "AI / ML": ["PyTorch", "TensorFlow", "Transformers", "Open agent frameworks", "Custom agent frameworks", "LLM fine-tuning"],
     "Computer Vision": ["YOLOv8", "GroundingDINO", "OpenCV", "VLMs"],
-    "MLOps & Cloud": ["AWS", "OCI", "Docker", "CI/CD", "Model monitoring"],
-    "Engineering": ["Python", "TypeScript", "Bun", "Solidity", "SQL/NoSQL", "REST APIs", "TDD", "Agent harness design", "SDK design"],
+    "MLOps & Cloud": ["AWS", "OCI", "Docker", "CI/CD", "Model monitoring", "Inference optimization", "vLLM"],
+    "Engineering": ["Python", "TypeScript", "Bun", "Solidity", "SQL/NoSQL", "REST APIs", "TDD", "Agent harness design", "SDK design", "Eval & red-teaming"],
     "Data": ["Pandas", "NumPy", "Matplotlib", "Plotly", "Streamlit"]
   },
   certifications: [

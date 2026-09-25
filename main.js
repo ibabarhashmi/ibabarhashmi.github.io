@@ -466,23 +466,27 @@ function copyEmail(){
       H = cv.height = Math.min(900, window.innerHeight || 800);
       seed();
     }
-    const HUES = [315, 278, 190]; /* fuchsia, violet, cyan */
+    const ORBS = [
+      { h: 276, s: 18, l: 60 }, /* backdrop violet */
+      { h: 305, s: 22, l: 70 }, /* backdrop mauve */
+      { h: 32, s: 72, l: 74 }   /* backdrop peach */
+    ];
     let sprites = [];
-    function makeSprite(hue){
+    function makeSprite(o){
       const S = 560, c = document.createElement("canvas");
       c.width = S; c.height = S;
       const g = c.getContext("2d");
       if(!g) return c;
       const grad = g.createRadialGradient(S/2, S/2, 0, S/2, S/2, S/2);
-      grad.addColorStop(0, "hsla("+hue+",95%,62%,.95)");
-      grad.addColorStop(.45, "hsla("+hue+",95%,60%,.35)");
-      grad.addColorStop(.7, "hsla("+hue+",95%,60%,0)");
+      grad.addColorStop(0, "hsla("+o.h+","+o.s+"%,"+o.l+"%,.95)");
+      grad.addColorStop(.45, "hsla("+o.h+","+o.s+"%,"+o.l+"%,.35)");
+      grad.addColorStop(.7, "hsla("+o.h+","+o.s+"%,"+o.l+"%,0)");
       g.fillStyle = grad;
       g.fillRect(0, 0, S, S);
       return c;
     }
     function seed(){
-      sprites = HUES.map(makeSprite);
+      sprites = ORBS.map(makeSprite);
       nodes = [
         { s: 0, bx: .16, by: .20, ax: .09, ay: .12, tx: 38, ty: 29, ph: 0.0, size: .62, a: .50 },
         { s: 1, bx: .84, by: .30, ax: .10, ay: .13, tx: 46, ty: 34, ph: 2.1, size: .70, a: .45 },
