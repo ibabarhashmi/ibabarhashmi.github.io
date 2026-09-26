@@ -427,106 +427,14 @@ function copyEmail(){
   });
 })();
 
-/* ---------- Delight: tilt, spotlight, network canvas, count-up ---------- */
+/* ---------- Delight: count-up only (tilt, spotlight, orb canvas cut) ---------- */
 (function(){
   try{ console.log("%cAgents that tell the truth. - BH", "color:#1487FA;font-weight:bold"); }catch(e){}
-  const mqFine = window.matchMedia ? window.matchMedia("(pointer:fine)") : null;
   const mqCalm = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
-  const fine = !!(mqFine && mqFine.matches);
   const calm = !!(mqCalm && mqCalm.matches);
   const canRAF = !!window.requestAnimationFrame;
 
-  /* pointer tilt: profile 4deg, project cards 2.5deg; spotlight follows */
-  if(fine && !calm){
-    const profile = document.getElementById("tile-profile");
-    if(profile){ profile.classList.add("tilt-live"); bindTilt(profile, 4); }
-    const cards = document.querySelectorAll(".proj");
-    (cards.forEach ? cards : Array.prototype.slice.call(cards)).forEach(function(c){ bindTilt(c, 2.5); });
-  }
-  function bindTilt(node, max){
-    node.addEventListener("pointermove", function(ev){
-      const r = node.getBoundingClientRect();
-      if(!r.width || !r.height) return;
-      const px = (ev.clientX - r.left)/r.width - .5;
-      const py = (ev.clientY - r.top)/r.height - .5;
-      node.style.setProperty("--rx", (-py*max).toFixed(2)+"deg");
-      node.style.setProperty("--ry", (px*max).toFixed(2)+"deg");
-      node.style.setProperty("--mx", ((px+.5)*100).toFixed(1)+"%");
-      node.style.setProperty("--my", ((py+.5)*100).toFixed(1)+"%");
-    });
-    node.addEventListener("pointerleave", function(){
-      node.style.setProperty("--rx", "0deg");
-      node.style.setProperty("--ry", "0deg");
-    });
-  }
-
-  /* network backdrop: single rAF loop, paused offscreen-tab, one frame when calm */
-  (function(){
-    const cv = document.getElementById("net");
-    if(!cv || !cv.getContext || !canRAF) return;
-    const ctx = cv.getContext("2d");
-    if(!ctx) return;
-    let W = 0, H = 0, nodes = [], raf = 0;
-    function dark(){ return document.documentElement.dataset.theme === "dark"; }
-    function resize(){
-      W = cv.width = Math.min(1600, window.innerWidth || 1200);
-      H = cv.height = Math.min(900, window.innerHeight || 800);
-      seed();
-    }
-    const ORBS = [
-      { h: 276, s: 18, l: 60 }, /* backdrop violet */
-      { h: 305, s: 22, l: 70 }, /* backdrop mauve */
-      { h: 32, s: 72, l: 74 }   /* backdrop peach */
-    ];
-    let sprites = [];
-    function makeSprite(o){
-      const S = 560, c = document.createElement("canvas");
-      c.width = S; c.height = S;
-      const g = c.getContext("2d");
-      if(!g) return c;
-      const grad = g.createRadialGradient(S/2, S/2, 0, S/2, S/2, S/2);
-      grad.addColorStop(0, "hsla("+o.h+","+o.s+"%,"+o.l+"%,.95)");
-      grad.addColorStop(.45, "hsla("+o.h+","+o.s+"%,"+o.l+"%,.35)");
-      grad.addColorStop(.7, "hsla("+o.h+","+o.s+"%,"+o.l+"%,0)");
-      g.fillStyle = grad;
-      g.fillRect(0, 0, S, S);
-      return c;
-    }
-    function seed(){
-      sprites = ORBS.map(makeSprite);
-      nodes = [
-        { s: 0, bx: .16, by: .20, ax: .09, ay: .12, tx: 38, ty: 29, ph: 0.0, size: .62, a: .50 },
-        { s: 1, bx: .84, by: .30, ax: .10, ay: .13, tx: 46, ty: 34, ph: 2.1, size: .70, a: .45 },
-        { s: 2, bx: .55, by: .85, ax: .14, ay: .08, tx: 33, ty: 41, ph: 4.2, size: .58, a: .40 }
-      ];
-    }
-    function draw(tsec){
-      ctx.clearRect(0, 0, W, H);
-      const d = dark(), base = d ? .85 : .40, S = Math.max(W, H);
-      nodes.forEach(function(o){
-        const x = (o.bx + o.ax*Math.sin(6.2832*tsec/o.tx + o.ph))*W;
-        const y = (o.by + o.ay*Math.sin(6.2832*tsec/o.ty + o.ph*1.7))*H;
-        const r = o.size*S/2;
-        ctx.globalAlpha = (base*o.a).toFixed(3);
-        ctx.drawImage(sprites[o.s], x-r, y-r, 2*r, 2*r);
-      });
-      ctx.globalAlpha = 1;
-    }
-    function step(t){
-      draw((t || 0)/1000);
-      if(!calm) raf = requestAnimationFrame(step);
-    }
-    function start(){ if(!raf){ resize(); raf = requestAnimationFrame(step); } }
-    function stop(){ if(raf){ cancelAnimationFrame(raf); raf = 0; } }
-    resize();
-    if(calm){ draw(14); }
-    else{
-      start();
-      document.addEventListener("visibilitychange", function(){ if(document.hidden) stop(); else start(); });
-      window.addEventListener("resize", resize);
-    }
-  })();
-
+  /* network backdrop: element kept dormant, no animation loop (2026 cut) */
   /* count-up impact stats, first reveal only; final text stays in DOM */
   (function(){
     if(calm || !canRAF) return;
