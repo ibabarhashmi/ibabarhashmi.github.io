@@ -155,8 +155,6 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 .icon-link .only-dark{display:none}
 [data-theme="dark"] .icon-link .only-light{display:none}
 [data-theme="dark"] .icon-link .only-dark{display:block}
-.mail-wrap{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
-.mail-addr{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--text-2);user-select:all;overflow-wrap:anywhere}
 .contact-title{font-size:28px;font-weight:700;margin:0 0 8px;letter-spacing:-.02em}
 .footer{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:32px 24px;font-size:13px;color:var(--text-3);border-top:1px solid var(--border);margin-top:24px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);border-radius:12px;padding:10px 14px;font-size:14px;z-index:50;box-shadow:var(--shadow-hover)}

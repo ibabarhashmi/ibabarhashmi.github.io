@@ -377,9 +377,6 @@ async function loadGitHub(){
   mailBtn.addEventListener("click", copyEmail);
   icons.appendChild(mailBtn);
   c.appendChild(icons);
-  const mailWrap = el("div",{class:"mail-wrap"});
-  mailWrap.appendChild(el("span",{class:"mail-addr",text:SITE.email||""}));
-  c.appendChild(mailWrap);
 })();
 
 /* ---------- Footer year ---------- */
