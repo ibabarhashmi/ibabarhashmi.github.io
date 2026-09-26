@@ -350,7 +350,9 @@ async function loadGitHub(){
   c.appendChild(row);
   const icons = el("div",{class:"icon-row"});
   function brandLink(href,label,src,alt,darkSrc){
-    const a = extLink(href,""); a.className="icon-link";
+    /* Plain anchor on purpose: no extLink vh span, so copy-paste of the tile stays clean. Name lives in aria-label + title. */
+    const a = el("a",{href:href,target:"_blank",rel:"noopener noreferrer"});
+    a.className="icon-link";
     a.setAttribute("aria-label",label);
     a.setAttribute("title",label);
     const img = el("img",{src:src,alt:"",width:"24",height:"24",loading:"lazy"});
