@@ -342,20 +342,44 @@ async function loadGitHub(){
   c.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
   const row = el("div",{class:"actions"});
   const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; row.appendChild(b1);
-  const b2 = extLink(SITE.links.telegram,"Telegram"); b2.className="btn btn-secondary"; row.appendChild(b2);
-  const b3 = el("button",{class:"btn btn-secondary",type:"button",text:"Copy email"});
-  b3.setAttribute("aria-label","Copy email address to clipboard");
-  b3.setAttribute("title","Click to copy");
-  b3.addEventListener("click", copyEmail);
-  row.appendChild(b3);
-  const li = extLink(SITE.links.linkedin,"LinkedIn"); li.className="btn btn-secondary"; row.appendChild(li);
-  const gh = extLink(SITE.links.github,"GitHub"); gh.className="btn btn-secondary"; row.appendChild(gh);
   if(SITE.resume){
     const r = el("a",{class:"btn btn-secondary",href:SITE.resume,text:"Download CV"});
     r.setAttribute("target","_blank"); r.setAttribute("rel","noopener noreferrer");
     row.appendChild(r);
   }
   c.appendChild(row);
+  const icons = el("div",{class:"icon-row"});
+  function brandLink(href,label,src,alt,darkSrc){
+    const a = extLink(href,""); a.className="icon-link";
+    a.setAttribute("aria-label",label);
+    a.setAttribute("title",label);
+    const img = el("img",{src:src,alt:"",width:"24",height:"24",loading:"lazy"});
+    img.setAttribute("aria-hidden","true");
+    if(darkSrc){
+      img.className="only-light";
+      const dim = el("img",{src:darkSrc,alt:"",width:"24",height:"24",loading:"lazy"});
+      dim.setAttribute("aria-hidden","true");
+      dim.className="only-dark";
+      a.appendChild(img); a.appendChild(dim);
+    }else{
+      a.appendChild(img);
+    }
+    return a;
+  }
+  icons.appendChild(brandLink(SITE.links.linkedin,"LinkedIn profile","assets/icons/linkedin.svg"));
+  icons.appendChild(brandLink(SITE.links.github,"GitHub profile","assets/icons/github-light.svg","", "assets/icons/github-dark.svg"));
+  icons.appendChild(brandLink(SITE.links.telegram,"Telegram chat","assets/icons/telegram.svg"));
+  const mailBtn = el("button",{class:"icon-link",type:"button"});
+  mailBtn.setAttribute("aria-label","Copy email address to clipboard");
+  mailBtn.setAttribute("title","Copy email address");
+  /* Inline (not img) so stroke inherits .icon-link color in both themes. Swap this block to change providers. */
+  mailBtn.insertAdjacentHTML("afterbegin",'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>');
+  mailBtn.addEventListener("click", copyEmail);
+  icons.appendChild(mailBtn);
+  c.appendChild(icons);
+  const mailWrap = el("div",{class:"mail-wrap"});
+  mailWrap.appendChild(el("span",{class:"mail-addr",text:SITE.email||""}));
+  c.appendChild(mailWrap);
 })();
 
 /* ---------- Footer year ---------- */
