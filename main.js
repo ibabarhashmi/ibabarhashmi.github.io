@@ -266,32 +266,45 @@ async function loadGitHub(){
   const head = document.getElementById("work-heading");
   head.textContent = "Selected work";
   const slot = document.getElementById("projects-slot");
-  (SITE.projects||[]).forEach(p=>{
+  (SITE.projects||[]).forEach((p,idx)=>{
+    const featured = idx===0;
+    const withMedia = idx<3;
     let card;
     if(p.repo){
-      card = el("a",{class:"tile span-2 proj tile-linked",href:p.repo,target:"_blank",rel:"noopener noreferrer"});
+      card = el("a",{class:"tile proj tile-linked"+(featured?" span-4 proj-featured":" span-2"),href:p.repo,target:"_blank",rel:"noopener noreferrer"});
       card.setAttribute("aria-label","Open "+p.name+" repository");
     }else{
-      card = el("article",{class:"tile span-2 proj"});
+      card = el("article",{class:"tile proj"+(featured?" span-4 proj-featured":" span-2")});
     }
     markTile(card);
-    card.appendChild(el("p",{class:"proj-tag",text:p.tag||"Project"}));
+    const seed = (p.repo?p.repo.split("/").pop():p.name).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || "project";
+    if(withMedia){
+      const fig = el("figure",{class:"proj-media"});
+      fig.style.margin = "0";
+      const img = el("img",{src:"https://picsum.photos/seed/"+seed+(featured?"/1200/560":"/800/500"),alt:p.name+" preview",loading:"lazy",decoding:"async",width:featured?"1200":"800",height:featured?"560":"500"});
+      img.onerror = function(){ img.onerror=null; fig.remove(); };
+      fig.appendChild(img);
+      card.appendChild(fig);
+    }
+    const body = featured ? el("div",{class:"proj-body"}) : card;
+    body.appendChild(el("p",{class:"proj-tag",text:p.tag||"Project"}));
     if(p.repo){
       const s = el("span",{class:"ext","aria-hidden":"true"});
       s.innerHTML = ICONS.ext;
-      card.appendChild(s);
+      body.appendChild(s);
     }
-    card.appendChild(el("h3",{text:p.name}));
-    card.appendChild(el("p",{class:"muted",text:p.summary}));
+    body.appendChild(el("h3",{text:p.name}));
+    body.appendChild(el("p",{class:"muted",text:p.summary}));
     if(p.highlights && p.highlights.length){
       const ul = el("ul",{class:"checks"});
       p.highlights.forEach(h=>ul.appendChild(el("li",{text:h})));
-      card.appendChild(ul);
+      body.appendChild(ul);
     }
     const chips = el("div",{class:"chips"});
     (p.stack||[]).forEach(s=>chips.appendChild(el("span",{class:"chip",text:s})));
     if(!p.repo) chips.appendChild(el("span",{class:"chip chip-accent",text:"Private / work project"}));
-    card.appendChild(chips);
+    body.appendChild(chips);
+    if(featured) card.appendChild(body);
     slot.appendChild(card);
   });
 })();

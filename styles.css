@@ -23,6 +23,18 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: no-preference){
+  html{scroll-snap-type:y proximity}
+  .tile, .section-heading{scroll-snap-align:start;scroll-margin-top:76px}
+}
+/* Scroll progress: single motivated motion, hierarchy feedback only. transform-only. */
+.progress{position:fixed;top:0;left:0;height:2px;width:100%;background:var(--accent-ink);transform-origin:0 50%;transform:scaleX(0);z-index:20;pointer-events:none}
+@supports (animation-timeline: scroll()){
+  @media (prefers-reduced-motion: no-preference){
+    .progress{animation:progress linear both;animation-timeline:scroll(root)}
+  }
+}
+@keyframes progress{to{transform:scaleX(1)}}
 body{margin:0;background:var(--bg);background-image:linear-gradient(180deg,#ECE7F1 0%,#FCFBF9 28%,#FCFBF9 72%,#F9EFE2 100%);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
 [data-theme="dark"] body{background-image:linear-gradient(180deg,#1C1420 0%,#0F0F0E 35%,#0F0F0E 70%,#1E1410 100%)}
 a{color:var(--accent-ink);text-decoration:none}
@@ -177,3 +189,41 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 [data-theme="dark"] #tile-vibe{background:var(--accent);border-color:var(--accent)}
 [data-theme="dark"] #tile-vibe .tile-title{color:#0F0F0E}
 [data-theme="dark"] #tile-vibe .vibe-text{color:#0F0F0E}
+
+/* ---------- scroll story (native-first, no new deps) ---------- */
+/* Hero stays detailed per user lock: full bio preserved, natural height, snap start only. */
+#tile-profile{scroll-margin-top:76px}
+/* Experience sticky-stack: each role pins under topbar, next overlaps. Real stack, not sequential reveal. */
+.timeline{position:relative;padding-left:0}
+.timeline::before{display:none}
+.tl-item{position:sticky;top:76px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 16px 14px;margin-bottom:12px;box-shadow:var(--shadow-rest)}
+.tl-item::before{display:none}
+.tl-item:last-child{margin-bottom:0}
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion: no-preference){
+    .tl-item{animation:stack-in linear both;animation-timeline:view()}
+  }
+}
+@keyframes stack-in{
+  from{transform:scale(.98)}
+  to{transform:scale(1)}
+}
+/* Selected work: 1 full-width feature plus asymmetric rest. Exact cell count, no filler. */
+.proj-featured{padding:0;overflow:hidden}
+.proj-featured .proj-body{padding:20px}
+.proj-media{margin:0;overflow:hidden;background:var(--surface-2)}
+.proj-media img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover}
+.proj-featured .proj-media img{aspect-ratio:21/9}
+@media(min-width:1024px){
+  .proj-featured{display:grid;grid-template-columns:1.15fr .85fr}
+  .proj-featured .proj-media{min-height:100%}
+  .proj-featured .proj-media img{height:100%}
+}
+@media (prefers-reduced-motion: no-preference){
+  .proj-media img{transform:scale(1.02)}
+  .tile.in .proj-media img{transition:transform 600ms cubic-bezier(.2,.8,.2,1)}
+  .tile.in:hover .proj-media img{transform:scale(1)}
+}
+/* Bento background diversity: first three project cells carry imagery, rest stay text. */
+.proj .ext{position:absolute;top:20px;right:20px;color:var(--text-3)}
+.proj-featured .ext{top:20px;right:20px}
