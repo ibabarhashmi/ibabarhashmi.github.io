@@ -208,22 +208,9 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
   from{transform:scale(.98)}
   to{transform:scale(1)}
 }
-/* Selected work: 1 full-width feature plus asymmetric rest. Exact cell count, no filler. */
-.proj-featured{padding:0;overflow:hidden}
-.proj-featured .proj-body{padding:20px}
-.proj-media{margin:0;overflow:hidden;background:var(--surface-2)}
-.proj-media img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover}
-.proj-featured .proj-media img{aspect-ratio:21/9}
-@media(min-width:1024px){
-  .proj-featured{display:grid;grid-template-columns:1.15fr .85fr}
-  .proj-featured .proj-media{min-height:100%}
-  .proj-featured .proj-media img{height:100%}
-}
-@media (prefers-reduced-motion: no-preference){
-  .proj-media img{transform:scale(1.02)}
-  .tile.in .proj-media img{transition:transform 600ms cubic-bezier(.2,.8,.2,1)}
-  .tile.in:hover .proj-media img{transform:scale(1)}
-}
-/* Bento background diversity: first three project cells carry imagery, rest stay text. */
+/* Selected work: uniform text cards, no imagery. Same size, shared baseline. */
+.proj{min-height:340px}
+.proj .muted{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.proj .checks{min-height:60px}
+.proj .chips{margin-top:auto;padding-top:4px}
 .proj .ext{position:absolute;top:20px;right:20px;color:var(--text-3)}
-.proj-featured .ext{top:20px;right:20px}
