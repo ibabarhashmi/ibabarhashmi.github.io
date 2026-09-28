@@ -109,8 +109,7 @@ ZONES.forEach(z=>{
   root.appendChild(foot);
   root.appendChild(el("p",{class:"tile-foot",id:"overlap",text:""}));
 })();
-function tick(){
-  const now = new Date();
+function updateClocks(now){
   ZONES.forEach(z=>{
     const node = document.querySelector('[data-clock="'+z.tz+'"]');
     if(!node) return;
@@ -141,12 +140,15 @@ function tick(){
     badge.title = inside ? "Within IST working hours" : "Outside IST working hours - async replies";
   }
 }
-tick();
-(function schedule(){
-  const delay = 1000 - (Date.now()%1000);
-  setTimeout(function(){ tick(); setInterval(function(){ if(!document.hidden) tick(); },1000); }, delay);
-})();
-document.addEventListener("visibilitychange", function(){ if(!document.hidden) tick(); });
+let clockRafId = null;
+function clockLoop(){
+  updateClocks(new Date());
+  if(!document.hidden) clockRafId = requestAnimationFrame(clockLoop);
+}
+document.addEventListener("visibilitychange", function(){
+  if(!document.hidden && !clockRafId) clockLoop();
+});
+clockLoop();
 
 /* ---------- Impact ---------- */
 (function(){
@@ -436,14 +438,13 @@ function copyEmail(){
   });
 })();
 
-/* ---------- Delight: count-up only (tilt, spotlight, orb canvas cut) ---------- */
+/* ---------- Delight: count-up only ---------- */
 (function(){
   try{ console.log("%cAgents that tell the truth. - BH", "color:#1487FA;font-weight:bold"); }catch(e){}
   const mqCalm = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
   const calm = !!(mqCalm && mqCalm.matches);
   const canRAF = !!window.requestAnimationFrame;
 
-  /* network backdrop: element kept dormant, no animation loop (2026 cut) */
   /* count-up impact stats, first reveal only; final text stays in DOM */
   (function(){
     if(calm || !canRAF) return;
