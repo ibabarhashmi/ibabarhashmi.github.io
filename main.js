@@ -38,7 +38,8 @@ document.querySelectorAll(".tile").forEach(markTile);
 (function(){
   const root = document.getElementById("tile-profile");
   if(!root) return;
-  const wrap = el("div",{class:"profile"});
+  root.classList.add("bezel");
+  const wrap = el("div",{class:"profile bezel-inner"});
   const img = el("img",{class:"avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"96",height:"96",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
   const right = el("div",{class:"profile-text"});
@@ -342,9 +343,12 @@ async function loadGitHub(){
   v.appendChild(el("p",{class:"vibe-text",text:SITE.vibe||""}));
 
   const c = document.getElementById("tile-contact");
-  c.appendChild(el("h2",{class:"eyebrow",id:"h-contact",text:"Contact"}));
-  c.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
-  c.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
+  c.classList.add("bezel");
+  const ci = el("div",{class:"bezel-inner"});
+  c.appendChild(ci);
+  ci.appendChild(el("h2",{class:"eyebrow",id:"h-contact",text:"Contact"}));
+  ci.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
+  ci.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
   const row = el("div",{class:"actions"});
   const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; b1.appendChild(orb()); row.appendChild(b1);
   if(SITE.resume){
@@ -352,7 +356,7 @@ async function loadGitHub(){
     r.setAttribute("target","_blank"); r.setAttribute("rel","noopener noreferrer");
     row.appendChild(r);
   }
-  c.appendChild(row);
+  ci.appendChild(row);
   const icons = el("div",{class:"icon-row"});
   function brandLink(href,label,src,alt,darkSrc){
     /* Plain anchor on purpose: no extLink vh span, so copy-paste of the tile stays clean. Name lives in aria-label + title. */
@@ -383,7 +387,7 @@ async function loadGitHub(){
   mailBtn.insertAdjacentHTML("afterbegin",'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>');
   mailBtn.addEventListener("click", copyEmail);
   icons.appendChild(mailBtn);
-  c.appendChild(icons);
+  ci.appendChild(icons);
 })();
 
 /* ---------- Footer year ---------- */

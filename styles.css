@@ -13,7 +13,7 @@
   --success-ink:#15803D;
   --peach:#9A5A1E;--peach-soft:#FBEEDF;
   --shadow-rest:0 1px 2px rgba(20,20,15,.04),0 1px 1px rgba(20,20,15,.03);
-  --shadow-hover:0 8px 24px rgba(20,20,15,.08),0 2px 6px rgba(20,20,15,.05);
+  --shadow-hover:0 8px 24px rgba(15,107,218,.10),0 2px 6px rgba(20,20,15,.05);
 }
 [data-theme="dark"]{
   --bg:#0F0F0E;--surface:#171716;--surface-2:#1F1F1D;--border:#2A2A27;
@@ -24,7 +24,7 @@
   --success-ink:#22C55E;
   --peach:#F2B56B;--peach-soft:#2A1D10;
   --shadow-rest:0 1px 2px rgba(0,0,0,.3);
-  --shadow-hover:0 8px 24px rgba(0,0,0,.45);
+  --shadow-hover:0 8px 24px rgba(0,0,0,.45),0 2px 8px rgba(77,163,255,.10);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -233,3 +233,23 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 
 /* Floating pill nav offset for anchor jumps, all motion modes. */
 .tile,.section-heading{scroll-margin-top:88px}
+
+/* ---------- premium depth: grain, bezels, brows, footer ---------- */
+/* Film grain: fixed pointer-events-none overlay only, never on scrollers. Static, no animation. */
+body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.032;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E")}
+[data-theme="dark"] body::after{opacity:.05}
+/* Double-bezel: tinted tray outside, surfaced core inside, concentric radii. */
+.bezel{padding:6px !important}
+#tile-profile.bezel{background:var(--surface-2)}
+.tile-contact.bezel{background:var(--accent-soft);border-color:var(--accent-soft)}
+.bezel-inner{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:inset 0 1px 1px rgba(255,255,255,.5)}
+[data-theme="dark"] .bezel-inner{box-shadow:inset 0 1px 1px rgba(255,255,255,.08)}
+@media(max-width:639px){.bezel-inner{padding:16px}}
+/* Pill brows: exactly two on the page, work plus contact. */
+.section-heading{justify-self:start;display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-2)}
+.tile-contact .eyebrow{display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;background:var(--surface);border:1px solid transparent;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink);opacity:1;margin:0 0 12px}
+/* Footer: spread row, quiet links, no invented destinations. */
+.footer{justify-content:space-between;align-items:center}
+.footer nav{display:flex;gap:2px;flex-wrap:wrap}
+.footer nav a,.footer .to-top{display:inline-flex;align-items:center;height:36px;padding:0 10px;border-radius:999px;color:var(--text-2);font-size:13px;font-weight:600}
+.footer nav a:hover,.footer .to-top:hover{color:var(--text);text-decoration:none;background:var(--surface-2)}
