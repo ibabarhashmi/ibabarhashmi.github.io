@@ -18,6 +18,11 @@ function extLink(href, text){
   a.appendChild(vh);
   return a;
 }
+function orb(){
+  const s = el("span",{class:"btn-orb","aria-hidden":"true"});
+  s.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+  return s;
+}
 const ICONS = {
   /* Single icon family: consistent 1.75 stroke, round caps. Phosphor-style paths, inline to avoid a new dependency on this static page. */
   pin:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
@@ -48,7 +53,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   badge.appendChild(document.createTextNode(SITE.availability||"Available remote - globally"));
   const bio = el("p",{class:"bio",text:SITE.bio||""});
   const actions = el("div",{class:"actions"});
-  const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn-primary";
+  const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn-primary"; book.appendChild(orb());
   actions.appendChild(book);
   const work = el("a",{class:"btn btn-secondary",href:"#work-heading",text:"View work"});
   actions.appendChild(work);
@@ -341,7 +346,7 @@ async function loadGitHub(){
   c.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
   c.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
   const row = el("div",{class:"actions"});
-  const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; row.appendChild(b1);
+  const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; b1.appendChild(orb()); row.appendChild(b1);
   if(SITE.resume){
     const r = el("a",{class:"btn btn-secondary",href:SITE.resume,text:"Download CV"});
     r.setAttribute("target","_blank"); r.setAttribute("rel","noopener noreferrer");
