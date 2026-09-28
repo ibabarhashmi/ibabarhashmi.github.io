@@ -18,6 +18,11 @@ function extLink(href, text){
   a.appendChild(vh);
   return a;
 }
+function orb(){
+  const s = el("span",{class:"btn-orb","aria-hidden":"true"});
+  s.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+  return s;
+}
 const ICONS = {
   /* Single icon family: consistent 1.75 stroke, round caps. Phosphor-style paths, inline to avoid a new dependency on this static page. */
   pin:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
@@ -33,7 +38,8 @@ document.querySelectorAll(".tile").forEach(markTile);
 (function(){
   const root = document.getElementById("tile-profile");
   if(!root) return;
-  const wrap = el("div",{class:"profile"});
+  root.classList.add("bezel");
+  const wrap = el("div",{class:"profile bezel-inner"});
   const img = el("img",{class:"avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"96",height:"96",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
   const right = el("div",{class:"profile-text"});
@@ -48,7 +54,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   badge.appendChild(document.createTextNode(SITE.availability||"Available remote - globally"));
   const bio = el("p",{class:"bio",text:SITE.bio||""});
   const actions = el("div",{class:"actions"});
-  const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn-primary";
+  const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn-primary"; book.appendChild(orb());
   actions.appendChild(book);
   const work = el("a",{class:"btn btn-secondary",href:"#work-heading",text:"View work"});
   actions.appendChild(work);
@@ -337,17 +343,20 @@ async function loadGitHub(){
   v.appendChild(el("p",{class:"vibe-text",text:SITE.vibe||""}));
 
   const c = document.getElementById("tile-contact");
-  c.appendChild(el("h2",{class:"eyebrow",id:"h-contact",text:"Contact"}));
-  c.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
-  c.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
+  c.classList.add("bezel");
+  const ci = el("div",{class:"bezel-inner"});
+  c.appendChild(ci);
+  ci.appendChild(el("h2",{class:"eyebrow",id:"h-contact",text:"Contact"}));
+  ci.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
+  ci.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
   const row = el("div",{class:"actions"});
-  const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; row.appendChild(b1);
+  const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; b1.appendChild(orb()); row.appendChild(b1);
   if(SITE.resume){
     const r = el("a",{class:"btn btn-secondary",href:SITE.resume,text:"Download CV"});
     r.setAttribute("target","_blank"); r.setAttribute("rel","noopener noreferrer");
     row.appendChild(r);
   }
-  c.appendChild(row);
+  ci.appendChild(row);
   const icons = el("div",{class:"icon-row"});
   function brandLink(href,label,src,alt,darkSrc){
     /* Plain anchor on purpose: no extLink vh span, so copy-paste of the tile stays clean. Name lives in aria-label + title. */
@@ -378,7 +387,7 @@ async function loadGitHub(){
   mailBtn.insertAdjacentHTML("afterbegin",'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>');
   mailBtn.addEventListener("click", copyEmail);
   icons.appendChild(mailBtn);
-  c.appendChild(icons);
+  ci.appendChild(icons);
 })();
 
 /* ---------- Footer year ---------- */
