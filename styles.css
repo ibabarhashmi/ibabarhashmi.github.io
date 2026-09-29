@@ -116,18 +116,28 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 .chip{display:inline-flex;align-items:center;padding:6px 10px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;font-size:13px;font-weight:500;color:var(--text)}
 .chip-accent{background:var(--accent-soft);border-color:transparent;color:var(--accent-ink)}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-/* clocks */
-.clock-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--border)}
-.clock-row:first-of-type{border-top:none;padding-top:0}
-.clock-row:last-of-type{border-bottom:none}
-.clock-left{display:flex;flex-direction:column}
-.clock-label{font-size:13px;font-weight:600}
-.clock-city{font-size:13px;color:var(--text-3)}
-.clock-right{text-align:right}
-.clock-time{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
-.clock-day{font-size:12px;color:var(--text-3);margin-top:4px}
-.clock-icon{font-size:16px;margin-left:8px}
-.tile-foot{font-size:12px;color:var(--text-3);margin-top:12px;margin-bottom:0}
+
+/* ---------- Cinematic Center Hero ---------- */
+.hero-tile{min-height:90vh;display:flex;align-items:center;justify-content:center}
+.hero-tile .bezel-inner{padding:40px;max-width:800px;width:100%;text-align:center}
+.hero{display:flex;flex-direction:column;align-items:center;gap:16px}
+.hero-avatar{width:120px;height:120px;border-radius:50%;object-fit:cover;border:1px solid var(--border);background:var(--surface-2);box-shadow:var(--shadow-hover);margin-bottom:8px}
+.hero h1{font-size:clamp(3rem, 6vw, 5.5rem);line-height:1.05;font-weight:700;letter-spacing:-.03em;margin:0;max-width:900px}
+.hero-title{font-size:clamp(1.25rem, 2.5vw, 1.75rem);font-weight:500;color:var(--text-2);margin:0;max-width:65ch}
+.hero-meta{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--text-2);margin:8px 0 4px}
+.hero .badge{margin:0 auto 8px}
+.hero-bio{font-size:1.1rem;line-height:1.7;color:var(--text);max-width:65ch;margin:8px auto 16px}
+.hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:8px}
+.hero-actions .btn{min-width:160px}
+
+@media(max-width:639px){
+  .hero-tile{min-height:auto;padding:60px 0}
+  .hero-tile .bezel-inner{padding:24px}
+  .hero-avatar{width:96px;height:96px}
+  .hero-actions .btn{min-width:0;flex:1}
+  .hero-actions{width:100%}
+}
+
 /* impact */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .stat-value{font-size:28px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
@@ -168,14 +178,10 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 .proj:hover{text-decoration:none}
 .checks{list-style:none;margin:8px 0;padding:0;font-size:13px;color:var(--text-2)}
 .checks li::before{content:"✓ ";color:var(--success);font-weight:700}
-/* stack / certs */
+/* stack */
 .stack-group{margin-bottom:12px}
 .stack-group:last-child{margin-bottom:0}
 .stack-name{font-size:12px;font-weight:600;color:var(--text-3);margin-bottom:6px}
-.cert-row{padding:8px 0;border-top:1px solid var(--border)}
-.cert-row:first-of-type{border-top:none}
-.cert-name{font-size:14px;font-weight:600;margin:0}
-.cert-meta{font-size:13px;color:var(--text-2);margin:0}
 /* vibe */
 .vibe-text{font-size:22px;font-weight:600;letter-spacing:-.01em;margin:0}
 /* contact: tinted within theme, no full invert */
@@ -205,13 +211,7 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 .container{position:relative;z-index:1}
 .js #tile-profile:not(.in){filter:blur(8px)}
 #tile-profile.tile.in{transition:opacity 800ms cubic-bezier(0.32,0.72,0,1),transform 800ms cubic-bezier(0.32,0.72,0,1),box-shadow 250ms cubic-bezier(0.32,0.72,0,1),border-color 250ms,filter 800ms cubic-bezier(0.32,0.72,0,1);transition-delay:calc(var(--i,0)*40ms),calc(var(--i,0)*40ms),0ms,0ms,calc(var(--i,0)*40ms)}
-#tile-vibe{background:var(--accent-ink);border-color:var(--accent-ink)}
-#tile-vibe .tile-title{color:#fff}
-#tile-vibe .vibe-text{color:#fff}
-#tile-vibe:hover{filter:brightness(1.07)}
-[data-theme="dark"] #tile-vibe{background:var(--accent);border-color:var(--accent)}
-[data-theme="dark"] #tile-vibe .tile-title{color:#0F0F0E}
-[data-theme="dark"] #tile-vibe .vibe-text{color:#0F0F0E}
+
 
 /* ---------- scroll story (native-first, no new deps) ---------- */
 /* Hero stays detailed per user lock: full bio preserved, natural height, snap start only. */

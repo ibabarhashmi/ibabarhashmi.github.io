@@ -27,6 +27,8 @@
 </script>
 <link rel="preload" href="assets/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css?v=20260928d">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
 <script>(function(){try{var t=localStorage.getItem("theme");if(!t){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.dataset.theme=t;}catch(e){}document.documentElement.classList.add("js");})();</script>
 <script src="data.js?v=20260928d" defer></script>
 <script src="main.js?v=20260928d" defer></script>
@@ -57,16 +59,13 @@
   <div class="grid" id="grid">
     <section class="tile span-4" id="tile-profile" aria-labelledby="h-name"></section>
     <section class="tile span-2" id="tile-now" aria-labelledby="h-now"></section>
-    <section class="tile span-2" id="tile-time" aria-labelledby="h-time"></section>
     <section class="tile span-2" id="tile-impact" aria-labelledby="h-impact"></section>
     <section class="tile span-2 row-2" id="tile-github" aria-labelledby="h-github"></section>
     <section class="tile span-4" id="tile-exp" aria-labelledby="h-exp"></section>
     <div class="section-heading span-4" id="work-heading" aria-label="Selected work"></div>
     <div id="projects-slot" class="contents"></div>
-    <section class="tile span-2" id="tile-stack" aria-labelledby="h-stack"></section>
-    <section class="tile span-2" id="tile-certs" aria-labelledby="h-certs"></section>
-    <section class="tile span-2" id="tile-domains" aria-labelledby="h-domains"></section>
-    <section class="tile span-2" id="tile-vibe" aria-labelledby="h-vibe"></section>
+    <section class="tile span-4" id="tile-stack" aria-labelledby="h-stack"></section>
+    <section class="tile span-4 tile-vibe" id="tile-vibe" aria-labelledby="h-vibe"></section>
     <section class="tile span-4 tile-contact" id="tile-contact" aria-labelledby="h-contact"></section>
   </div>
 </main>

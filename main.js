@@ -34,32 +34,37 @@ let tileIndex = 0;
 function markTile(node){ node.style.setProperty("--i", String(tileIndex++)); return node; }
 document.querySelectorAll(".tile").forEach(markTile);
 
-/* ---------- Profile ---------- */
+/* ---------- Profile (Cinematic Center Hero) ---------- */
 (function(){
   const root = document.getElementById("tile-profile");
   if(!root) return;
-  root.classList.add("bezel");
-  const wrap = el("div",{class:"profile bezel-inner"});
-  const img = el("img",{class:"avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"96",height:"96",fetchpriority:"high",decoding:"async"});
+  root.classList.add("bezel", "hero-tile");
+  const wrap = el("div",{class:"hero bezel-inner"});
+  
+  // Avatar as decorative element, not layout driver
+  const img = el("img",{class:"hero-avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"120",height:"120",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
-  const right = el("div",{class:"profile-text"});
+  
   const h1 = el("h1",{id:"h-name",text:SITE.name||"Babar Hashmi"});
-  const title = el("p",{class:"title",text:SITE.title||""});
-  const meta = el("div",{class:"meta-row"});
+  const title = el("p",{class:"hero-title",text:SITE.title||""});
+  const meta = el("div",{class:"hero-meta"});
   meta.insertAdjacentHTML("afterbegin", ICONS.pin);
   meta.appendChild(document.createTextNode((SITE.location||"") + ", " + (SITE.relocation||"")));
+  
   const badge = el("div",{class:"badge",id:"avail-badge"});
   const dot = el("span",{class:"dot","aria-hidden":"true"});
   badge.appendChild(dot);
   badge.appendChild(document.createTextNode(SITE.availability||"Available remote - globally"));
-  const bio = el("p",{class:"bio",text:SITE.bio||""});
-  const actions = el("div",{class:"actions"});
+  
+  const bio = el("p",{class:"hero-bio",text:SITE.bio||""});
+  
+  const actions = el("div",{class:"hero-actions"});
   const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn-primary"; book.appendChild(orb());
   actions.appendChild(book);
   const work = el("a",{class:"btn btn-secondary",href:"#work-heading",text:"View work"});
   actions.appendChild(work);
-  right.append(h1,title,meta,badge,bio,actions);
-  wrap.append(img,right);
+  
+  wrap.append(img, h1, title, meta, badge, bio, actions);
   root.appendChild(wrap);
 })();
 
@@ -71,84 +76,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   root.lastChild.style.cssText = "font-size:17px;font-weight:500;margin:0";
 })();
 
-/* ---------- Clocks ---------- */
-const ZONES = [
-  { label:"IST", city:"Bangalore", tz:"Asia/Kolkata", offset:"UTC+5:30" },
-  { label:"KSA", city:"Riyadh", tz:"Asia/Riyadh", offset:"UTC+3" },
-  { label:"UAE", city:"Dubai", tz:"Asia/Dubai", offset:"UTC+4" }
-];
-const fmt = {};
-ZONES.forEach(z=>{
-  fmt[z.tz] = {
-    time:new Intl.DateTimeFormat("en-GB",{timeZone:z.tz,hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false,hourCycle:"h23"}),
-    day:new Intl.DateTimeFormat("en-GB",{timeZone:z.tz,weekday:"short",day:"numeric",month:"short"}),
-    hour:new Intl.DateTimeFormat("en-GB",{timeZone:z.tz,hour:"numeric",hour12:false,hourCycle:"h23"})
-  };
-});
-(function(){
-  const root = document.getElementById("tile-time");
-  root.appendChild(el("h2",{class:"tile-title",id:"h-time",text:"Local time"}));
-  root.setAttribute("aria-live","off");
-  ZONES.forEach(z=>{
-    const row = el("div",{class:"clock-row"});
-    row.setAttribute("data-clock", z.tz);
-    const left = el("div",{class:"clock-left"});
-    left.appendChild(el("span",{class:"clock-label",text:z.label+" - "+z.city}));
-    left.appendChild(el("span",{class:"clock-city",text:z.offset}));
-    const right = el("div",{class:"clock-right"});
-    right.appendChild(el("div",{class:"clock-time",text:"--:--:--"}));
-    const sub = el("div",{class:"clock-day"});
-    sub.appendChild(el("span",{class:"day",text:""}));
-    const ic = el("span",{class:"clock-icon","aria-hidden":"true"});
-    sub.appendChild(ic);
-    right.appendChild(sub);
-    row.append(left,right);
-    root.appendChild(row);
-  });
-  const foot = el("p",{class:"tile-foot",text:"Working hours 10:00-19:00 IST (08:30-17:30 Dubai, 07:30-16:30 Riyadh)"});
-  root.appendChild(foot);
-  root.appendChild(el("p",{class:"tile-foot",id:"overlap",text:""}));
-})();
-function updateClocks(now){
-  ZONES.forEach(z=>{
-    const node = document.querySelector('[data-clock="'+z.tz+'"]');
-    if(!node) return;
-    const t = node.querySelector(".clock-time");
-    const d = node.querySelector(".day");
-    if(t) t.textContent = fmt[z.tz].time.format(now);
-    if(d) d.textContent = fmt[z.tz].day.format(now) + " (" + z.offset + ")";
-    let h = 12;
-    try{ h = parseInt(fmt[z.tz].hour.format(now),10); }catch(e){}
-    const day = (h>=7 && h<19);
-    node.dataset.daypart = day ? "day" : "night";
-    const ic = node.querySelector(".clock-icon");
-    if(ic && ic.dataset.p!==node.dataset.daypart){ ic.dataset.p=node.dataset.daypart; ic.innerHTML = day ? ICONS.sun : ICONS.moon; }
-  });
-  const ov=document.getElementById("overlap");
-  if(ov){ let dh=12; try{dh=parseInt(fmt["Asia/Dubai"].hour.format(now),10);}catch(e){}
-    let ih=12; try{ih=parseInt(fmt["Asia/Kolkata"].hour.format(now),10);}catch(e){}
-    const gulf=dh>=9&&dh<18, me=ih>=10&&ih<19;
-    ov.textContent = (gulf&&me) ? "Overlap now: Gulf business hours" : "Outside shared hours - replies within a day"; }
-  // availability dot
-  let istH = 12;
-  try{ istH = parseInt(fmt["Asia/Kolkata"].hour.format(now),10); }catch(e){}
-  const wh = SITE.workingHoursIST || [10,19];
-  const badge = document.getElementById("avail-badge");
-  if(badge){
-    const inside = istH>=wh[0] && istH<wh[1];
-    badge.classList.toggle("off", !inside);
-    badge.title = inside ? "Within IST working hours" : "Outside IST working hours - async replies";
-  }
-}
-let clockRafId = null;
-function clockLoop(){
-  updateClocks(new Date());
-  if(!document.hidden) clockRafId = requestAnimationFrame(clockLoop);
-}
-document.addEventListener("visibilitychange", function(){
-  if(!document.hidden && !clockRafId) clockLoop();
-});
-clockLoop();
+
 
 /* ---------- Impact ---------- */
 (function(){
@@ -319,26 +247,11 @@ async function loadGitHub(){
   });
 })();
 
-/* ---------- Certs ---------- */
-(function(){
-  const root = document.getElementById("tile-certs");
-  root.appendChild(el("h2",{class:"tile-title",id:"h-certs",text:"Certifications"}));
-  (SITE.certifications||[]).forEach(c=>{
-    const r = el("div",{class:"cert-row"});
-    r.appendChild(el("p",{class:"cert-name",text:c.name}));
-    r.appendChild(el("p",{class:"cert-meta",text:c.issuer+" - "+c.date}));
-    root.appendChild(r);
-  });
-})();
+
 
 /* ---------- Domains / Vibe / Contact ---------- */
 (function(){
-  const d = document.getElementById("tile-domains");
-  d.appendChild(el("h2",{class:"tile-title",id:"h-domains",text:"Domains"}));
-  const chips = el("div",{class:"chips"});
-  chips.style.margin = "0";
-  (SITE.domains||[]).forEach(x=>chips.appendChild(el("span",{class:"chip",text:x})));
-  d.appendChild(chips);
+
 
   const v = document.getElementById("tile-vibe");
   v.appendChild(el("h2",{class:"tile-title",id:"h-vibe",text:"Note"}));
@@ -382,12 +295,10 @@ async function loadGitHub(){
   icons.appendChild(brandLink(SITE.links.linkedin,"LinkedIn profile","assets/icons/linkedin.svg"));
   icons.appendChild(brandLink(SITE.links.github,"GitHub profile","assets/icons/github-light.svg","", "assets/icons/github-dark.svg"));
   icons.appendChild(brandLink(SITE.links.telegram,"Telegram chat","assets/icons/telegram.svg"));
-  const mailBtn = el("button",{class:"icon-link",type:"button"});
-  mailBtn.setAttribute("aria-label","Copy email address to clipboard");
-  mailBtn.setAttribute("title","Copy email address");
-  /* Inline (not img) so stroke inherits .icon-link color in both themes. Swap this block to change providers. */
-  mailBtn.insertAdjacentHTML("afterbegin",'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>');
-  mailBtn.addEventListener("click", copyEmail);
+  const mailBtn = el("a",{class:"icon-link",href:"mailto:"+SITE.email,target:"_blank",rel:"noopener noreferrer"});
+  mailBtn.setAttribute("aria-label","Email Babar Hashmi");
+  mailBtn.setAttribute("title","Email Babar Hashmi");
+  mailBtn.insertAdjacentHTML("afterbegin",'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>');
   icons.appendChild(mailBtn);
   ci.appendChild(icons);
 })();
@@ -481,5 +392,104 @@ function copyEmail(){
   }else{
     tiles.forEach(t=>t.classList.add("in"));
   }
+})();
+
+
+/* ---------- GSAP Scroll Motion ---------- */
+(function(){
+  if(!window.gsap || !window.ScrollTrigger) return;
+  const mqCalm = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  const calm = !!(mqCalm && mqCalm.matches);
+  if(calm) return;
+  
+  gsap.registerPlugin(ScrollTrigger);
+  
+  /* Experience: Scroll Pinning - pin each role while next scrolls over */
+  const tlItems = gsap.utils.toArray('.tl-item');
+  if(tlItems.length > 1){
+    tlItems.forEach((item, i) => {
+      if(i === tlItems.length - 1) return; // Last item doesn't pin
+      ScrollTrigger.create({
+        trigger: item,
+        start: 'top 88px',
+        endTrigger: tlItems[tlItems.length - 1],
+        end: 'top 88px',
+        pin: true,
+        pinSpacing: false,
+      });
+      // Scale/fade previous as next arrives
+      gsap.to(item, {
+        scale: 0.95,
+        opacity: 0.7,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: tlItems[i + 1],
+          start: 'top bottom',
+          end: 'top 88px',
+          scrub: 1,
+        },
+      });
+    });
+  }
+  
+  /* Projects: Card Stacking - cards stack from bottom on scroll */
+  const projCards = gsap.utils.toArray('.proj');
+  if(projCards.length > 3){
+    const stackCards = projCards.slice(0, 6); // First 6 cards
+    stackCards.forEach((card, i) => {
+      if(i === 0) return; // First card stays
+      gsap.fromTo(card, 
+        { y: 100, opacity: 0, scale: 0.95 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          ease: 'power3.out',
+          duration: 0.8,
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 85%',
+            end: 'top 50%',
+            scrub: 0.5,
+            toggleActions: 'play none none reverse',
+          }
+        }
+      );
+    });
+  }
+  
+  /* Hero Avatar: Parallax float on scroll */
+  const heroAvatar = document.querySelector('.hero-avatar');
+  if(heroAvatar){
+    gsap.to(heroAvatar, {
+      yPercent: 30,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#tile-profile',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1,
+      }
+    });
+  }
+  
+  /* Section headings: Scrubbing text reveal */
+  const sectionHeadings = gsap.utils.toArray('.section-heading, .eyebrow');
+  sectionHeadings.forEach(heading => {
+    gsap.fromTo(heading, 
+      { opacity: 0.2, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: heading,
+          start: 'top 90%',
+          end: 'top 60%',
+          scrub: 1,
+        }
+      }
+    );
+  });
 })();
 })();
