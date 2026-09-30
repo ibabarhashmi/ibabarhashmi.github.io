@@ -1,6 +1,20 @@
 "use strict";
 (function(){
 const SITE = window.SITE || {};
+/* Availability state lives top: hero profile IIFE builds the panel before later consts initialize. */
+const PRESETS = [
+  ["Asia/Kolkata","IST · Bangalore"],
+  ["Asia/Dubai","GST · Dubai"],
+  ["Asia/Riyadh","AST · Riyadh"],
+  ["UTC","UTC"],
+  ["Europe/London","London"],
+  ["Europe/Berlin","Berlin"],
+  ["America/New_York","New York"],
+  ["America/Los_Angeles","Los Angeles"],
+  ["Asia/Singapore","Singapore"],
+  ["Australia/Sydney","Sydney"]
+];
+const avail = { tz: getVisitorTz() };
 function el(tag, attrs, children){
   const n = document.createElement(tag);
   if(attrs) for(const k in attrs){
@@ -65,7 +79,10 @@ document.querySelectorAll(".tile").forEach(markTile);
   [h1,title,meta,badge,bio,actions].forEach((n,i)=>{ n.classList.add("hero-el"); n.style.setProperty("--hi",String(i+1)); });
   main.append(h1,title,meta,badge,bio,actions);
   wrap.append(main,dock);
-  root.appendChild(wrap);
+  const grid = el("div",{class:"hero-grid"});
+  grid.appendChild(wrap);
+  grid.appendChild(buildAvailPanel());
+  root.appendChild(grid);
 })();
 
 /* ---------- NOW ---------- */
@@ -76,68 +93,111 @@ document.querySelectorAll(".tile").forEach(markTile);
   root.lastChild.style.cssText = "font-size:17px;font-weight:500;margin:0";
 })();
 
-/* ---------- Clocks ---------- */
-const ZONES = [
-  { label:"IST", city:"Bangalore", tz:"Asia/Kolkata", offset:"UTC+5:30" },
-  { label:"KSA", city:"Riyadh", tz:"Asia/Riyadh", offset:"UTC+3" },
-  { label:"UAE", city:"Dubai", tz:"Asia/Dubai", offset:"UTC+4" }
-];
-const fmt = {};
-ZONES.forEach(z=>{
-  fmt[z.tz] = {
-    time:new Intl.DateTimeFormat("en-GB",{timeZone:z.tz,hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false,hourCycle:"h23"}),
-    day:new Intl.DateTimeFormat("en-GB",{timeZone:z.tz,weekday:"short",day:"numeric",month:"short"}),
-    hour:new Intl.DateTimeFormat("en-GB",{timeZone:z.tz,hour:"numeric",hour12:false,hourCycle:"h23"})
+/* ---------- Availability: visitor tz vs IST comparator (hero panel) ---------- */
+const IST_TZ = "Asia/Kolkata";
+function tzCity(tz){ const p = String(tz).split("/"); return p.length>1 ? p[1].replace(/_/g," ") : String(tz); }
+function validTz(tz){ try{ new Intl.DateTimeFormat("en",{timeZone:tz}); return true; }catch(e){ return false; } }
+function getVisitorTz(){
+  try{
+    const saved = localStorage.getItem("visitor_tz");
+    if(saved && validTz(saved)) return saved;
+  }catch(e){}
+  try{
+    const d = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if(d && validTz(d)) return d;
+  }catch(e){}
+  return "Asia/Dubai";
+}
+function tzFmt(tz){
+  return {
+    time:new Intl.DateTimeFormat("en-GB",{timeZone:tz,hour:"2-digit",minute:"2-digit",hour12:false,hourCycle:"h23"}),
+    full:new Intl.DateTimeFormat("en-GB",{timeZone:tz,weekday:"short",hour:"numeric",minute:"2-digit",hour12:false}),
+    hour:new Intl.DateTimeFormat("en-GB",{timeZone:tz,hour:"numeric",hour12:false,hourCycle:"h23"})
   };
-});
-(function(){
-  const root = document.getElementById("tile-time");
-  root.appendChild(el("h2",{class:"tile-title",id:"h-time",text:"Local time"}));
-  root.setAttribute("aria-live","off");
-  ZONES.forEach(z=>{
-    const row = el("div",{class:"clock-row"});
-    row.setAttribute("data-clock", z.tz);
-    const left = el("div",{class:"clock-left"});
-    left.appendChild(el("span",{class:"clock-label",text:z.label+" - "+z.city}));
-    left.appendChild(el("span",{class:"clock-city",text:z.offset}));
-    const right = el("div",{class:"clock-right"});
-    right.appendChild(el("div",{class:"clock-time",text:"--:--:--"}));
-    const sub = el("div",{class:"clock-day"});
-    sub.appendChild(el("span",{class:"day",text:""}));
-    const ic = el("span",{class:"clock-icon","aria-hidden":"true"});
-    sub.appendChild(ic);
-    right.appendChild(sub);
-    row.append(left,right);
-    root.appendChild(row);
+}
+function tzHour(tz,now){ try{ return parseInt(tzFmt(tz).hour.format(now),10); }catch(e){ return 12; } }
+function buildAvailPanel(){
+  const aside = el("aside",{class:"hero-avail hero-el","aria-label":"Availability across timezones"});
+  aside.style.setProperty("--hi","7");
+  aside.appendChild(el("p",{class:"avail-eyebrow",text:"Availability"}));
+  const verdict = el("p",{class:"avail-verdict",role:"status"});
+  verdict.appendChild(el("span",{class:"dot","aria-hidden":"true"}));
+  verdict.appendChild(el("span",{class:"avail-verdict-text",text:"Checking hours..."}));
+  aside.appendChild(verdict);
+  const rows = el("div",{class:"avail-rows"});
+  const istRow = el("div",{class:"avail-row"});
+  const istT = el("time",{class:"avail-time avail-ist",datetime:""});
+  istRow.appendChild(istT);
+  istRow.appendChild(el("div",{class:"avail-label",text:"Bangalore · IST"}));
+  const vRow = el("div",{class:"avail-row"});
+  const vT = el("time",{class:"avail-time",datetime:""});
+  vRow.appendChild(vT);
+  const vLabel = el("div",{class:"avail-label"});
+  vLabel.appendChild(el("span",{class:"avail-city",text:"Your time"}));
+  vLabel.appendChild(document.createTextNode(" "));
+  const change = el("button",{class:"avail-change",type:"button",text:"change"});
+  change.setAttribute("aria-expanded","false");
+  vLabel.appendChild(change);
+  vRow.appendChild(vLabel);
+  rows.appendChild(istRow); rows.appendChild(vRow);
+  aside.appendChild(rows);
+  const sel = el("select",{class:"avail-select","aria-label":"Choose your timezone"});
+  sel.hidden = true;
+  const presetTz = PRESETS.map(p=>p[0]);
+  PRESETS.forEach(([tz,label])=>{
+    const o = el("option",{value:tz,text:label});
+    sel.appendChild(o);
   });
-  const foot = el("p",{class:"tile-foot",text:"Working hours 10:00-19:00 IST (08:30-17:30 Dubai, 07:30-16:30 Riyadh)"});
-  root.appendChild(foot);
-  root.appendChild(el("p",{class:"tile-foot",id:"overlap",text:""}));
-})();
-function tick(){
+  try{
+    const all = Intl.supportedValuesOf("timeZone").filter(t=>presetTz.indexOf(t)<0);
+    all.forEach(tz=>{
+      const o = el("option",{value:tz,text:tzCity(tz)});
+      sel.appendChild(o);
+    });
+  }catch(e){}
+  sel.value = avail.tz;
+  if(sel.selectedIndex<0 && sel.options.length) sel.selectedIndex = 0;
+  change.addEventListener("click", function(){
+    sel.hidden = !sel.hidden;
+    change.setAttribute("aria-expanded", String(!sel.hidden));
+    if(!sel.hidden) sel.focus();
+  });
+  sel.addEventListener("change", function(){
+    if(!validTz(sel.value)) return;
+    avail.tz = sel.value;
+    try{ localStorage.setItem("visitor_tz", avail.tz); }catch(e){}
+    sel.hidden = true;
+    change.setAttribute("aria-expanded","false");
+    tickAvail();
+  });
+  aside.appendChild(sel);
+  aside.appendChild(el("p",{class:"avail-foot",text:"Working hours 10:00-19:00 IST - replies within a day outside shared hours"}));
+  return aside;
+}
+function tickAvail(){
   const now = new Date();
-  ZONES.forEach(z=>{
-    const node = document.querySelector('[data-clock="'+z.tz+'"]');
-    if(!node) return;
-    const t = node.querySelector(".clock-time");
-    const d = node.querySelector(".day");
-    if(t) t.textContent = fmt[z.tz].time.format(now);
-    if(d) d.textContent = fmt[z.tz].day.format(now) + " (" + z.offset + ")";
-    let h = 12;
-    try{ h = parseInt(fmt[z.tz].hour.format(now),10); }catch(e){}
-    const day = (h>=7 && h<19);
-    node.dataset.daypart = day ? "day" : "night";
-    const ic = node.querySelector(".clock-icon");
-    if(ic && ic.dataset.p!==node.dataset.daypart){ ic.dataset.p=node.dataset.daypart; ic.innerHTML = day ? ICONS.sun : ICONS.moon; }
-  });
-  const ov=document.getElementById("overlap");
-  if(ov){ let dh=12; try{dh=parseInt(fmt["Asia/Dubai"].hour.format(now),10);}catch(e){}
-    let ih=12; try{ih=parseInt(fmt["Asia/Kolkata"].hour.format(now),10);}catch(e){}
-    const gulf=dh>=9&&dh<18, me=ih>=10&&ih<19;
-    ov.textContent = (gulf&&me) ? "Overlap now: Gulf business hours" : "Outside shared hours - replies within a day"; }
-  // availability dot
-  let istH = 12;
-  try{ istH = parseInt(fmt["Asia/Kolkata"].hour.format(now),10); }catch(e){}
+  const istT = document.querySelector(".hero-avail .avail-ist");
+  const vT = document.querySelector(".hero-avail .avail-row:nth-child(2) .avail-time");
+  try{
+    const f = tzFmt(IST_TZ);
+    if(istT){ istT.textContent = f.time.format(now); istT.setAttribute("datetime", now.toISOString()); istT.setAttribute("aria-label", f.full.format(now)+" India Standard Time"); }
+  }catch(e){}
+  try{
+    const f = tzFmt(avail.tz);
+    if(vT){ vT.textContent = f.time.format(now); vT.setAttribute("datetime", now.toISOString()); vT.setAttribute("aria-label", f.full.format(now)+" your time"); }
+  }catch(e){}
+  const city = document.querySelector(".hero-avail .avail-city");
+  if(city) city.textContent = "Your time · " + tzCity(avail.tz);
+  const sel = document.querySelector(".hero-avail .avail-select");
+  if(sel && validTz(avail.tz)) sel.value = avail.tz;
+  const istH = tzHour(IST_TZ, now), vH = tzHour(avail.tz, now);
+  const overlap = istH>=10 && istH<19 && vH>=9 && vH<18;
+  const verdict = document.querySelector(".hero-avail .avail-verdict");
+  const vt = document.querySelector(".hero-avail .avail-verdict-text");
+  if(verdict && vt){
+    verdict.classList.toggle("off", !overlap);
+    vt.textContent = overlap ? "Overlap now - good time to talk" : "Outside shared hours - replies within a day";
+  }
   const wh = SITE.workingHoursIST || [10,19];
   const badge = document.getElementById("avail-badge");
   if(badge){
@@ -146,12 +206,12 @@ function tick(){
     badge.title = inside ? "Within IST working hours" : "Outside IST working hours - async replies";
   }
 }
-tick();
-(function schedule(){
-  const delay = 1000 - (Date.now()%1000);
-  setTimeout(function(){ tick(); setInterval(function(){ if(!document.hidden) tick(); },1000); }, delay);
+tickAvail();
+(function scheduleAvail(){
+  const delay = 60000 - (Date.now()%60000);
+  setTimeout(function(){ tickAvail(); setInterval(function(){ if(!document.hidden) tickAvail(); },60000); }, delay);
 })();
-document.addEventListener("visibilitychange", function(){ if(!document.hidden) tick(); });
+document.addEventListener("visibilitychange", function(){ if(!document.hidden) tickAvail(); });
 
 /* ---------- Impact ---------- */
 (function(){
