@@ -38,10 +38,13 @@ document.querySelectorAll(".tile").forEach(markTile);
 (function(){
   const root = document.getElementById("tile-profile");
   if(!root) return;
-  const wrap = el("div",{class:"profile"});
-  const img = el("img",{class:"avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"96",height:"96",fetchpriority:"high",decoding:"async"});
+  const wrap = el("div",{class:"profile profile-statement"});
+  const main = el("div",{class:"profile-main"});
+  const img = el("img",{class:"avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"112",height:"112",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
-  const right = el("div",{class:"profile-text"});
+  const dock = el("div",{class:"avatar-dock hero-el"});
+  dock.style.setProperty("--hi","0");
+  dock.appendChild(img);
   const h1 = el("h1",{id:"h-name",text:SITE.name||"Babar Hashmi"});
   const title = el("p",{class:"title",text:SITE.title||""});
   const meta = el("div",{class:"meta-row"});
@@ -59,8 +62,9 @@ document.querySelectorAll(".tile").forEach(markTile);
   const work = el("a",{class:"btn btn-secondary",href:"#work-heading",text:"View work"});
   work.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↓</span>');
   actions.appendChild(work);
-  right.append(h1,title,meta,badge,bio,actions);
-  wrap.append(img,right);
+  [h1,title,meta,badge,bio,actions].forEach((n,i)=>{ n.classList.add("hero-el"); n.style.setProperty("--hi",String(i+1)); });
+  main.append(h1,title,meta,badge,bio,actions);
+  wrap.append(main,dock);
   root.appendChild(wrap);
 })();
 
