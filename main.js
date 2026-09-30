@@ -269,16 +269,39 @@ async function loadGitHub(){
 /* ---------- Projects ---------- */
 (function(){
   const head = document.getElementById("work-heading");
-  head.textContent = "Selected work";
+  head.innerHTML = "";
+  head.appendChild(el("h2",{class:"work-title",id:"work-title",text:"Selected work"}));
+  const filters = [["all","All"],["agents","Agents"],["security","Security"],["cv","Applied CV"]];
+  const row = el("div",{class:"filter-row",role:"group","aria-label":"Filter projects"});
+  const counts = {all:(SITE.projects||[]).length,agents:0,security:0,cv:0};
+  (SITE.projects||[]).forEach(p=>{ if(counts[p.cat]!=null) counts[p.cat]++; });
+  filters.forEach(([v,label],i)=>{
+    const b = el("button",{class:"filter-btn",type:"button",text:label+" ("+counts[v]+")"});
+    b.dataset.filter = v;
+    b.setAttribute("aria-pressed", v==="all" ? "true" : "false");
+    if(v==="all") b.classList.add("on");
+    b.addEventListener("click", function(){
+      row.querySelectorAll(".filter-btn").forEach(x=>{ x.classList.remove("on"); x.setAttribute("aria-pressed","false"); });
+      b.classList.add("on"); b.setAttribute("aria-pressed","true");
+      slot.querySelectorAll(".proj").forEach(c=>{
+        const show = v==="all" || c.dataset.cat===v;
+        c.hidden = !show;
+      });
+    });
+    row.appendChild(b);
+  });
+  head.appendChild(row);
   const slot = document.getElementById("projects-slot");
   (SITE.projects||[]).forEach((p)=>{
     let card;
+    const cls = p.featured ? "tile span-4 proj proj-feat tile-linked" : "tile span-2 proj tile-linked";
     if(p.repo){
-      card = el("a",{class:"tile span-2 proj tile-linked",href:p.repo,target:"_blank",rel:"noopener noreferrer"});
+      card = el("a",{class:cls,href:p.repo,target:"_blank",rel:"noopener noreferrer"});
       card.setAttribute("aria-label","Open "+p.name+" repository");
     }else{
-      card = el("article",{class:"tile span-2 proj"});
+      card = el("article",{class:cls});
     }
+    card.dataset.cat = p.cat||"all";
     markTile(card);
     card.appendChild(el("p",{class:"proj-tag",text:p.tag||"Project"}));
     if(p.repo){
