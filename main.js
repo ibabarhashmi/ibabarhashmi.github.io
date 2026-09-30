@@ -237,8 +237,9 @@ document.addEventListener("visibilitychange", function(){ if(!document.hidden) t
 })();
 
 /* ---------- GitHub ---------- */
-/* Three widely-spaced tints: ~30% lightness gaps read at a glance. Rank 3+ groups as other. */
+/* Dots use full-range tints; names use darker text-safe twins (all >=4.5:1 on paper). */
 const LANG_TINTS = ["#2a2722","#6b675f","#b3b3b3"];
+const LANG_TEXT = ["#2a2722","#57534c","#6b675f"];
 async function loadGitHub(){
   const KEY="gh_cache_v2", TTL=6*3600*1000;
   try{
@@ -295,11 +296,13 @@ async function loadGitHub(){
     const legend = el("div",{class:"lang-legend"});
     Object.entries(langs).sort((a,b)=>b[1]-a[1]).slice(0,5).forEach(([name,count],i)=>{
       const tint = LANG_TINTS[i]||LANG_TINTS[LANG_TINTS.length-1];
+      const tcol = LANG_TEXT[i]||LANG_TEXT[LANG_TEXT.length-1];
       const seg = el("i",{});
       seg.style.width = (count/total*100)+"%";
       seg.style.background = tint;
       bar.appendChild(seg);
       const item = el("span",{});
+      item.style.color = tcol;
       const dotS = el("s",{});
       dotS.style.background = tint;
       item.appendChild(dotS);
