@@ -104,7 +104,7 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 .clock-icon{font-size:16px;margin-left:8px}
 .tile-foot{font-size:12px;color:var(--text-3);margin-top:12px;margin-bottom:0}
 /* impact */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .stat-value{font-size:28px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
 .stat-label{font-size:13px;color:var(--text-2);margin-top:4px}
 /* github */
@@ -157,13 +157,15 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 /* contact: tinted within theme, no full invert */
 .tile-contact{background:var(--accent-soft);border-color:var(--accent-soft)}
 .tile-contact .eyebrow{color:var(--accent-ink);opacity:1}
-/* Contact exception removed: social marks inherit text color, single accent only. */
+/* Contact exception (user-directed): social marks keep original brand colors, not the single page accent. */
 /* Shape rule: icon targets 44px with 12px hover wash, matching buttons. */
-.icon-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px}
-.icon-link{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;color:var(--text-2);background:var(--surface);border:1px solid var(--border);transition:transform 200ms ease-out,box-shadow 200ms ease-out,border-color 200ms,color 200ms}
-.icon-link:hover{background:var(--surface-2);text-decoration:none;color:var(--text);transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--text-3)}
-.icon-link:active{transform:scale(.97)}
-.icon-link svg{width:22px;height:22px;display:block}
+.icon-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:12px}
+.icon-link{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;color:var(--text-2)}
+.icon-link:hover{background:rgba(128,128,128,.18);text-decoration:none;color:var(--text)}
+.icon-link img{width:24px;height:24px;display:block}
+.icon-link .only-dark{display:none}
+[data-theme="dark"] .icon-link .only-light{display:none}
+[data-theme="dark"] .icon-link .only-dark{display:block}
 .contact-title{font-size:28px;font-weight:700;margin:0 0 8px;letter-spacing:-.02em}
 .footer{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:32px 24px;font-size:13px;color:var(--text-3);border-top:1px solid var(--border);margin-top:24px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);border-radius:12px;padding:10px 14px;font-size:14px;z-index:50;box-shadow:var(--shadow-hover)}
@@ -176,6 +178,7 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 [data-theme="dark"] .btn-primary,[data-theme="dark"] .btn-primary:hover{color:#0F0F0E;background:var(--accent)}
 
 /* ---------- delight: backdrop, entrance ---------- */
+#net{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .container{position:relative;z-index:1}
 .js #tile-profile:not(.in){filter:blur(8px)}
 #tile-profile.tile.in{transition:opacity 400ms cubic-bezier(.2,.8,.2,1),transform 400ms cubic-bezier(.2,.8,.2,1),box-shadow 200ms ease-out,border-color 200ms,filter 600ms cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--i,0)*40ms),calc(var(--i,0)*40ms),0ms,0ms,calc(var(--i,0)*40ms)}
@@ -190,11 +193,10 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 /* ---------- scroll story (native-first, no new deps) ---------- */
 /* Hero stays detailed per user lock: full bio preserved, natural height, snap start only. */
 #tile-profile{scroll-margin-top:76px}
-/* Experience: flattened rows, no card-in-card. Sticky overlap keeps surface bg. */
+/* Experience sticky-stack: each role pins under topbar, next overlaps. Real stack, not sequential reveal. */
 .timeline{position:relative;padding-left:0}
 .timeline::before{display:none}
-.tl-item{position:sticky;top:76px;background:var(--surface);border-top:1px solid var(--border);padding:14px 0;margin-bottom:4px}
-.tl-item:first-child{border-top:none}
+.tl-item{position:sticky;top:76px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 16px 14px;margin-bottom:12px;box-shadow:var(--shadow-rest)}
 .tl-item::before{display:none}
 .tl-item:last-child{margin-bottom:0}
 @supports (animation-timeline: view()){
@@ -206,7 +208,9 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
   from{transform:scale(.98)}
   to{transform:scale(1)}
 }
-/* Selected work: uniform text cards, no imagery. Shared baseline, no forced voids. */
+/* Selected work: uniform text cards, no imagery. Same size, shared baseline. */
+.proj{min-height:340px}
 .proj .muted{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.proj .checks{min-height:60px}
 .proj .chips{margin-top:auto;padding-top:4px}
 .proj .ext{position:absolute;top:20px;right:20px;color:var(--text-3)}
