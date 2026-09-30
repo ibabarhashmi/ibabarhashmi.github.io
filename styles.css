@@ -105,6 +105,7 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 .chip-accent{background:var(--accent-soft);border-color:transparent;color:var(--accent-ink)}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .actions .btn{flex:0 0 auto;min-width:148px;padding:0 18px}
+#top-book{min-width:148px}
 /* clocks */
 .clock-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--border)}
 .clock-row:first-of-type{border-top:none;padding-top:0}
