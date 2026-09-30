@@ -54,10 +54,8 @@ document.querySelectorAll(".tile").forEach(markTile);
   const bio = el("p",{class:"bio",text:SITE.bio||""});
   const actions = el("div",{class:"actions"});
   const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn-primary";
-  book.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↗</span>');
   actions.appendChild(book);
   const work = el("a",{class:"btn btn-secondary",href:"#work-heading",text:"View work"});
-  work.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↓</span>');
   actions.appendChild(work);
   right.append(h1,title,meta,badge,bio,actions);
   wrap.append(img,right);
@@ -271,39 +269,16 @@ async function loadGitHub(){
 /* ---------- Projects ---------- */
 (function(){
   const head = document.getElementById("work-heading");
-  head.innerHTML = "";
-  head.appendChild(el("h2",{class:"work-title",id:"work-title",text:"Selected work"}));
+  head.textContent = "Selected work";
   const slot = document.getElementById("projects-slot");
-  const filters = [["all","All"],["agents","Agents"],["security","Security"],["cv","Applied CV"]];
-  const row = el("div",{class:"filter-row",role:"group","aria-label":"Filter projects"});
-  const counts = {all:(SITE.projects||[]).length,agents:0,security:0,cv:0};
-  (SITE.projects||[]).forEach(p=>{ if(counts[p.cat]!=null) counts[p.cat]++; });
-  filters.forEach(([v,label],i)=>{
-    const b = el("button",{class:"filter-btn",type:"button",text:label+" ("+counts[v]+")"});
-    b.dataset.filter = v;
-    b.setAttribute("aria-pressed", v==="all" ? "true" : "false");
-    if(v==="all") b.classList.add("on");
-    b.addEventListener("click", function(){
-      row.querySelectorAll(".filter-btn").forEach(x=>{ x.classList.remove("on"); x.setAttribute("aria-pressed","false"); });
-      b.classList.add("on"); b.setAttribute("aria-pressed","true");
-      slot.querySelectorAll(".proj").forEach(c=>{
-        const show = v==="all" || c.dataset.cat===v;
-        c.hidden = !show;
-      });
-    });
-    row.appendChild(b);
-  });
-  head.appendChild(row);
   (SITE.projects||[]).forEach((p)=>{
     let card;
-    const cls = p.featured ? "tile span-4 proj proj-feat tile-linked" : "tile span-2 proj tile-linked";
     if(p.repo){
-      card = el("a",{class:cls,href:p.repo,target:"_blank",rel:"noopener noreferrer"});
+      card = el("a",{class:"tile span-2 proj tile-linked",href:p.repo,target:"_blank",rel:"noopener noreferrer"});
       card.setAttribute("aria-label","Open "+p.name+" repository");
     }else{
-      card = el("article",{class:cls});
+      card = el("article",{class:"tile span-2 proj"});
     }
-    card.dataset.cat = p.cat||"all";
     markTile(card);
     card.appendChild(el("p",{class:"proj-tag",text:p.tag||"Project"}));
     if(p.repo){
@@ -371,7 +346,7 @@ async function loadGitHub(){
   c.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
   c.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
   const row = el("div",{class:"actions"});
-  const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; b1.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↗</span>'); row.appendChild(b1);
+  const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; row.appendChild(b1);
   if(SITE.resume){
     const r = el("a",{class:"btn btn-secondary",href:SITE.resume,text:"Download CV"});
     r.setAttribute("target","_blank"); r.setAttribute("rel","noopener noreferrer");
