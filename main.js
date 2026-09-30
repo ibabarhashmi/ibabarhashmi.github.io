@@ -237,7 +237,8 @@ document.addEventListener("visibilitychange", function(){ if(!document.hidden) t
 })();
 
 /* ---------- GitHub ---------- */
-const LANG_COLORS = {"Python":"#2a2722","TypeScript":"#2a2722","JavaScript":"#2a2722","Jupyter Notebook":"#2a2722","Solidity":"#2a2722"};
+/* Rank-ordered warm-mono tints: same hue, lightness steps. Rank carries order, labels carry names. */
+const LANG_TINTS = ["#2a2722","#3e3b36","#57534c","#6b675f","#9f9f9f"];
 async function loadGitHub(){
   const KEY="gh_cache_v2", TTL=6*3600*1000;
   try{
@@ -292,14 +293,15 @@ async function loadGitHub(){
     const total = Object.values(langs).reduce((a,b)=>a+b,0) || 1;
     const bar = el("div",{class:"langbar","aria-hidden":"true"});
     const legend = el("div",{class:"lang-legend"});
-    Object.entries(langs).sort((a,b)=>b[1]-a[1]).slice(0,5).forEach(([name,count])=>{
+    Object.entries(langs).sort((a,b)=>b[1]-a[1]).slice(0,5).forEach(([name,count],i)=>{
+      const tint = LANG_TINTS[i]||LANG_TINTS[LANG_TINTS.length-1];
       const seg = el("i",{});
       seg.style.width = (count/total*100)+"%";
-      seg.style.background = LANG_COLORS[name]||"var(--text-3)";
+      seg.style.background = tint;
       bar.appendChild(seg);
       const item = el("span",{});
       const dotS = el("s",{});
-      dotS.style.background = LANG_COLORS[name]||"var(--text-3)";
+      dotS.style.background = tint;
       item.appendChild(dotS);
       item.appendChild(document.createTextNode(name));
       legend.appendChild(item);
