@@ -54,7 +54,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   if(!root) return;
   const wrap = el("div",{class:"profile profile-statement"});
   const main = el("div",{class:"profile-main"});
-  const img = el("img",{class:"avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"112",height:"112",fetchpriority:"high",decoding:"async"});
+  const img = el("img",{class:"avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"168",height:"168",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
   const dock = el("div",{class:"avatar-dock hero-el"});
   dock.style.setProperty("--hi","0");
@@ -78,9 +78,9 @@ document.querySelectorAll(".tile").forEach(markTile);
   actions.appendChild(work);
   [h1,title,meta,badge,bio,actions].forEach((n,i)=>{ n.classList.add("hero-el"); n.style.setProperty("--hi",String(i+1)); });
   main.append(h1,title,meta,badge,bio,actions);
-  wrap.append(main,dock);
+  wrap.append(main);
   const grid = el("div",{class:"hero-grid"});
-  grid.appendChild(wrap);
+  grid.append(dock,wrap);
   grid.appendChild(buildAvailPanel());
   root.appendChild(grid);
 })();
@@ -191,12 +191,21 @@ function tickAvail(){
   const sel = document.querySelector(".hero-avail .avail-select");
   if(sel && validTz(avail.tz)) sel.value = avail.tz;
   const istH = tzHour(IST_TZ, now), vH = tzHour(avail.tz, now);
+  let sameTz = false;
+  try{ sameTz = tzFmt(IST_TZ).time.format(now) === tzFmt(avail.tz).time.format(now); }catch(e){}
+  const vRow = document.querySelector(".hero-avail .avail-row:nth-child(2)");
+  if(vRow) vRow.hidden = sameTz;
   const overlap = istH>=10 && istH<19 && vH>=9 && vH<18;
   const verdict = document.querySelector(".hero-avail .avail-verdict");
   const vt = document.querySelector(".hero-avail .avail-verdict-text");
   if(verdict && vt){
-    verdict.classList.toggle("off", !overlap);
-    vt.textContent = overlap ? "Overlap now - good time to talk" : "Outside shared hours - replies within a day";
+    if(sameTz){
+      verdict.classList.remove("off");
+      vt.textContent = "Same timezone - talk anytime 10-19 IST";
+    }else{
+      verdict.classList.toggle("off", !overlap);
+      vt.textContent = overlap ? "Overlap now - good time to talk" : "Outside shared hours - replies within a day";
+    }
   }
   const wh = SITE.workingHoursIST || [10,19];
   const badge = document.getElementById("avail-badge");
