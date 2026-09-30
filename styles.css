@@ -101,6 +101,7 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 .chip{display:inline-flex;align-items:center;padding:6px 10px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;font-size:13px;font-weight:500;color:var(--text)}
 .chip-accent{background:var(--accent-soft);border-color:transparent;color:var(--accent-ink)}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.actions .btn{flex:1 1 0;min-width:140px}
 /* clocks */
 .clock-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--border)}
 .clock-row:first-of-type{border-top:none;padding-top:0}
@@ -241,6 +242,8 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 .filter-btn.on{background:var(--text);border-color:var(--text);color:var(--bg)}
 .proj-feat h3{font-size:20px}
 .proj-feat .muted{font-size:15px}
+/* Filter hides via [hidden]; author display:flex beats UA hidden without this */
+.proj[hidden]{display:none}
 .proj .muted{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .proj .chips{margin-top:auto;padding-top:4px}
 .proj .ext{position:absolute;top:20px;right:20px;color:var(--text-3)}

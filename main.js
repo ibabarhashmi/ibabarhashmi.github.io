@@ -271,6 +271,7 @@ async function loadGitHub(){
   const head = document.getElementById("work-heading");
   head.innerHTML = "";
   head.appendChild(el("h2",{class:"work-title",id:"work-title",text:"Selected work"}));
+  const slot = document.getElementById("projects-slot");
   const filters = [["all","All"],["agents","Agents"],["security","Security"],["cv","Applied CV"]];
   const row = el("div",{class:"filter-row",role:"group","aria-label":"Filter projects"});
   const counts = {all:(SITE.projects||[]).length,agents:0,security:0,cv:0};
@@ -291,7 +292,6 @@ async function loadGitHub(){
     row.appendChild(b);
   });
   head.appendChild(row);
-  const slot = document.getElementById("projects-slot");
   (SITE.projects||[]).forEach((p)=>{
     let card;
     const cls = p.featured ? "tile span-4 proj proj-feat tile-linked" : "tile span-2 proj tile-linked";
