@@ -237,7 +237,7 @@ document.addEventListener("visibilitychange", function(){ if(!document.hidden) t
 })();
 
 /* ---------- GitHub ---------- */
-const LANG_COLORS = {"Python":"#3572A5","TypeScript":"#3178C6","JavaScript":"#F1E05A","Jupyter Notebook":"#DA5B0B","Solidity":"#AA6746"};
+const LANG_COLORS = {"Python":"#2a2722","TypeScript":"#2a2722","JavaScript":"#2a2722","Jupyter Notebook":"#2a2722","Solidity":"#2a2722"};
 async function loadGitHub(){
   const KEY="gh_cache_v2", TTL=6*3600*1000;
   try{
@@ -522,7 +522,7 @@ function copyEmail(){
 
 /* ---------- Delight: count-up only (tilt, spotlight, orb canvas cut) ---------- */
 (function(){
-  try{ console.log("%cAgents that tell the truth. - BH", "color:#1487FA;font-weight:bold"); }catch(e){}
+  try{ console.log("%cAgents that tell the truth. - BH", "color:#2a2722;font-weight:bold"); }catch(e){}
   const mqCalm = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
   const calm = !!(mqCalm && mqCalm.matches);
   const canRAF = !!window.requestAnimationFrame;
