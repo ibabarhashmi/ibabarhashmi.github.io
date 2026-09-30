@@ -237,9 +237,8 @@ document.addEventListener("visibilitychange", function(){ if(!document.hidden) t
 })();
 
 /* ---------- GitHub ---------- */
-/* High-separation warm-mono scale: full paper-to-ink + print patterns. Rank carries order, labels carry names. */
-const LANG_TINTS = ["#2a2722","#57534c","#8a867e","#c9c5bc","#ece9e3"];
-const LANG_PAT = [null,"repeating-linear-gradient(45deg, rgba(250,250,250,.4) 0 2px, transparent 2px 5px)",null,"radial-gradient(circle, rgba(42,39,34,.55) 1px, transparent 1.6px)",null];
+/* Three widely-spaced tints: ~30% lightness gaps read at a glance. Rank 3+ groups as other. */
+const LANG_TINTS = ["#2a2722","#6b675f","#b3b3b3"];
 async function loadGitHub(){
   const KEY="gh_cache_v2", TTL=6*3600*1000;
   try{
@@ -296,17 +295,13 @@ async function loadGitHub(){
     const legend = el("div",{class:"lang-legend"});
     Object.entries(langs).sort((a,b)=>b[1]-a[1]).slice(0,5).forEach(([name,count],i)=>{
       const tint = LANG_TINTS[i]||LANG_TINTS[LANG_TINTS.length-1];
-      const pat = LANG_PAT[i]||null;
       const seg = el("i",{});
       seg.style.width = (count/total*100)+"%";
       seg.style.background = tint;
-      if(pat){ seg.style.backgroundImage = pat; if(i===3) seg.style.backgroundSize = "5px 5px"; }
       bar.appendChild(seg);
       const item = el("span",{});
       const dotS = el("s",{});
       dotS.style.background = tint;
-      if(pat){ dotS.style.backgroundImage = pat; if(i===3) dotS.style.backgroundSize = "4px 4px"; }
-      dotS.style.border = "1px solid #2a2722";
       item.appendChild(dotS);
       item.appendChild(document.createTextNode(name));
       legend.appendChild(item);
