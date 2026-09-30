@@ -54,8 +54,10 @@ document.querySelectorAll(".tile").forEach(markTile);
   const bio = el("p",{class:"bio",text:SITE.bio||""});
   const actions = el("div",{class:"actions"});
   const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn-primary";
+  book.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↗</span>');
   actions.appendChild(book);
   const work = el("a",{class:"btn btn-secondary",href:"#work-heading",text:"View work"});
+  work.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↓</span>');
   actions.appendChild(work);
   right.append(h1,title,meta,badge,bio,actions);
   wrap.append(img,right);
@@ -369,7 +371,7 @@ async function loadGitHub(){
   c.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
   c.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
   const row = el("div",{class:"actions"});
-  const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; row.appendChild(b1);
+  const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; b1.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↗</span>'); row.appendChild(b1);
   if(SITE.resume){
     const r = el("a",{class:"btn btn-secondary",href:SITE.resume,text:"Download CV"});
     r.setAttribute("target","_blank"); r.setAttribute("rel","noopener noreferrer");

@@ -63,6 +63,9 @@ a:hover{text-decoration:underline}
 @media (prefers-reduced-motion: no-preference){
 .btn-primary::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left 500ms ease-out}
 .btn-primary:hover::after{left:130%}
+.btn-glyph{display:inline-block;line-height:1;transition:transform 200ms ease-out}
+.btn-primary:hover .btn-glyph{transform:translate(1px,-1px)}
+.btn-secondary:hover .btn-glyph{transform:translateY(2px)}
 .proj .ext{transition:transform 200ms ease-out}
 .proj:hover .ext{transform:translate(2px,-2px)}
 .icon-link svg{transition:transform 200ms ease-out}
@@ -101,7 +104,7 @@ a.tile:hover,.tile-linked:hover{transform:translateY(-2px);box-shadow:var(--shad
 .chip{display:inline-flex;align-items:center;padding:6px 10px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;font-size:13px;font-weight:500;color:var(--text)}
 .chip-accent{background:var(--accent-soft);border-color:transparent;color:var(--accent-ink)}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.actions .btn{flex:1 1 0;min-width:140px}
+.actions .btn{flex:0 0 auto;min-width:148px;padding:0 18px}
 /* clocks */
 .clock-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--border)}
 .clock-row:first-of-type{border-top:none;padding-top:0}
