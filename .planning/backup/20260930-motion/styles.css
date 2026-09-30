@@ -53,21 +53,12 @@ a:hover{text-decoration:underline}
 .monogram img{width:32px;height:32px;object-fit:cover;display:block}
 .brand-name{font-size:15px}
 .topbar-actions{display:flex;align-items:center;gap:8px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;height:40px;padding:0 16px;border-radius:12px;font-size:14px;font-weight:600;border:1px solid transparent;cursor:pointer;white-space:nowrap;position:relative;overflow:hidden;transition:transform 200ms ease-out,box-shadow 200ms ease-out,background 200ms,border-color 200ms,filter 200ms}
-.btn:hover{transform:translateY(-1px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;height:40px;padding:0 16px;border-radius:12px;font-size:14px;font-weight:600;border:1px solid transparent;cursor:pointer;white-space:nowrap}
 .btn:active{transform:scale(.98);transition:transform 120ms}
 .btn-primary{background:var(--accent-ink);color:#fff}
-.btn-primary:hover{filter:brightness(1.08);text-decoration:none;color:#fff;box-shadow:var(--shadow-hover)}
+.btn-primary:hover{filter:brightness(1.05);text-decoration:none;color:#fff}
 .btn-secondary{background:var(--surface);border-color:var(--border);color:var(--text)}
-.btn-secondary:hover{background:var(--surface-2);text-decoration:none;border-color:var(--text-3);box-shadow:var(--shadow-hover)}
-@media (prefers-reduced-motion: no-preference){
-.btn-primary::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left 500ms ease-out}
-.btn-primary:hover::after{left:130%}
-.proj .ext{transition:transform 200ms ease-out}
-.proj:hover .ext{transform:translate(2px,-2px)}
-.icon-link svg{transition:transform 200ms ease-out}
-.icon-link:hover svg{transform:translateY(-1px)}
-}
+.btn-secondary:hover{background:var(--surface-2);text-decoration:none}
 .btn-icon{width:40px;padding:0}
 .grid{display:grid;gap:16px;grid-template-columns:repeat(4,1fr);grid-auto-flow:dense;padding:24px 0 8px}
 .contents{display:contents}
