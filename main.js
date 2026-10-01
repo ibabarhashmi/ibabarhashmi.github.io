@@ -173,7 +173,7 @@ function buildAvailPanel(){
     tickAvail();
   });
   aside.appendChild(sel);
-  aside.appendChild(el("p",{class:"avail-foot",text:"Working hours 10:00-19:00 IST - replies within a day outside shared hours"}));
+  aside.appendChild(el("p",{class:"avail-foot",text:"Working hours 10:00-19:00 IST - replies within a day outside shared hours. IST wall-clock, no tracking."}));
   return aside;
 }
 function tickAvail(){
