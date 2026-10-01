@@ -79,7 +79,8 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .profile-statement{gap:32px;align-items:flex-start;justify-content:space-between}
 .profile-main{flex:1 1 auto;min-width:0}
 .avatar{width:168px;height:168px;border-radius:12px;object-fit:cover;border:1px solid var(--ink);flex-shrink:0;background:var(--paper);filter:grayscale(1) contrast(1.08)}
-.avatar-dock{position:relative;flex-shrink:0;line-height:0;align-self:start}
+.avatar-dock{position:relative;flex-shrink:0;line-height:0;align-self:start;touch-action:pan-y;cursor:grab;transform:translate(var(--dx,0px),var(--dy,0px))}
+.avatar-dock.dragging{cursor:grabbing}
 .avatar-dock::after{content:"";position:absolute;inset:-5px;border-radius:16px;border:1px solid var(--ink);opacity:1;pointer-events:none}
 .profile h1{font-family:var(--font-display);font-weight:400;font-size:clamp(3rem,7vw,5.5rem);line-height:.9;letter-spacing:0;margin:0 0 8px;text-wrap:balance}
 /* Name pronunciation popover (yuvich pattern, Henry mono) */

@@ -112,6 +112,53 @@ document.querySelectorAll(".tile").forEach(markTile);
   root.appendChild(grid);
 })();
 
+/* ---------- Avatar spring drag (yuvich pattern, single toy, transform-only) ---------- */
+(function(){
+  const dock = document.querySelector(".avatar-dock");
+  if(!dock || dock.dataset.dragInit) return;
+  dock.dataset.dragInit = "1";
+  const calm = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
+  const W = 2*Math.sqrt(60)*.62;
+  let sx=0, sy=0, vx=0, vy=0, raf=0, dragging=false, moved=false, lx=0, ly=0, lt=0, px=0, py=0;
+  function paint(x,y){ dock.style.setProperty("--dx",x+"px"); dock.style.setProperty("--dy",y+"px"); }
+  function cur(){ return [parseFloat(dock.style.getPropertyValue("--dx"))||0, parseFloat(dock.style.getPropertyValue("--dy"))||0]; }
+  function springHome(){
+    if(calm){ paint(0,0); return; }
+    let [x,y] = cur();
+    let last = performance.now();
+    cancelAnimationFrame(raf);
+    (function step(t){
+      const dt = Math.min(.032,(t-last)/1e3); last = t;
+      vx += (-60*x - W*vx)*dt; vy += (-60*y - W*vy)*dt;
+      x += vx*dt; y += vy*dt; paint(x,y);
+      if(Math.hypot(x,y)>.3 || Math.hypot(vx,vy)>2) raf = requestAnimationFrame(step);
+      else paint(0,0);
+    })(last);
+  }
+  dock.addEventListener("pointerdown", function(e){
+    if(e.pointerType==="mouse" && e.button!==0) return;
+    cancelAnimationFrame(raf);
+    dragging = true; moved = false;
+    sx = lx = px = e.clientX; sy = ly = py = e.clientY; lt = performance.now();
+    vx = vy = 0;
+    try{ dock.setPointerCapture(e.pointerId); }catch(err){}
+    dock.classList.add("dragging");
+  });
+  dock.addEventListener("pointermove", function(e){
+    if(!dragging) return;
+    let nx = e.clientX - sx, ny = e.clientY - sy;
+    nx = Math.max(-80, Math.min(80, nx)); ny = Math.max(-60, Math.min(60, ny));
+    if(Math.abs(e.clientX-sx)>4 || Math.abs(e.clientY-sy)>4) moved = true;
+    const now = performance.now(), dt = Math.max(.001,(now-lt)/1e3);
+    vx = vx*.6 + ((e.clientX-px)/dt)*.4; vy = vy*.6 + ((e.clientY-py)/dt)*.4;
+    px = e.clientX; py = e.clientY; lt = now;
+    paint(nx,ny);
+  });
+  function up(){ if(!dragging) return; dragging = false; dock.classList.remove("dragging"); vx = Math.max(-2500,Math.min(2500,vx)); vy = Math.max(-2500,Math.min(2500,vy)); springHome(); }
+  dock.addEventListener("pointerup", up);
+  dock.addEventListener("pointercancel", up);
+})();
+
 /* ---------- NOW ---------- */
 (function(){
   const root = document.getElementById("tile-now");
