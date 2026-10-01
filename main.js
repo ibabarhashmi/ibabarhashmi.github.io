@@ -450,7 +450,32 @@ async function loadGitHub(){
     track.appendChild(fig);
   });
   shelf.appendChild(track);
+  const nav = el("div",{class:"shelf-nav"});
+  const prev = el("button",{class:"shelf-btn",type:"button",text:"<"});
+  prev.setAttribute("aria-label","Previous evals");
+  prev.dataset.dir = "-1";
+  const next = el("button",{class:"shelf-btn",type:"button",text:">"});
+  next.setAttribute("aria-label","Next evals");
+  next.dataset.dir = "1";
+  nav.appendChild(prev); nav.appendChild(next);
+  shelf.appendChild(nav);
   root.appendChild(shelf);
+  const calmNav = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
+  function step(){ const c = track.querySelector(".eval-card"); return c ? c.getBoundingClientRect().width+12 : track.clientWidth*.8; }
+  function sync(){
+    try{
+      const max = track.scrollWidth - track.clientWidth;
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= max-2;
+      shelf.toggleAttribute("data-fits", max <= 2);
+    }catch(e){}
+  }
+  [prev,next].forEach(function(b){
+    b.addEventListener("click", function(){ track.scrollBy({left:Number(b.dataset.dir)*step(), behavior: calmNav ? "auto" : "smooth"}); });
+  });
+  track.addEventListener("scroll", sync, {passive:true});
+  if("ResizeObserver" in window){ try{ new ResizeObserver(sync).observe(track); }catch(e){} }
+  sync();
   const series = [[1,1,1,1,1],[.8,.85,.88,.9,.92],[3,5,4,6,7],[.89,.9,.91,.92,.93],[2,3,3,4,5]];
   track.querySelectorAll(".eval-spark").forEach(function(cv,i){
     try{
