@@ -64,6 +64,8 @@ document.querySelectorAll(".tile").forEach(markTile);
   const meta = el("div",{class:"meta-row"});
   meta.insertAdjacentHTML("afterbegin", ICONS.pin);
   meta.appendChild(document.createTextNode((SITE.location||"") + ", " + (SITE.relocation||"")));
+  meta.appendChild(document.createTextNode(" - "));
+  meta.appendChild(el("time",{class:"meta-ist",datetime:"",text:""}));
   const badge = el("div",{class:"badge",id:"avail-badge"});
   const dot = el("span",{class:"dot","aria-hidden":"true"});
   badge.appendChild(dot);
@@ -181,6 +183,8 @@ function tickAvail(){
   try{
     const f = tzFmt(IST_TZ);
     if(istT){ istT.textContent = f.time.format(now); istT.setAttribute("datetime", now.toISOString()); istT.setAttribute("aria-label", f.full.format(now)+" India Standard Time"); }
+    const mIst = document.querySelector(".meta-ist");
+    if(mIst){ mIst.textContent = f.time.format(now) + " IST"; mIst.setAttribute("datetime", now.toISOString()); }
   }catch(e){}
   try{
     const f = tzFmt(avail.tz);

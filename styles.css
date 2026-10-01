@@ -85,6 +85,7 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .profile .title{font-size:18px;line-height:1.4;font-weight:400;color:var(--text-2);margin:0 0 8px}
 .profile .title{font-size:18px;line-height:1.4;font-weight:400;color:var(--text-2);margin:0 0 8px}
 .meta-row{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--text-2);margin-bottom:10px}
+.meta-row .meta-ist{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text)}
 .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:12px;background:var(--paper);color:var(--ink);border:1px solid var(--ink);font-size:13px;font-weight:700;margin-bottom:12px}
 .badge .dot{width:8px;height:8px;border-radius:0;background:currentColor;animation:blink 2s steps(2,start) infinite}
 .badge.off .dot{background:transparent;border:1px solid currentColor;animation:none}
