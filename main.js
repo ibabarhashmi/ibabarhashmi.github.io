@@ -551,6 +551,33 @@ async function loadGitHub(){
     (p.stack||[]).forEach(s=>chips.appendChild(el("span",{class:"chip",text:s})));
     if(!p.repo) chips.appendChild(el("span",{class:"chip chip-accent",text:"Private / work project"}));
     card.appendChild(chips);
+    if(p.name==="DesiRAG"){
+      const demo = el("div",{class:"term"});
+      const out = el("div",{class:"term-out","aria-live":"polite"});
+      out.textContent = "Press play to step the retrieval trace.";
+      const play = el("button",{class:"term-play",type:"button",text:"Play retrieval trace"});
+      const lines = [
+        "query (hi, MSMARCO-XI): transcribed voice input",
+        "retrieve: dense top-50 + bm25 top-50 -> hybrid fuse",
+        "guardrail: PII scan clean, groundedness check on",
+        "answer: 2 cited passages, client-ready report"
+      ];
+      const calmT = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
+      let ti = 0, timer = null;
+      play.addEventListener("click", function(){
+        if(timer){ clearInterval(timer); timer = null; play.textContent = "Play retrieval trace"; return; }
+        if(calmT){ out.textContent = lines.join("\n"); play.textContent = "Replay trace"; return; }
+        ti = 0; out.textContent = "";
+        play.textContent = "Stop";
+        timer = setInterval(function(){
+          out.textContent += (ti>0?"\n":"") + lines[ti];
+          ti++;
+          if(ti>=lines.length){ clearInterval(timer); timer = null; play.textContent = "Replay trace"; }
+        },400);
+      });
+      demo.appendChild(out); demo.appendChild(play);
+      card.appendChild(demo);
+    }
     slot.appendChild(card);
   });
 })();
