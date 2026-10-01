@@ -44,11 +44,11 @@ window.SITE = {
   ],
   projects: [
     { name: "Financial Strategy Risk Scoring Engine", tag: "Featured - FinTech / Agents", cat: "agents", featured: true,
-      summary: "Deterministic scorecard over 7 risk axes using point-in-time market data, paired with a groundedness-gated LLM. The verifier rejects any claim it cannot trace to data.",
+      summary: "Crash recall on dated backtests leads: deterministic scorecard over 7 risk axes on point-in-time market data, paired with a groundedness-gated LLM whose verifier rejects any claim it cannot trace to data.",
       highlights: ["Validated on historical crashes", "One-command verification pipeline", "Eval: crash recall on dated backtests"],
       stack: ["TypeScript", "LLM", "Verifier"], repo: "https://github.com/ibabarhashmi/organon" },
     { name: "Agentic-Auditor", tag: "Featured - Security / Agents", cat: "agents", featured: true,
-      summary: "On the go AI smart-contract auditor. Vite plus TypeScript front end with a Gemini assisted audit flow and client ready reports.",
+      summary: "Measured finding precision on labelled contracts: on the go AI smart-contract auditor with a Gemini assisted flow and client ready reports in a Vite plus TypeScript front end.",
       highlights: ["AI assisted audit UX", "Client ready reporting", "Eval: finding precision on labelled contracts"],
       stack: ["TypeScript", "Vite", "Gemini"], repo: "https://github.com/ibabarhashmi/Agentic-Auditor" },
     { name: "GoldenHour", tag: "Security / Fraud response", cat: "security",
