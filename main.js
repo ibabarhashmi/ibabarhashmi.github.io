@@ -59,7 +59,32 @@ document.querySelectorAll(".tile").forEach(markTile);
   const dock = el("div",{class:"avatar-dock hero-el"});
   dock.style.setProperty("--hi","0");
   dock.appendChild(img);
-  const h1 = el("h1",{id:"h-name",text:SITE.name||"Babar Hashmi"});
+  const h1 = el("h1",{id:"h-name"});
+  const nameBtn = el("button",{class:"name-btn",type:"button",text:SITE.name||"Babar Hashmi"});
+  nameBtn.setAttribute("aria-expanded","false");
+  nameBtn.setAttribute("aria-controls","name-def");
+  h1.appendChild(nameBtn);
+  h1.insertAdjacentHTML("beforeend",'<svg class="name-squiggle" aria-hidden="true" height="7" viewBox="0 0 120 7" preserveAspectRatio="none"><path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1"/></svg>');
+  const ndef = el("span",{class:"name-def",id:"name-def",role:"note"});
+  ndef.hidden = true;
+  ndef.appendChild(el("span",{class:"nd-head",text:"Babar Hashmi"}));
+  ndef.appendChild(el("span",{class:"nd-say",text:"/baabar haashmi/"}));
+  const ndUrdu = el("span",{class:"nd-dev",text:"بابر ہاشمی"});
+  ndUrdu.setAttribute("lang","ur");
+  ndef.appendChild(ndUrdu);
+  ndef.appendChild(el("span",{class:"nd-body",text:"Babar means tiger in Chagatai Turkic."}));
+  h1.appendChild(ndef);
+  nameBtn.addEventListener("click", function(){
+    const open = ndef.hidden;
+    ndef.hidden = !open;
+    nameBtn.setAttribute("aria-expanded", String(open));
+  });
+  document.addEventListener("click", function(e){
+    if(!ndef.hidden && !h1.contains(e.target)){ ndef.hidden = true; nameBtn.setAttribute("aria-expanded","false"); }
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key==="Escape" && !ndef.hidden){ ndef.hidden = true; nameBtn.setAttribute("aria-expanded","false"); nameBtn.focus(); }
+  });
   const title = el("p",{class:"title",text:SITE.title||""});
   const meta = el("div",{class:"meta-row"});
   meta.insertAdjacentHTML("afterbegin", ICONS.pin);
