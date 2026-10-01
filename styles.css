@@ -173,7 +173,18 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .cert-row:first-of-type{border-top:none}
 .cert-name{font-size:14px;font-weight:600;margin:0}
 .cert-meta{font-size:13px;color:var(--text-2);margin:0}
-/* vibe */
+/* evals shelf: static-first strip, mono only */
+.shelf{position:relative}
+.shelf-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;padding:4px 2px 8px}
+.shelf-track:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.eval-card{flex:0 0 200px;scroll-snap-align:start;margin:0;background:var(--paper);border:1px solid var(--border-soft);border-radius:12px;padding:12px;min-width:0}
+.eval-face{display:grid;gap:6px}
+.eval-big{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:0}
+.eval-spark{width:100%;height:32px;display:block}
+.eval-note{font-size:12px;color:var(--text-2);margin:0}
+.eval-cap{display:flex;flex-direction:column;gap:2px;margin-top:8px;border-top:1px solid var(--border-soft);padding-top:8px}
+.eval-name{font-size:13px;font-weight:700}
+.eval-ds{font-size:12px;color:var(--text-3)}
 .vibe-text{font-size:22px;font-weight:600;letter-spacing:-.01em;margin:0}
 /* vibe: inverted letter */
 #tile-vibe{background:var(--ink);border-color:var(--ink);color:var(--paper);text-align:center}
