@@ -412,6 +412,7 @@ async function loadGitHub(){
 (function(){
   const root = document.getElementById("tile-stack");
   root.appendChild(el("h2",{class:"tile-title",id:"h-stack",text:"Stack"}));
+  root.appendChild(el("p",{class:"stack-lede",text:"PyTorch and fine-tuned LLMs up front, AWS and vLLM behind them, TypeScript holding the SDK together."}));
   Object.entries(SITE.stack||{}).forEach(([g,items])=>{
     const grp = el("div",{class:"stack-group"});
     grp.appendChild(el("div",{class:"stack-name",text:g}));

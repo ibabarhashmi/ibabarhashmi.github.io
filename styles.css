@@ -152,6 +152,7 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .checks li::before{content:"- ";color:var(--ink);font-weight:700}
 /* stack / certs */
 .stack-group{margin-bottom:12px}
+.stack-lede{font-size:14px;line-height:1.55;color:var(--text-2);margin:0 0 12px;max-width:56ch}
 .stack-group:last-child{margin-bottom:0}
 .stack-name{font-size:12px;font-weight:600;color:var(--text-3);margin-bottom:6px}
 .cert-row{padding:8px 0;border-top:1px solid var(--border)}
