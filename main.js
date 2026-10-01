@@ -114,8 +114,8 @@ document.querySelectorAll(".tile").forEach(markTile);
 
 /* ---------- Avatar spring drag (yuvich pattern, single toy, transform-only) ---------- */
 (function(){
-  const dock = document.querySelector(".avatar-dock");
-  if(!dock || dock.dataset.dragInit) return;
+  const dock = document.querySelector ? document.querySelector(".avatar-dock") : null;
+  if(!dock || !dock.dataset || !dock.style || !dock.addEventListener || dock.dataset.dragInit) return;
   dock.dataset.dragInit = "1";
   const calm = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
   const W = 2*Math.sqrt(60)*.62;
