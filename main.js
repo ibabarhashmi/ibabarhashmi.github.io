@@ -478,29 +478,67 @@ async function loadGitHub(){
     card.appendChild(chips);
     if(p.name==="DesiRAG"){
       const demo = el("div",{class:"term"});
+      demo.appendChild(el("p",{class:"term-label",text:"Try it - paste text"}));
+      const input = el("textarea",{class:"term-input",rows:"5","aria-label":"Paste text to trace retrieval over"});
+      input.placeholder = "Paste a few paragraphs. The trace chunks, scores, and cites them.";
       const out = el("div",{class:"term-out","aria-live":"polite"});
-      out.textContent = "Press play to step the retrieval trace.";
-      const play = el("button",{class:"term-play",type:"button",text:"Play retrieval trace"});
-      const lines = [
-        "query (hi, MSMARCO-XI): transcribed voice input",
-        "retrieve: dense top-50 + bm25 top-50 -> hybrid fuse",
-        "guardrail: PII scan clean, groundedness check on",
-        "answer: 2 cited passages, client-ready report"
-      ];
-      const calmT = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
-      let ti = 0, timer = null;
-      play.addEventListener("click", function(){
-        if(timer){ clearInterval(timer); timer = null; play.textContent = "Play retrieval trace"; return; }
-        if(calmT){ out.textContent = lines.join("\n"); play.textContent = "Replay trace"; return; }
-        ti = 0; out.textContent = "";
-        play.textContent = "Stop";
-        timer = setInterval(function(){
-          out.textContent += (ti>0?"\n":"") + lines[ti];
-          ti++;
-          if(ti>=lines.length){ clearInterval(timer); timer = null; play.textContent = "Replay trace"; }
+      out.textContent = "Run the trace to chunk, score, and cite your paste.";
+      const run = el("button",{class:"term-play",type:"button",text:"Run trace"});
+      run.disabled = true;
+      demo.appendChild(el("p",{class:"term-hint",text:"Simulated trace - runs in your browser, no data leaves the page."}));
+      const calmD = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
+      let timerD = null;
+      function toks(s){ return (String(s).toLowerCase().match(/[a-z0-9\u00c0-\u024f]+/g)||[]); }
+      function trace(text){
+        let trimmed = false;
+        if(text.length>2000){ text = text.slice(0,2000); trimmed = true; }
+        const raw = text.split(/\n\s*\n|\r?\n/).map(function(x){ return x.trim(); }).filter(Boolean);
+        const passages = [];
+        raw.forEach(function(chunk){
+          chunk.split(/(?<=[.!?])\s+/).forEach(function(s){
+            if(s && passages.length<6) passages.push(s.slice(0,280));
+          });
+        });
+        if(!passages.length) return ["empty: paste at least one sentence."];
+        const freq = {};
+        passages.forEach(function(pg){ toks(pg).forEach(function(w){ freq[w]=(freq[w]||0)+1; }); });
+        const stop = {the:1,a:1,an:1,and:1,or:1,of:1,to:1,in:1,is:1,it:1,for:1,on:1};
+        const query = Object.keys(freq).filter(function(w){ return !stop[w]; }).sort(function(a,b){ return freq[b]-freq[a]; }).slice(0,8);
+        const scored = passages.map(function(pg,i){
+          const ws = toks(pg), hit = ws.filter(function(w){ return query.indexOf(w)>=0; }).length;
+          const dense = ws.length ? hit/ws.length : 0;
+          const bm25 = hit*(1+Math.log(1+ws.length/20));
+          return {i:i,pg:pg,dense:dense,bm25:bm25,fuse:dense+bm25/10};
+        }).sort(function(a,b){ return b.fuse-a.fuse; });
+        const lines = [
+          "chunk: "+passages.length+" passages from your paste"+(trimmed?" (trimmed to first 2000 chars)":""),
+          "query terms: "+(query.slice(0,6).join(", ")||"(none)"),
+          "retrieve: dense + bm25 -> hybrid fuse"
+        ];
+        scored.slice(0,passages.length).forEach(function(s){
+          lines.push("p"+(s.i+1)+": dense "+s.dense.toFixed(2)+" bm25 "+s.bm25.toFixed(2)+" fuse "+s.fuse.toFixed(2));
+        });
+        const pii = /(\S+@\S+\.\S+|\b\d{3}[-. ]?\d{3}[-. ]?\d{4}\b)/.test(text);
+        lines.push("guardrail: PII "+(pii?"flagged - redact before sharing":"clean")+", groundedness check on");
+        scored.slice(0,2).forEach(function(s){
+          lines.push("cite [p"+(s.i+1)+"]: "+s.pg.slice(0,120));
+        });
+        return lines;
+      }
+      input.addEventListener("input", function(){ run.disabled = toks(input.value).length<1; });
+      run.addEventListener("click", function(){
+        if(timerD){ clearInterval(timerD); timerD = null; run.textContent = "Run trace"; return; }
+        const lines = trace(input.value);
+        if(calmD){ out.textContent = lines.join("\n"); run.textContent = "Replay trace"; return; }
+        let k = 0; out.textContent = "";
+        run.textContent = "Stop";
+        timerD = setInterval(function(){
+          out.textContent += (k>0?"\n":"") + lines[k];
+          k++;
+          if(k>=lines.length){ clearInterval(timerD); timerD = null; run.textContent = "Replay trace"; }
         },400);
       });
-      demo.appendChild(out); demo.appendChild(play);
+      demo.appendChild(input); demo.appendChild(out); demo.appendChild(run);
       card.appendChild(demo);
     }
     slot.appendChild(card);
