@@ -94,7 +94,7 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .name-squiggle path{fill:none;stroke:var(--ink);stroke-width:1.4;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0;opacity:.55}
 #h-name:hover .name-squiggle path{animation:name-draw .52s cubic-bezier(.3,0,.2,1)}
 @keyframes name-draw{from{stroke-dashoffset:1}}
-.name-def{position:absolute;left:0;top:calc(100% + 12px);z-index:45;display:grid;gap:2px;width:250px;padding:12px 14px 13px;border-radius:12px;background:var(--paper);border:1px solid var(--ink);font-family:var(--font-ui);font-size:14px;line-height:1.5;color:var(--text);text-align:left}
+.name-def{position:absolute;left:0;top:calc(100% + 12px);z-index:45;display:grid;gap:2px;width:250px;max-width:calc(100vw - 32px);padding:12px 14px 13px;border-radius:12px;background:var(--paper);border:1px solid var(--ink);font-family:var(--font-ui);font-size:14px;line-height:1.5;color:var(--text);text-align:left}
 .name-def[hidden]{display:none}
 .nd-head{font-weight:700;font-size:16px}
 .nd-say{font-size:13px;color:var(--text-3)}

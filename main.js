@@ -354,7 +354,7 @@ async function loadGitHub(){
   loadGitHub().then(d=>{
     sk.remove();
     const head = el("div",{class:"gh-head"});
-    const av = el("img",{src:d.avatar||SITE.githubFallback.avatar,alt:"GitHub avatar of ibabarhashmi",width:"40",height:"40"});
+    const av = el("img",{src:d.avatar||SITE.githubFallback.avatar,alt:"GitHub avatar of ibabarhashmi",width:"40",height:"40",decoding:"async",loading:"lazy"});
     head.appendChild(av);
     head.appendChild(extLink("https://github.com/ibabarhashmi","@ibabarhashmi"));
     root.appendChild(head);
