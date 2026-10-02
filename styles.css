@@ -13,6 +13,10 @@
   --font-ui:"Archivo",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --font-display:"Bodoni Moda",Georgia,"Times New Roman",serif;
   --font-stamp:"Antonio",var(--font-ui);
+  /* Design tokens: single source of truth (4/8 base, 1.25-ish type steps) */
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;
+  --text-xs:12px;--text-sm:13px;--text-base:14px;--text-md:16px;--text-lg:17px;--text-xl:22px;--text-2xl:24px;--text-3xl:32px;
+  --ease-out:cubic-bezier(.2,.8,.2,1);--dur-micro:200ms;--dur-enter:400ms;--radius:12px;
   --shadow-rest:none;
   --shadow-hover:none;
 }
@@ -68,10 +72,10 @@ a:hover{text-decoration-thickness:2px}
 a.tile:hover,.tile-linked:hover{text-decoration:none}
 .tile.in:hover{transition-delay:0ms}
 .eyebrow{font-size:11px;line-height:1.2;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin:0 0 12px}
-.tile-title{font-size:15px;line-height:1.35;font-weight:700;letter-spacing:.02em;text-transform:uppercase;margin:0 0 8px;color:var(--text)}
-.proj-tag{font-size:12px;line-height:1.4;font-weight:700;color:var(--ink);margin:0 0 8px;text-transform:uppercase;letter-spacing:.06em}
-.tile h3{font-size:17px;line-height:1.35;font-weight:600;letter-spacing:-.01em;margin:0 0 8px;text-wrap:balance}
-.tile p{font-size:14px;line-height:1.55;margin:0 0 8px;color:var(--text);text-wrap:pretty}
+.tile-title{font-size:var(--text-base);line-height:1.35;font-weight:700;letter-spacing:.02em;text-transform:uppercase;margin:0 0 var(--space-2);color:var(--text)}
+.proj-tag{font-size:var(--text-xs);line-height:1.4;font-weight:700;color:var(--ink);margin:0 0 var(--space-2);text-transform:uppercase;letter-spacing:.06em}
+.tile h3{font-size:var(--text-lg);line-height:1.35;font-weight:600;letter-spacing:-.01em;margin:0 0 var(--space-2);text-wrap:balance}
+.tile p{font-size:var(--text-base);line-height:1.55;margin:0 0 var(--space-2);color:var(--text);text-wrap:pretty}
 .tile p.muted,.muted{color:var(--text-2)}
 .section-heading{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);padding:16px 4px 0}
 /* profile: statement hero, avatar docked right with live ring */
@@ -122,7 +126,7 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .avail-verdict.off{color:var(--ink)}
 .avail-rows{display:flex;flex-direction:column;gap:14px}
 .avail-row[hidden]{display:none}
-.avail-time{font-family:var(--font-ui);font-size:32px;font-weight:700;letter-spacing:0;line-height:1.1;font-variant-numeric:tabular-nums}
+.avail-time{font-family:var(--font-ui);font-size:var(--text-3xl);font-weight:700;letter-spacing:0;line-height:1.1;font-variant-numeric:tabular-nums}
 .avail-label{font-size:13px;color:var(--text-2);margin-top:2px}
 .avail-change{background:none;border:none;padding:0;color:var(--ink);font-size:13px;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .avail-change:hover{text-decoration:underline}
@@ -131,7 +135,7 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .avail-foot{font-size:12px;color:var(--text-3);margin:16px 0 0}
 /* impact */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px}
-.stat-value{font-family:var(--font-ui);font-size:32px;font-weight:700;letter-spacing:0;font-variant-numeric:tabular-nums;line-height:1}
+.stat-value{font-family:var(--font-ui);font-size:var(--text-3xl);font-weight:700;letter-spacing:0;font-variant-numeric:tabular-nums;line-height:1}
 .stat-label{font-size:13px;color:var(--text-2);margin-top:4px}
 /* github */
 .gh-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
@@ -179,7 +183,7 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .shelf-track:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .eval-card{flex:0 0 200px;scroll-snap-align:start;margin:0;background:var(--paper);border:1px solid var(--border-soft);border-radius:12px;padding:12px;min-width:0}
 .eval-face{display:grid;gap:6px}
-.eval-big{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:0}
+.eval-big{font-size:var(--text-xl);font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:0}
 .eval-spark{width:100%;height:32px;display:block}
 .eval-note{font-size:12px;color:var(--text-2);margin:0}
 .eval-cap{display:flex;flex-direction:column;gap:2px;margin-top:8px;border-top:1px solid var(--border-soft);padding-top:8px}
