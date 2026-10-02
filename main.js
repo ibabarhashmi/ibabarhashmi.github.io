@@ -318,6 +318,15 @@ const LANG_TINTS = ["#2a2722","#6b675f","#b3b3b3"];
 const LANG_TEXT = ["#2a2722","#57534c","#6b675f"];
 async function loadGitHub(){
   const KEY="gh_cache_v2", TTL=6*3600*1000;
+  function offlineFirst(){
+    try{
+      const conn = navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+      if(!conn) return false;
+      if(conn.saveData) return true;
+      return /^(slow-2g|2g)$/.test(conn.effectiveType||"");
+    }catch(e){ return false; }
+  }
+  if(offlineFirst()) return Object.assign({}, SITE.githubFallback, {live:false, note:"offline-first: showing cached data"});
   try{
     const c = JSON.parse(localStorage.getItem(KEY)||"null");
     if(c && Date.now()-c.t<TTL) return c.d;
@@ -339,8 +348,17 @@ async function loadGitHub(){
       stars:repos.reduce((s,x)=>s+x.stargazers_count,0),
       languages:langs,
       recent:repos.slice(0,4).map(x=>({name:x.name,description:x.description,language:x.language,stars:x.stargazers_count,url:x.html_url,updated:x.pushed_at})),
+      activity:null,
       live:true
     };
+    try{
+      const ev = await fetch("https://api.github.com/users/ibabarhashmi/events/public?per_page=10",{headers:{Accept:"application/vnd.github+json"}});
+      if(ev.ok){
+        const list = await ev.json();
+        const e = list.find(function(x){ return x.type==="PushEvent"; }) || list[0];
+        if(e && e.repo) d.activity = {repo:String(e.repo.name).split("/").pop(), type:e.type, at:e.created_at};
+      }
+    }catch(e){}
     try{ localStorage.setItem(KEY, JSON.stringify({t:Date.now(),d:d})); }catch(e){}
     return d;
   }catch(e){ return Object.assign({}, SITE.githubFallback, {live:false}); }
@@ -358,6 +376,15 @@ async function loadGitHub(){
     head.appendChild(av);
     head.appendChild(extLink("https://github.com/ibabarhashmi","@ibabarhashmi"));
     root.appendChild(head);
+    if(d.activity && d.activity.repo){
+      let when = "";
+      try{
+        const days = Math.floor((Date.now()-Date.parse(d.activity.at))/864e5);
+        when = days<=0 ? "today" : days===1 ? "yesterday" : days+"d ago";
+      }catch(e){}
+      const verb = d.activity.type==="PushEvent" ? "pushed to" : d.activity.type==="CreateEvent" ? "created in" : "active in";
+      root.appendChild(el("div",{class:"repo-meta",text:"Latest: "+verb+" "+d.activity.repo+(when?" - "+when:"")}));
+    }
     const stats = el("div",{class:"gh-stats"});
     [["Repos",d.public_repos],["Stars",d.stars],["Followers",d.followers]].forEach(([l,v])=>{
       const s = el("div",{});
@@ -395,7 +422,7 @@ async function loadGitHub(){
       if(meta) r.appendChild(el("div",{class:"repo-meta",text:meta}));
       root.appendChild(r);
     });
-    if(d.live===false) root.appendChild(el("div",{class:"cached-note",text:"Showing cached data"}));
+    if(d.live===false) root.appendChild(el("div",{class:"cached-note",text:d.note||"Showing cached data"}));
     const all = extLink("https://github.com/ibabarhashmi?tab=repositories","View all on GitHub →");
     all.className="view-all";
     root.appendChild(all);
