@@ -84,52 +84,92 @@ document.querySelectorAll(".tile").forEach(markTile);
   nameWrap.style.cssText = "position:relative;display:inline;white-space:nowrap";
   nameWrap.textContent = fullName;
 
-  // Magnetic letter interaction (desktop only, respects reduced motion)
+  // Professional magnetic letter interaction using variable font weight (wght axis)
+  // Each character gets its own span with font-variation-settings for wght axis (300-600)
   if("ResizeObserver" in window && window.matchMedia("(pointer: fine)").matches && MOTION_OK){
-    const letters = nameWrap.textContent.split("");
-    nameWrap.innerHTML = "";
-    letters.forEach((char, i) => {
-      const span = document.createElement("span");
-      span.style.cssText = "display:inline-block;position:relative;will-change:transform";
-      span.textContent = char === " " ? "\u00A0" : char;
-      span.dataset.index = i;
-      nameWrap.appendChild(span);
-    });
-    
-    // Magnetic spring interaction
-    const lettersEl = nameWrap.querySelectorAll("span");
-    const spring = {stiffness: 180, damping: 22, mass: 0.5};
-    const n = letters.length;
-    let mx = 0, my = 0;
-    const rx = new Array(n).fill(0), ry = new Array(n).fill(0);
-    const vx = new Array(n).fill(0), vy = new Array(n).fill(0);
-    
-    function animateLetters(){
-      lettersEl.forEach((span, i) => {
-        const rect = span.getBoundingClientRect();
-        const cx = rect.left + rect.width/2;
-        const cy = rect.top + rect.height/2;
-        const dx = mx - cx, dy = my - cy;
-        const dist = Math.hypot(dx, dy);
-        const maxDist = 100;
-        const force = Math.max(0, 1 - dist/maxDist);
-        const targetY = force * -14;
-        const targetX = (mx - (span.getBoundingClientRect().left + rect.width/2)) * force * 0.25;
-        
-        // Spring physics
-        vy[i] += (180 * (targetY - ry[i]) - 22 * vy[i]) * 0.016 / 0.5;
-        vx[i] += (180 * (targetX - rx[i]) - 22 * vx[i]) * 0.016 / 0.5;
-        ry[i] += vy[i] * 0.016;
-        rx[i] += vx[i] * 0.016;
-        
-        const skew = (mx - (span.getBoundingClientRect().left + rect.width/2)) * 0.015 * (1 - Math.min(1, Math.hypot(mx - (rect.left+rect.width/2), my - (rect.top+rect.height/2))/100));
-        span.style.transform = `translate(${rx[i]}px, ${ry[i]}px) skewX(${skew}deg)`;
+    // Ensure variable font is loaded before measuring
+    document.fonts.ready.then(() => {
+      const letters = nameWrap.textContent.split("");
+      nameWrap.innerHTML = "";
+      const charElements = letters.map((char, i) => {
+        const span = document.createElement("span");
+        span.style.cssText = "display:inline-block;will-change:font-variation-settings";
+        span.textContent = char === " " ? "\u00A0" : char;
+        span.dataset.index = i;
+        // Initial rest weight
+        span.style.fontVariationSettings = "'wght' 300";
+        nameWrap.appendChild(span);
+        return span;
       });
-      requestAnimationFrame(animateLetters);
-    }
-    
-    document.addEventListener("pointermove", e => { mx = e.clientX; my = e.clientY; });
-    animateLetters();
+      
+      // Variable font weight magnetic interaction
+      const charSpans = nameWrap.querySelectorAll("span");
+      const n = charSpans.length;
+      const charRects = new Array(n);
+      
+      // Cache character positions
+      function updateCharRects(){
+        charSpans.forEach((span, i) => {
+          const rect = span.getBoundingClientRect();
+          charRects[i] = {
+            cx: rect.left + rect.width/2,
+            cy: rect.top + rect.height/2,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height
+          };
+        });
+      }
+      
+      // Initial cache
+      updateCharRects();
+      
+      // Recalculate on resize
+      const ro = new ResizeObserver(() => updateCharRects());
+      ro.observe(nameWrap);
+      
+      let mx = 0, my = 0;
+      let raf = 0;
+      
+      // Smooth weight interpolation per character
+      const currentWeights = new Array(charSpans.length).fill(300);
+      const targetWeights = new Array(charSpans.length).fill(300);
+      
+      const RADIUS = 100; // px - subtle field
+      const REST_WEIGHT = 300;
+      const PEAK_WEIGHT = 600;
+      const MAX_DIST = 100;
+      
+      function animateWeights(){
+        charSpans.forEach((span, i) => {
+          const rect = charRects[i];
+          if(!rect) return;
+          
+          const cx = rect.cx;
+          const cy = rect.cy;
+          const dx = mx - cx;
+          const dy = my - cy;
+          const dist = Math.hypot(dx, dy);
+          const maxDist = 100;
+          const force = Math.max(0, 1 - Math.pow(dist / maxDist, 2)); // quadratic falloff
+          
+          // Target weight based on proximity
+          targetWeights[i] = 300 + (600 - 300) * force;
+          
+          // Smooth interpolation (ease-out)
+          currentWeights[i] += (targetWeights[i] - currentWeights[i]) * 0.15;
+          
+          // Apply font-variation-settings
+          span.style.fontVariationSettings = "'wght' " + Math.round(currentWeights[i]);
+        });
+        
+        raf = requestAnimationFrame(animateWeights);
+      }
+      
+      // Initial position cache
+      updateCharRects();
+      animateWeights();
+    });
   }
 
   h1.appendChild(nameWrap);

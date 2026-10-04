@@ -104,7 +104,7 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .avatar-dock{position:relative;flex-shrink:0;line-height:0;align-self:start;touch-action:pan-y;cursor:grab;transform:translate(var(--dx,0px),var(--dy,0px))}
 .avatar-dock.dragging{cursor:grabbing}
 .avatar-dock::after{content:"";position:absolute;inset:-5px;border-radius:16px;border:1px solid var(--ink);opacity:1;pointer-events:none}
-.profile h1{font-family:var(--font-display);font-weight:400;font-size:clamp(3rem,7vw,5.5rem);line-height:.9;letter-spacing:0;margin:0 0 8px;text-wrap:balance}
+.profile h1{font-family:var(--font-display);font-weight:400;font-size:clamp(2.5rem,5.5vw,4.5rem);line-height:.9;letter-spacing:0;margin:0 0 8px;text-wrap:balance;font-variation-settings:'wght' 300}
 /* Name pronunciation popover (yuvich pattern, Henry mono) */
 #h-name{position:relative}
 .name-btn{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
