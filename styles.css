@@ -165,7 +165,26 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 /* projects */
 .proj{display:flex;flex-direction:column;position:relative;text-decoration:none;color:inherit}
 .proj:hover{text-decoration:none}
-.proj .ext{position:absolute;top:20px;right:20px;color:var(--text-3)}
+.proj:hover h3{
+  transform:translateX(4px);
+  transition:transform 200ms cubic-bezier(.2,.8,.2,1);
+}
+.proj:hover .ext{
+  opacity:1;
+  transform:translate(-4px, -4px);
+  transition:opacity 200ms, transform 200ms cubic-bezier(.2,.8,.2,1);
+}
+.proj .ext{position:absolute;top:20px;right:20px;color:var(--text-3);opacity:0.4;transform:translate(0,0);}
+.proj-feat:hover h3{
+  transform:translateX(4px);
+  transition:transform 200ms cubic-bezier(.2,.8,.2,1);
+}
+.proj-feat:hover .ext{
+  opacity:1;
+  transform:translate(-4px, -4px);
+  transition:opacity 200ms, transform 200ms cubic-bezier(.2,.8,.2,1);
+}
+.chip:hover{border-color:var(--ink);}
 .checks{list-style:none;margin:8px 0;padding:0;font-size:13px;color:var(--text-2)}
 .checks li::before{content:"- ";color:var(--ink);font-weight:700}
 /* stack / certs */
