@@ -60,9 +60,25 @@ document.querySelectorAll(".tile").forEach(markTile);
   dock.style.setProperty("--hi","0");
   dock.appendChild(img);
   const h1 = el("h1",{id:"h-name"});
-  const nameBtn = el("button",{class:"name-btn",type:"button",text:SITE.name||"Babar Hashmi"});
+  const nameBtn = el("button",{class:"name-btn",type:"button"});
   nameBtn.setAttribute("aria-expanded","false");
   nameBtn.setAttribute("aria-controls","name-def");
+  const fullName = SITE.name || "Babar Hashmi";
+  [...fullName].forEach((char, i) => {
+    const isFirst = i === 0;
+    const span = el("span",{
+      class:"inline-block overflow-hidden hero-letter",
+      style:"padding:0.06em 0.06em 0;margin:-0.06em -0.115em 0 -0.06em;--i:" + i,
+      "aria-hidden":"true"
+    });
+    const inner = el("span",{
+      class:"inline-block will-change-transform",
+      style: isFirst ? "font-family:var(--font-display);font-style:italic;font-weight:400" : ""
+    });
+    inner.textContent = char === " " ? "\u00A0" : char;
+    span.appendChild(inner);
+    nameBtn.appendChild(span);
+  });
   h1.appendChild(nameBtn);
   h1.insertAdjacentHTML("beforeend",'<svg class="name-squiggle" aria-hidden="true" height="7" viewBox="0 0 120 7" preserveAspectRatio="none"><path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1"/></svg>');
   const ndef = el("span",{class:"name-def",id:"name-def",role:"note"});
