@@ -175,6 +175,47 @@ document.querySelectorAll(".tile").forEach(markTile);
   dock.addEventListener("pointercancel", up);
 })();
 
+/* ---------- Magnetic cursor (desktop, reduced-motion aware) ---------- */
+(function(){
+  if(window.matchMedia("(pointer: coarse)").matches) return;
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const cursor = document.createElement("div");
+  cursor.className = "magnetic-cursor";
+  cursor.innerHTML = '<div class="cursor-ring"></div><div class="cursor-dot"></div>';
+  document.body.appendChild(cursor);
+
+  const ring = cursor.querySelector(".cursor-ring");
+  const dot = cursor.querySelector(".cursor-dot");
+
+  const stiffness = 700, damping = 45, mass = 0.35;
+  let mx = -100, my = -100, rx = -100, ry = -100, vx = 0, vy = 0;
+  let raf = 0, overInteractive = false;
+
+  function step(t){
+    const dt = Math.min(0.032, (t - (step.last || t)) / 1000);
+    step.last = t;
+    vx += (stiffness * (mx - rx) - damping * vx) * dt / mass;
+    vy += (stiffness * (my - ry) - damping * vy) * dt / mass;
+    rx += vx * dt; ry += vy * dt;
+    ring.style.transform = "translate(" + rx + "px, " + ry + "px)";
+    dot.style.transform = "translate(" + rx + "px, " + ry + "px)";
+    if(Math.hypot(vx, vy) > 1 || Math.hypot(mx - rx, my - ry) > 1) raf = requestAnimationFrame(step);
+  }
+
+  document.addEventListener("pointermove", function(e){
+    mx = e.clientX; my = e.clientY;
+    const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea");
+    overInteractive = !!target;
+    cursor.classList.toggle("over-interactive", overInteractive);
+    if(!raf) raf = requestAnimationFrame(step);
+  });
+
+  document.addEventListener("pointerleave", function(){
+    mx = my = -9999;
+  });
+})();
+
 /* ---------- NOW ---------- */
 (function(){
   const root = document.getElementById("tile-now");

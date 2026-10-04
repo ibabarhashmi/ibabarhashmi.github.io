@@ -260,6 +260,21 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 }
 @keyframes hero-letter-rise{to{opacity:1;transform:none;}}
 
+/* ---------- Magnetic cursor ---------- */
+.magnetic-cursor{
+  position:fixed;top:0;left:0;z-index:100;
+  pointer-events:none;width:10px;height:10px;
+  mix-blend-mode:difference;
+}
+.cursor-ring{position:absolute;inset:-5px;border:1px solid var(--ink);border-radius:50%;transition:transform 150ms cubic-bezier(.2,.8,.2,1);}
+.cursor-dot{position:absolute;inset:0;background:var(--ink);border-radius:50%;transition:transform 150ms cubic-bezier(.2,.8,.2,1);}
+.magnetic-cursor.over-interactive .cursor-ring{transform:scale(3.4);border-color:var(--ink);}
+.magnetic-cursor.over-interactive .cursor-dot{transform:scale(3.4);}
+
+@media(prefers-reduced-motion:reduce){
+  .magnetic-cursor{display:none !important;}
+}
+
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 14px;font-size:14px;z-index:50}
 .toast[hidden]{display:none}
 .repo-desc,.chip,.bio{overflow-wrap:anywhere}
