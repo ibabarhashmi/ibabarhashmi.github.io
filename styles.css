@@ -58,7 +58,17 @@ a:hover{text-decoration-thickness:2px}
 .monogram img{width:32px;height:32px;object-fit:cover;display:block;filter:grayscale(1) contrast(1.1)}
 .brand-name{font-size:15px}
 .ticker{border-bottom:1px solid var(--ink);background:var(--paper);overflow:hidden}
-.ticker-inner{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;padding:6px 24px;overflow:hidden;text-overflow:ellipsis}
+.ticker-inner{
+  display:inline-flex;
+  white-space:nowrap;
+  animation:marquee 20s linear infinite;
+  font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:6px 0;
+}
+@keyframes marquee{
+  from{transform:translateX(0);}
+  to{transform:translateX(-50%);}
+}
 .topbar-actions{display:flex;align-items:center;gap:8px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;height:44px;padding:0 16px;border-radius:12px;font-size:14px;font-weight:700;border:1px solid var(--ink);cursor:pointer;white-space:nowrap;position:relative;transition:background 200ms,color 200ms}
 .btn:hover{transform:none}
@@ -251,13 +261,23 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .footer-morph.is-revealed{transform:translateY(0);}
 
 .footer-morph #foot-copy{
-  display:block;
+  display:inline-block;
   text-align:center;
   font-size:12px;
   font-weight:700;
   letter-spacing:.06em;
   text-transform:uppercase;
   color:var(--text-3);
+}
+.footer-palette-hint{
+  display:inline-block;
+  margin-left:16px;
+  font-size:11px;
+  color:var(--text-3);
+  font-family:var(--font-mono);
+}
+@media (max-width:639px){
+  .footer-palette-hint{display:none;}
 }
 
 .footer-giant{
