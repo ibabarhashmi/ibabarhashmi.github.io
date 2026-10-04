@@ -269,23 +269,9 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 }
 
 @media(max-width:639px){
-  .footer-giant{font-size:clamp(2.5rem,15vw,4rem);}
   .footer-morph{min-height:35vh;padding:32px 16px 24px;}
   .footer-meta{gap:12px;}
 }
-
-/* ---------- Hero per-letter entrance ---------- */
-.hero-letter{
-  opacity:0;
-  transform:translateY(110%);
-}
-@media (prefers-reduced-motion: no-preference){
-  .js .hero-letter{
-    animation:hero-letter-rise 900ms cubic-bezier(.22,1,.36,1) forwards;
-    animation-delay:calc(var(--i) * 40ms);
-  }
-}
-@keyframes hero-letter-rise{to{opacity:1;transform:none;}}
 
 /* ---------- Magnetic cursor ---------- */
 .magnetic-cursor{

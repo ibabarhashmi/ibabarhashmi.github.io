@@ -81,25 +81,9 @@ document.querySelectorAll(".tile").forEach(markTile);
   dock.style.setProperty("--hi","0");
   dock.appendChild(img);
   const h1 = el("h1",{id:"h-name"});
-  const nameBtn = el("button",{class:"name-btn",type:"button"});
+  const nameBtn = el("button",{class:"name-btn",type:"button",text:SITE.name||"Babar Hashmi"});
   nameBtn.setAttribute("aria-expanded","false");
   nameBtn.setAttribute("aria-controls","name-def");
-  const fullName = SITE.name || "Babar Hashmi";
-  [...fullName].forEach((char, i) => {
-    const isFirst = i === 0;
-    const span = el("span",{
-      class:"inline-block overflow-hidden hero-letter",
-      style:"padding:0.06em 0.06em 0;margin:-0.06em -0.115em 0 -0.06em;--i:" + i,
-      "aria-hidden":"true"
-    });
-    const inner = el("span",{
-      class:"inline-block will-change-transform",
-      style: isFirst ? "font-family:var(--font-display);font-style:italic;font-weight:400" : ""
-    });
-    inner.textContent = char === " " ? "\u00A0" : char;
-    span.appendChild(inner);
-    nameBtn.appendChild(span);
-  });
   h1.appendChild(nameBtn);
   h1.insertAdjacentHTML("beforeend",'<svg class="name-squiggle" aria-hidden="true" height="7" viewBox="0 0 120 7" preserveAspectRatio="none"><path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1"/></svg>');
   const ndef = el("span",{class:"name-def",id:"name-def",role:"note"});
@@ -226,7 +210,7 @@ document.querySelectorAll(".tile").forEach(markTile);
 
   document.addEventListener("pointermove", function(e){
     mx = e.clientX; my = e.clientY;
-    const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea");
+    const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea, .avatar-dock, #tile-profile");
     overInteractive = !!target;
     cursor.classList.toggle("over-interactive", overInteractive);
     if(!raf) raf = requestAnimationFrame(step);
@@ -847,37 +831,6 @@ function copyEmail(){
   hint.className = "palette-hint";
   hint.textContent = navigator.platform.includes("Mac") ? "\u2318K" : "Ctrl+K";
   document.querySelector(".footer-meta")?.append(hint);
-})();
-
-/* ---------- Footer magnetic letters (giant name skew on hover) ---------- */
-(function(){
-  const letters = document.querySelectorAll(".footer-letter");
-  if(!letters.length) return;
-  if(window.matchMedia("(pointer: coarse)").matches) return;
-  if(!MOTION_OK) return;
-
-  let mx = -9999, my = -9999;
-  document.addEventListener("pointermove", function(e){
-    mx = e.clientX; my = e.clientY;
-  });
-
-  function animate(){
-    letters.forEach(function(letter){
-      const rect = letter.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = mx - cx, dy = my - cy;
-      const dist = Math.hypot(dx, dy);
-      const maxDist = rect.width * 1.7;
-      const proximity = Math.max(0, 1 - dist / maxDist);
-      const eased = 1 - Math.pow(1 - proximity, 4);
-      const lift = eased * -12;
-      const skew = eased * -6;
-      letter.style.transform = "translateY(" + lift + "px) skewX(" + skew + "deg)";
-    });
-    requestAnimationFrame(animate);
-  }
-  animate();
 })();
 
 /* ---------- Entrance ---------- */
