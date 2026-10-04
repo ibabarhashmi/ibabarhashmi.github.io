@@ -75,9 +75,11 @@ document.querySelectorAll(".tile").forEach(markTile);
   if(!root) return;
   const wrap = el("div",{class:"profile profile-statement"});
   const main = el("div",{class:"profile-main"});
+  const avatarGlass = el("div",{class:"avatar-glass"});
   const img = el("img",{class:"avatar hero-el",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"168",height:"168",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
   img.style.setProperty("--hi","0");
+  avatarGlass.appendChild(img);
   const h1 = el("h1",{id:"h-name"});
   const fullName = SITE.name || "Babar Hashmi";
   const nameWrap = document.createElement("span");
@@ -201,7 +203,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   main.append(h1,title,meta,badge,bio,actions);
   wrap.append(main);
   const grid = el("div",{class:"hero-grid"});
-  grid.append(img,wrap);
+  grid.append(avatarGlass,wrap);
   grid.appendChild(buildAvailPanel());
   root.appendChild(grid);
 })();
@@ -223,6 +225,9 @@ document.querySelectorAll(".tile").forEach(markTile);
   let mx = -100, my = -100, rx = -100, ry = -100;
   let raf = 0, overInteractive = false;
 
+  // Glass tracking
+  const avatarGlass = document.querySelector(".avatar-glass");
+
   function step(t){
     const dt = Math.min(0.032, (t - (step.last || t)) / 1000);
     step.last = t;
@@ -231,12 +236,22 @@ document.querySelectorAll(".tile").forEach(markTile);
     rx += vx; ry += vy;
     ring.style.transform = "translate(" + rx + "px, " + ry + "px)";
     dot.style.transform = "translate(" + rx + "px, " + ry + "px)";
+    
+    // Update glass glare position
+    if(avatarGlass){
+      const rect = avatarGlass.getBoundingClientRect();
+      const gx = ((rx - rect.left) / rect.width * 100).toFixed(1);
+      const gy = ((ry - rect.top) / rect.height * 100).toFixed(1);
+      avatarGlass.style.setProperty("--glare-x", gx + "%");
+      avatarGlass.style.setProperty("--glare-y", gy + "%");
+    }
+    
     if(Math.abs(mx - rx) > 1 || Math.abs(my - ry) > 1) raf = requestAnimationFrame(step);
   }
 
   document.addEventListener("pointermove", function(e){
     mx = e.clientX; my = e.clientY;
-    const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea, .avatar-dock, #tile-profile");
+    const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea, .avatar-dock, #tile-profile, .avatar-glass");
     overInteractive = !!target;
     cursor.classList.toggle("over-interactive", overInteractive);
     if(!raf) raf = requestAnimationFrame(step);
