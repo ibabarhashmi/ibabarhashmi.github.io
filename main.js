@@ -169,6 +169,12 @@ document.querySelectorAll(".tile").forEach(markTile);
       // Initial position cache
       updateCharRects();
       animateWeights();
+
+      // Track mouse position for magnetic interaction
+      document.addEventListener("pointermove", function(e){
+        mx = e.clientX;
+        my = e.clientY;
+      });
     });
   }
 
@@ -371,7 +377,10 @@ function tickAvail(){
       verdict.classList.toggle("off", !overlap);
       vt.textContent = overlap ? "Overlap now - good time to talk" : "Outside shared hours - replies within a day";
     }
-    if(verdictDot) verdictDot.title = isOnline ? "Online" : "Offline";
+    if(verdictDot) {
+      verdictDot.title = isOnline ? "Online" : "Offline";
+      verdictDot.style.animation = isOnline ? "blink 2s steps(2,start) infinite" : "none";
+    }
   }
   const wh = SITE.workingHoursIST || [10,19];
   const badge = document.getElementById("avail-badge");
