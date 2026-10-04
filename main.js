@@ -290,6 +290,11 @@ function tickAvail(){
     badge.classList.toggle("off", !inside);
     badge.title = inside ? "Within IST working hours" : "Outside IST working hours - async replies";
   }
+  const footTime = document.getElementById("foot-time");
+  if(footTime){
+    const f = tzFmt(IST_TZ);
+    footTime.textContent = "Bangalore \u00b7 " + f.time.format(now) + " IST";
+  }
 }
 tickAvail();
 (function scheduleAvail(){
@@ -660,6 +665,28 @@ function copyEmail(){
     }, { threshold: .3 });
     io.observe(tile);
   })();
+
+/* ---------- Footer morph reveal (scroll-linked destination) ---------- */
+(function(){
+  const footer = document.querySelector(".footer-morph");
+  if(!footer) return;
+  if("IntersectionObserver" in window){
+    const trigger = document.getElementById("tile-contact");
+    if(trigger){
+      const io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){
+            footer.classList.add("is-revealed");
+            io.unobserve(trigger);
+          }
+        });
+      }, {rootMargin: "0px 0px -20% 0px", threshold: 0});
+      io.observe(trigger);
+    }
+  }else{
+    footer.classList.add("is-revealed");
+  }
+})();
 })();
 
 /* ---------- Entrance ---------- */
@@ -674,6 +701,28 @@ function copyEmail(){
     setTimeout(function(){ tiles.forEach(t=>t.classList.add("in")); }, 2500);
   }else{
     tiles.forEach(t=>t.classList.add("in"));
+  }
+})();
+
+/* ---------- Footer morph reveal (scroll-linked destination) ---------- */
+(function(){
+  const footer = document.querySelector(".footer-morph");
+  if(!footer) return;
+  if("IntersectionObserver" in window){
+    const trigger = document.getElementById("tile-contact");
+    if(trigger){
+      const io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){
+            footer.classList.add("is-revealed");
+            io.unobserve(trigger);
+          }
+        });
+      }, {rootMargin: "0px 0px -20% 0px", threshold: 0});
+      io.observe(trigger);
+    }
+  }else{
+    footer.classList.add("is-revealed");
   }
 })();
 })();
