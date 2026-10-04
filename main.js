@@ -16,6 +16,26 @@ const PRESETS = [
 ];
 const avail = { tz: getVisitorTz() };
 const MOTION_OK = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function getSpring(name){
+  const root = document.documentElement;
+  return {
+    stiffness: parseFloat(getComputedStyle(root).getPropertyValue("--spring-" + name + "-stiff")) || 0,
+    damping: parseFloat(getComputedStyle(root).getPropertyValue("--spring-" + name + "-damp")) || 0,
+    mass: parseFloat(getComputedStyle(root).getPropertyValue("--spring-" + name + "-mass")) || 0
+  };
+}
+function springTo(current, target, spring, onUpdate, onComplete){
+  let v = 0, last = performance.now();
+  function step(t){
+    const dt = Math.min(0.032, (t - last) / 1000); last = t;
+    v += (spring.stiffness * (target - current) - spring.damping * v) * dt / spring.mass;
+    current += v * dt;
+    onUpdate(current);
+    if(Math.abs(v) > 0.5 || Math.abs(target - current) > 0.1) requestAnimationFrame(step);
+    else { onUpdate(target); onComplete?.(); }
+  }
+  requestAnimationFrame(step);
+}
 function el(tag, attrs, children){
   const n = document.createElement(tag);
   if(attrs) for(const k in attrs){
@@ -179,7 +199,7 @@ document.querySelectorAll(".tile").forEach(markTile);
 /* ---------- Magnetic cursor (desktop, reduced-motion aware) ---------- */
 (function(){
   if(window.matchMedia("(pointer: coarse)").matches) return;
-  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if(!MOTION_OK) return;
 
   const cursor = document.createElement("div");
   cursor.className = "magnetic-cursor";
@@ -189,19 +209,19 @@ document.querySelectorAll(".tile").forEach(markTile);
   const ring = cursor.querySelector(".cursor-ring");
   const dot = cursor.querySelector(".cursor-dot");
 
-  const stiffness = 700, damping = 45, mass = 0.35;
-  let mx = -100, my = -100, rx = -100, ry = -100, vx = 0, vy = 0;
+  const spring = getSpring("ui");
+  let mx = -100, my = -100, rx = -100, ry = -100;
   let raf = 0, overInteractive = false;
 
   function step(t){
     const dt = Math.min(0.032, (t - (step.last || t)) / 1000);
     step.last = t;
-    vx += (stiffness * (mx - rx) - damping * vx) * dt / mass;
-    vy += (stiffness * (my - ry) - damping * vy) * dt / mass;
-    rx += vx * dt; ry += vy * dt;
+    const vx = (spring.stiffness * (mx - rx) - spring.damping * 0) * dt / spring.mass;
+    const vy = (spring.stiffness * (my - ry) - spring.damping * 0) * dt / spring.mass;
+    rx += vx; ry += vy;
     ring.style.transform = "translate(" + rx + "px, " + ry + "px)";
     dot.style.transform = "translate(" + rx + "px, " + ry + "px)";
-    if(Math.hypot(vx, vy) > 1 || Math.hypot(mx - rx, my - ry) > 1) raf = requestAnimationFrame(step);
+    if(Math.abs(mx - rx) > 1 || Math.abs(my - ry) > 1) raf = requestAnimationFrame(step);
   }
 
   document.addEventListener("pointermove", function(e){
@@ -834,7 +854,7 @@ function copyEmail(){
   const letters = document.querySelectorAll(".footer-letter");
   if(!letters.length) return;
   if(window.matchMedia("(pointer: coarse)").matches) return;
-  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if(!MOTION_OK) return;
 
   let mx = -9999, my = -9999;
   document.addEventListener("pointermove", function(e){

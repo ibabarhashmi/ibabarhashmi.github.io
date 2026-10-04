@@ -20,6 +20,10 @@
   --shadow-rest:none;
   --shadow-hover:none;
   --motion-ok:1;
+  /* Spring tokens (stiffness, damping, mass) */
+  --spring-ui-stiff:700;--spring-ui-damp:45;--spring-ui-mass:0.35;
+  --spring-btn-stiff:500;--spring-btn-damp:30;--spring-btn-mass:0.35;
+  --spring-mag-stiff:200;--spring-mag-damp:20;--spring-mag-mass:0.6;
 }
 @media (prefers-reduced-motion: reduce){
   :root{--motion-ok:0;}
