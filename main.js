@@ -830,7 +830,29 @@ function copyEmail(){
   const hint = document.createElement("span");
   hint.className = "palette-hint";
   hint.textContent = navigator.platform.includes("Mac") ? "\u2318K" : "Ctrl+K";
-  document.querySelector(".footer-meta")?.append(hint);
+  document.querySelector(".footer-actions")?.prepend(hint);
+
+  const social = document.querySelector(".footer-social");
+  if(social){
+    function brandSvgLink(href,label,svg){
+      const a = el("a",{href:href,target:"_blank",rel:"noopener noreferrer"});
+      a.className="icon-link";
+      a.setAttribute("aria-label",label);
+      a.setAttribute("title",label);
+      a.insertAdjacentHTML("afterbegin",svg);
+      return a;
+    }
+    if(SITE.links.linkedin) social.appendChild(brandSvgLink(SITE.links.linkedin,"LinkedIn profile",ICONS.linkedin));
+    if(SITE.links.github) social.appendChild(brandSvgLink(SITE.links.github,"GitHub profile",ICONS.github));
+    if(SITE.links.telegram) social.appendChild(brandSvgLink(SITE.links.telegram,"Telegram chat",ICONS.telegram));
+    if(SITE.links.x) social.appendChild(brandSvgLink(SITE.links.x,"X profile",ICONS.ext));
+    const mailBtn = el("button",{class:"icon-link",type:"button"});
+    mailBtn.setAttribute("aria-label","Copy email address to clipboard");
+    mailBtn.setAttribute("title","Copy email address");
+    mailBtn.insertAdjacentHTML("afterbegin",ICONS.mail);
+    mailBtn.addEventListener("click", copyEmail);
+    social.appendChild(mailBtn);
+  }
 })();
 
 /* ---------- Entrance ---------- */
