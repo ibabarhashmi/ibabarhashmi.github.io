@@ -228,6 +228,21 @@ document.querySelectorAll(".tile").forEach(markTile);
   // Glass tracking
   const avatarGlass = document.querySelector(".avatar-glass");
 
+  function updateGlare(){
+    if(!avatarGlass) return;
+    const rect = avatarGlass.getBoundingClientRect();
+    // Only update glare when mouse is over the avatar glass
+    if(mx >= rect.left && mx <= rect.right && my >= rect.top && my <= rect.bottom){
+      const gx = ((mx - rect.left) / rect.width * 100).toFixed(1);
+      const gy = ((my - rect.top) / rect.height * 100).toFixed(1);
+      avatarGlass.style.setProperty("--glare-x", gx + "%");
+      avatarGlass.style.setProperty("--glare-y", gy + "%");
+      avatarGlass.style.setProperty("--glare-opacity", "1");
+    }else{
+      avatarGlass.style.setProperty("--glare-opacity", "0");
+    }
+  }
+
   function step(t){
     const dt = Math.min(0.032, (t - (step.last || t)) / 1000);
     step.last = t;
@@ -237,14 +252,8 @@ document.querySelectorAll(".tile").forEach(markTile);
     ring.style.transform = "translate(" + rx + "px, " + ry + "px)";
     dot.style.transform = "translate(" + rx + "px, " + ry + "px)";
     
-    // Update glass glare position
-    if(avatarGlass){
-      const rect = avatarGlass.getBoundingClientRect();
-      const gx = ((rx - rect.left) / rect.width * 100).toFixed(1);
-      const gy = ((ry - rect.top) / rect.height * 100).toFixed(1);
-      avatarGlass.style.setProperty("--glare-x", gx + "%");
-      avatarGlass.style.setProperty("--glare-y", gy + "%");
-    }
+    // Update glass glare position using actual mouse position
+    updateGlare();
     
     if(Math.abs(mx - rx) > 1 || Math.abs(my - ry) > 1) raf = requestAnimationFrame(step);
   }
@@ -254,11 +263,15 @@ document.querySelectorAll(".tile").forEach(markTile);
     const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea, .avatar-dock, #tile-profile, .avatar-glass");
     overInteractive = !!target;
     cursor.classList.toggle("over-interactive", overInteractive);
+    updateGlare();
     if(!raf) raf = requestAnimationFrame(step);
   });
 
   document.addEventListener("pointerleave", function(){
     mx = my = -9999;
+    if(avatarGlass){
+      avatarGlass.style.setProperty("--glare-opacity", "0");
+    }
   });
 })();
 
