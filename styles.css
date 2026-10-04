@@ -238,18 +238,27 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .footer-morph{
   position:fixed;
   bottom:0;left:0;right:0;
-  min-height:40vh;
   background:var(--paper);
   border-top:1px solid var(--ink);
   z-index:5;
   transform:translateY(100%);
   will-change:transform;
-  padding:40px 24px 32px;
+  padding:24px;
 }
 @media (prefers-reduced-motion: no-preference){
   .footer-morph{transition:transform 600ms cubic-bezier(.2,.8,.2,1);}
 }
 .footer-morph.is-revealed{transform:translateY(0);}
+
+.footer-morph #foot-copy{
+  display:block;
+  text-align:center;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--text-3);
+}
 
 .footer-giant{
   display:flex;flex-wrap:wrap;justify-content:center;gap:0 0.02em;
