@@ -15,6 +15,7 @@ const PRESETS = [
   ["Australia/Sydney","Sydney"]
 ];
 const avail = { tz: getVisitorTz() };
+const MOTION_OK = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 function el(tag, attrs, children){
   const n = document.createElement(tag);
   if(attrs) for(const k in attrs){

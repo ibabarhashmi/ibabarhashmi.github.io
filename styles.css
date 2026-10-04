@@ -19,6 +19,10 @@
   --ease-out:cubic-bezier(.2,.8,.2,1);--dur-micro:200ms;--dur-enter:400ms;--radius:12px;
   --shadow-rest:none;
   --shadow-hover:none;
+  --motion-ok:1;
+}
+@media (prefers-reduced-motion: reduce){
+  :root{--motion-ok:0;}
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
