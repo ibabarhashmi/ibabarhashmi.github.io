@@ -67,7 +67,6 @@ a:hover{text-decoration-thickness:2px}
   max-width:none;
   margin:0;
   width:max-content;
-  min-width:200vw;
 }
 @keyframes marquee{
   from{transform:translateX(-50%);}
