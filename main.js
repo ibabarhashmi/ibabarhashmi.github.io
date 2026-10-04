@@ -79,8 +79,10 @@ document.querySelectorAll(".tile").forEach(markTile);
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
   img.style.setProperty("--hi","0");
   const h1 = el("h1",{id:"h-name"});
-  h1.textContent = SITE.name || "Babar Hashmi";
-  h1.insertAdjacentHTML("beforeend",'<svg class="name-squiggle" aria-hidden="true" height="7" viewBox="0 0 120 7" preserveAspectRatio="none"><path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1"/></svg>');
+  const nameWrap = el("span",{style:"display:inline-flex;align-items:flex-end;gap:0"});
+  nameWrap.textContent = SITE.name || "Babar Hashmi";
+  nameWrap.insertAdjacentHTML("beforeend",'<svg class="name-squiggle" aria-hidden="true" height="7" viewBox="0 0 120 7" preserveAspectRatio="none"><path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1"/></svg>');
+  h1.appendChild(nameWrap);
   const title = el("p",{class:"title",text:SITE.title||""});
   const meta = el("div",{class:"meta-row"});
   meta.insertAdjacentHTML("afterbegin", ICONS.pin);
@@ -279,7 +281,7 @@ function tickAvail(){
       verdict.classList.toggle("off", !overlap);
       vt.textContent = overlap ? "Overlap now - good time to talk" : "Outside shared hours - replies within a day";
     }
-    verdictDot.title = isOnline ? "Online" : "Offline";
+    if(verdictDot) verdictDot.title = isOnline ? "Online" : "Offline";
   }
   const wh = SITE.workingHoursIST || [10,19];
   const badge = document.getElementById("avail-badge");
@@ -287,7 +289,7 @@ function tickAvail(){
   if(badge){
     const inside = isOnline;
     badge.classList.toggle("off", !inside);
-    badgeDot?.title = isOnline ? "Online" : "Offline";
+    if(badgeDot) badgeDot.title = isOnline ? "Online" : "Offline";
   }
   const footTime = document.getElementById("foot-time");
   if(footTime){
@@ -693,7 +695,7 @@ function copyEmail(){
   if("IntersectionObserver" in window){
     const io = new IntersectionObserver(function(entries){
       entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-    }, {threshold:.1});
+    }, {threshold:0});
     tiles.forEach(t=>io.observe(t));
     /* Safety: if IO never fires (hidden tab, headless), show content. */
     setTimeout(function(){ tiles.forEach(t=>t.classList.add("in")); }, 2500);
