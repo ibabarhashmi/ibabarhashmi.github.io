@@ -261,10 +261,17 @@ function tickAvail(){
   try{ sameTz = tzFmt(IST_TZ).time.format(now) === tzFmt(avail.tz).time.format(now); }catch(e){}
   const vRow = document.querySelector(".hero-avail .avail-row:nth-child(2)");
   if(vRow) vRow.hidden = sameTz;
-  const overlap = istH>=10 && istH<19 && vH>=9 && vH<18;
+
+  const istDay = new Intl.DateTimeFormat("en",{timeZone:IST_TZ,weekday:"short"}).format(now);
+  const isWeekend = istDay === "Sat" || istDay === "Sun";
+  const isWorkingHours = istH >= 10 && istH < 19;
+  const isOnline = !isWeekend && isWorkingHours;
+
+  const overlap = isOnline && vH >= 9 && vH < 18;
   const verdict = document.querySelector(".hero-avail .avail-verdict");
   const vt = document.querySelector(".hero-avail .avail-verdict-text");
-  if(verdict && vt){
+  const verdictDot = verdict?.querySelector(".dot");
+  if(verdict && vt && verdictDot){
     if(sameTz){
       verdict.classList.remove("off");
       vt.textContent = "Same timezone - talk anytime 10-19 IST";
@@ -272,13 +279,15 @@ function tickAvail(){
       verdict.classList.toggle("off", !overlap);
       vt.textContent = overlap ? "Overlap now - good time to talk" : "Outside shared hours - replies within a day";
     }
+    verdictDot.title = isOnline ? "Online" : "Offline";
   }
   const wh = SITE.workingHoursIST || [10,19];
   const badge = document.getElementById("avail-badge");
+  const badgeDot = badge?.querySelector(".dot");
   if(badge){
-    const inside = istH>=wh[0] && istH<wh[1];
+    const inside = isOnline;
     badge.classList.toggle("off", !inside);
-    badge.title = inside ? "Within IST working hours" : "Outside IST working hours - async replies";
+    badgeDot?.title = isOnline ? "Online" : "Offline";
   }
   const footTime = document.getElementById("foot-time");
   if(footTime){

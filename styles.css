@@ -66,8 +66,8 @@ a:hover{text-decoration-thickness:2px}
   padding:6px 0;
 }
 @keyframes marquee{
-  from{transform:translateX(0);}
-  to{transform:translateX(-50%);}
+  from{transform:translateX(-50%);}
+  to{transform:translateX(0);}
 }
 .topbar-actions{display:flex;align-items:center;gap:8px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;height:44px;padding:0 16px;border-radius:12px;font-size:14px;font-weight:700;border:1px solid var(--ink);cursor:pointer;white-space:nowrap;position:relative;transition:background 200ms,color 200ms}
@@ -142,6 +142,23 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .avail-verdict .dot{width:8px;height:8px;border-radius:0;background:currentColor;flex-shrink:0;animation:blink 2s steps(2,start) infinite}
 .avail-verdict.off .dot{background:transparent;border:1px solid currentColor;animation:none}
 .avail-verdict.off{color:var(--ink)}
+
+/* Tooltip for availability dots */
+.avail-verdict .dot, .avail-badge .dot{position:relative;}
+.avail-verdict .dot::after, .avail-badge .dot::after{
+  content:attr(title);
+  position:absolute;
+  bottom:100%; left:50%; transform:translateX(-50%);
+  background:var(--ink); color:var(--paper);
+  font-size:11px; font-weight:400; text-transform:none; letter-spacing:0;
+  padding:4px 8px; border-radius:4px; white-space:nowrap;
+  opacity:0; pointer-events:none; transition:opacity 150ms;
+  margin-bottom:4px;
+}
+.avail-verdict .dot:hover::after, .avail-badge .dot:hover::after{
+  opacity:1;
+}
+
 .avail-rows{display:flex;flex-direction:column;gap:14px}
 .avail-row[hidden]{display:none}
 .avail-time{font-family:var(--font-ui);font-size:var(--text-3xl);font-weight:700;letter-spacing:0;line-height:1.1;font-variant-numeric:tabular-nums}
