@@ -110,23 +110,35 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
 .avatar-dock::after{content:"";position:absolute;inset:-5px;border-radius:16px;border:1px solid var(--ink);opacity:1;pointer-events:none}
 
 /* ---------- Liquid Glass (iOS 26 style) ---------- */
+/* Default: matches original .avatar exactly */
+.avatar-glass{
+  position:relative;
+  width:168px;height:168px;
+  border-radius:12px;
+  border:1px solid var(--ink);
+  background:var(--paper);
+  overflow:hidden;
+  flex-shrink:0;
+}
+
 @media (prefers-reduced-motion: no-preference){
-  .avatar-glass{
-    position:relative;
-    width:168px;height:168px;
+  /* Hover: activate glassmorphism */
+  .avatar-glass:hover{
     border-radius:16px;
-    overflow:hidden;
     backdrop-filter:blur(20px) saturate(180%);
     background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,rgba(255,255,255,.02) 50%,rgba(0,0,0,.05) 100%);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -1px 0 rgba(0,0,0,.1),0 8px 32px rgba(0,0,0,.12),0 0 0 1px rgba(255,255,255,.1);
+    border-color:transparent;
     transform:translateZ(0);
-    flex-shrink:0;
   }
-  .avatar-glass .avatar{
-    width:100%;height:100%;
+  .avatar-glass:hover .avatar{
     border-radius:12px;
-    filter:grayscale(1) contrast(1.08);
-    transition:transform 600ms cubic-bezier(.2,.8,.2,1),filter 600ms cubic-bezier(.2,.8,.2,1);
+    filter:grayscale(0) contrast(1.05);
+    transform:scale(1.02);
+    transition:transform 600ms cubic-bezier(.2,.8,.2,1),filter 600ms cubic-bezier(.2,.8,.2,1),border-radius 600ms cubic-bezier(.2,.8,.2,1);
+  }
+  .avatar-glass:hover::before{
+    opacity:1;
   }
   .avatar-glass::before{
     content:"";
@@ -136,26 +148,30 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
     opacity:var(--glare-opacity, 0);
     transition:opacity 300ms ease-out;
   }
-  .avatar-glass:hover::before{opacity:1}
-  .avatar-glass:hover .avatar{transform:scale(1.02);filter:grayscale(0) contrast(1.05)}
+  .avatar-glass .avatar{
+    width:100%;height:100%;
+    border-radius:12px;
+    filter:grayscale(1) contrast(1.08);
+    transition:transform 600ms cubic-bezier(.2,.8,.2,1),filter 600ms cubic-bezier(.2,.8,.2,1),border-radius 600ms cubic-bezier(.2,.8,.2,1);
+  }
 }
 
 @supports not (backdrop-filter: blur(20px)){
-  .avatar-glass{background:var(--paper);box-shadow:0 8px 32px rgba(0,0,0,.12),0 0 0 1px var(--ink)}
+  .avatar-glass:hover{background:var(--paper);box-shadow:0 8px 32px rgba(0,0,0,.12),0 0 0 1px var(--ink);border-color:var(--ink)}
 }
 
 /* Responsive avatar glass sizes matching .avatar breakpoints */
-@media (max-width:1023px) and (prefers-reduced-motion: no-preference){
+@media (max-width:1023px){
   .avatar-glass{width:128px;height:128px;border-radius:12px}
+}
+@media (max-width:639px){
+  .avatar-glass{width:96px;height:96px;border-radius:12px}
+}
+@media (max-width:1023px) and (prefers-reduced-motion: no-preference){
+  .avatar-glass:hover{border-radius:12px}
 }
 @media (max-width:639px) and (prefers-reduced-motion: no-preference){
-  .avatar-glass{width:96px;height:96px;border-radius:12px}
-}
-@media (max-width:639px) and (prefers-reduced-motion: reduce){
-  .avatar-glass{width:96px;height:96px;border-radius:12px}
-}
-@media (max-width:1023px) and (prefers-reduced-motion: reduce){
-  .avatar-glass{width:128px;height:128px;border-radius:12px}
+  .avatar-glass:hover{border-radius:12px}
 }
 .profile h1{font-family:var(--font-display);font-weight:400;font-size:clamp(2.5rem,5.5vw,4.5rem);line-height:.9;letter-spacing:0;margin:0 0 8px;text-wrap:balance;font-variation-settings:'wght' 300}
 /* Name pronunciation popover (yuvich pattern, Henry mono) */
