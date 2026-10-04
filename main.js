@@ -371,8 +371,9 @@ function tickAvail(){
   const verdictDot = verdict?.querySelector(".dot");
   if(verdict && vt && verdictDot){
     if(sameTz){
-      verdict.classList.remove("off");
       vt.textContent = "Same timezone - talk anytime 10-19 IST";
+      // Match badge behavior: .off class based on isOnline (IST working hours)
+      verdict.classList.toggle("off", !isOnline);
     }else{
       verdict.classList.toggle("off", !overlap);
       vt.textContent = overlap ? "Overlap now - good time to talk" : "Outside shared hours - replies within a day";
