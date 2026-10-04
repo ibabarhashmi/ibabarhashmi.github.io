@@ -79,9 +79,70 @@ document.querySelectorAll(".tile").forEach(markTile);
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
   img.style.setProperty("--hi","0");
   const h1 = el("h1",{id:"h-name"});
-  const nameWrap = el("span",{style:"display:inline-flex;align-items:flex-end;gap:0"});
-  nameWrap.textContent = SITE.name || "Babar Hashmi";
-  nameWrap.insertAdjacentHTML("beforeend",'<svg class="name-squiggle" aria-hidden="true" height="7" viewBox="0 0 120 7" preserveAspectRatio="none"><path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1"/></svg>');
+  const fullName = SITE.name || "Babar Hashmi";
+  const nameWrap = document.createElement("span");
+  nameWrap.style.cssText = "position:relative;display:inline;white-space:nowrap";
+  nameWrap.textContent = fullName;
+
+  const squiggle = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  squiggle.setAttribute("class","name-squiggle");
+  squiggle.setAttribute("aria-hidden","true");
+  squiggle.setAttribute("height","7");
+  squiggle.setAttribute("viewBox","0 0 120 7");
+  squiggle.setAttribute("preserveAspectRatio","none");
+  squiggle.style.cssText = "position:absolute;left:0;bottom:-2px;width:100%;height:7px;pointer-events:none";
+  squiggle.innerHTML = '<path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="0" opacity=".55">';
+  nameWrap.appendChild(squiggle);
+
+  h1.appendChild(nameWrap);
+
+  // ResizeObserver: detect wrap by checking if height > line-height
+  if("ResizeObserver" in window){
+    const ro = new ResizeObserver(function(){
+      const lineHeight = parseFloat(getComputedStyle(nameWrap).lineHeight) || 30;
+      const wrapped = nameWrap.offsetHeight > lineHeight * 1.2;
+      
+      if(wrapped && !nameWrap.dataset.wrapped){
+        nameWrap.dataset.wrapped = "1";
+        nameWrap.style.whiteSpace = "normal";
+        const text = nameWrap.firstChild.textContent.trim();
+        const parts = text.split(" ");
+        const lastName = parts.pop();
+        nameWrap.firstChild.textContent = parts.join(" ") + " ";
+        const lastSpan = document.createElement("span");
+        lastSpan.style.cssText = "position:relative;white-space:nowrap";
+        lastSpan.textContent = lastName;
+        const squiggle = nameWrap.querySelector(".name-squiggle");
+        if(squiggle) squiggle.remove();
+        lastSpan.appendChild(squiggle);
+        nameWrap.appendChild(lastSpan);
+      }else if(!wrapped && nameWrap.dataset.wrapped){
+        nameWrap.dataset.wrapped = "";
+        nameWrap.style.whiteSpace = "nowrap";
+        const lastSpan = nameWrap.querySelector("span:last-child");
+        const squiggle = lastSpan?.querySelector(".name-squiggle");
+        if(lastSpan && squiggle){
+          squiggle.remove();
+          nameWrap.style.whiteSpace = "nowrap";
+          nameWrap.textContent = SITE.name || "Babar Hashmi";
+          const newSquiggle = nameWrap.querySelector(".name-squiggle");
+          if(!newSquiggle){
+            const squiggle = document.createElementNS("http://www.w3.org/2000/svg","svg");
+            squiggle.setAttribute("class","name-squiggle");
+            squiggle.setAttribute("aria-hidden","true");
+            squiggle.setAttribute("height","7");
+            squiggle.setAttribute("viewBox","0 0 120 7");
+            squiggle.setAttribute("preserveAspectRatio","none");
+            squiggle.style.cssText = "position:absolute;left:0;bottom:-2px;width:100%;height:7px;pointer-events:none";
+            squiggle.innerHTML = '<path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="0" opacity=".55">';
+            nameWrap.appendChild(squiggle);
+          }
+        }
+      }
+    });
+    ro.observe(nameWrap);
+  }
+
   h1.appendChild(nameWrap);
   const title = el("p",{class:"title",text:SITE.title||""});
   const meta = el("div",{class:"meta-row"});
