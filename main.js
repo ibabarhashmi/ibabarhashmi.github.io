@@ -75,11 +75,9 @@ document.querySelectorAll(".tile").forEach(markTile);
   if(!root) return;
   const wrap = el("div",{class:"profile profile-statement"});
   const main = el("div",{class:"profile-main"});
-  const avatarGlass = el("div",{class:"avatar-glass"});
   const img = el("img",{class:"avatar hero-el",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"168",height:"168",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
   img.style.setProperty("--hi","0");
-  avatarGlass.appendChild(img);
   const h1 = el("h1",{id:"h-name"});
   const fullName = SITE.name || "Babar Hashmi";
   const nameWrap = document.createElement("span");
@@ -203,7 +201,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   main.append(h1,title,meta,badge,bio,actions);
   wrap.append(main);
   const grid = el("div",{class:"hero-grid"});
-  grid.append(avatarGlass,wrap);
+  grid.append(img,wrap);
   grid.appendChild(buildAvailPanel());
   root.appendChild(grid);
 })();
@@ -225,24 +223,6 @@ document.querySelectorAll(".tile").forEach(markTile);
   let mx = -100, my = -100, rx = -100, ry = -100;
   let raf = 0, overInteractive = false;
 
-  // Glass tracking
-  const avatarGlass = document.querySelector(".avatar-glass");
-
-  function updateGlare(){
-    if(!avatarGlass) return;
-    const rect = avatarGlass.getBoundingClientRect();
-    // Only update glare when mouse is over the avatar glass
-    if(mx >= rect.left && mx <= rect.right && my >= rect.top && my <= rect.bottom){
-      const gx = ((mx - rect.left) / rect.width * 100).toFixed(1);
-      const gy = ((my - rect.top) / rect.height * 100).toFixed(1);
-      avatarGlass.style.setProperty("--glare-x", gx + "%");
-      avatarGlass.style.setProperty("--glare-y", gy + "%");
-      avatarGlass.style.setProperty("--glare-opacity", "1");
-    }else{
-      avatarGlass.style.setProperty("--glare-opacity", "0");
-    }
-  }
-
   function step(t){
     const dt = Math.min(0.032, (t - (step.last || t)) / 1000);
     step.last = t;
@@ -252,26 +232,19 @@ document.querySelectorAll(".tile").forEach(markTile);
     ring.style.transform = "translate(" + rx + "px, " + ry + "px)";
     dot.style.transform = "translate(" + rx + "px, " + ry + "px)";
     
-    // Update glass glare position using actual mouse position
-    updateGlare();
-    
     if(Math.abs(mx - rx) > 1 || Math.abs(my - ry) > 1) raf = requestAnimationFrame(step);
   }
 
   document.addEventListener("pointermove", function(e){
     mx = e.clientX; my = e.clientY;
-    const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea, .avatar-dock, #tile-profile, .avatar-glass");
+    const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea, .avatar-dock, #tile-profile");
     overInteractive = !!target;
     cursor.classList.toggle("over-interactive", overInteractive);
-    updateGlare();
     if(!raf) raf = requestAnimationFrame(step);
   });
 
   document.addEventListener("pointerleave", function(){
     mx = my = -9999;
-    if(avatarGlass){
-      avatarGlass.style.setProperty("--glare-opacity", "0");
-    }
   });
 })();
 
