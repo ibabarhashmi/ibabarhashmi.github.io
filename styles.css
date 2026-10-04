@@ -66,8 +66,8 @@ a:hover{text-decoration-thickness:2px}
   padding:6px 0;
 }
 @keyframes marquee{
-  from{transform:translateX(-50%);}
-  to{transform:translateX(0);}
+  from{transform:translateX(0);}
+  to{transform:translateX(-50%);}
 }
 .topbar-actions{display:flex;align-items:center;gap:8px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;height:44px;padding:0 16px;border-radius:12px;font-size:14px;font-weight:700;border:1px solid var(--ink);cursor:pointer;white-space:nowrap;position:relative;transition:background 200ms,color 200ms;text-decoration:none}
