@@ -829,6 +829,9 @@ function copyEmail(){
 
   function open(){ palette.showModal(); input.value = ""; input.focus(); render([]); }
   function close(){ palette.close(); }
+  // Footer palette trigger
+  const footerTrigger = document.getElementById("footer-palette-trigger");
+  if(footerTrigger) footerTrigger.addEventListener("click", open);
   function render(matches){
     results.innerHTML = matches.map(function(m, i){
       return "<li role=\"option\" data-url=\"" + m.url + "\" " + (i===0?"aria-selected=\"true\"":"") + ">" + m.label + "<span class=\"palette-meta\">" + m.keys.join(" \u00b7 ") + "</span></li>";
