@@ -275,6 +275,24 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
   .magnetic-cursor{display:none !important;}
 }
 
+/* ---------- Command palette ---------- */
+.palette{
+  position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);
+  width:min(90vw, 600px);max-height:70vh;
+  background:var(--paper);border:1px solid var(--ink);border-radius:16px;
+  padding:20px;z-index:100;
+}
+.palette::backdrop{background:rgba(42,39,34,0.5);}
+.palette:not([open]){display:none;}
+#palette-search{width:100%;font:inherit;font-size:18px;padding:12px 16px;
+  border:1px solid var(--ink);border-radius:12px;background:var(--paper);color:var(--ink);}
+#palette-search:focus{outline:2px solid var(--ink);outline-offset:2px;}
+#palette-results{list-style:none;padding:0;margin:12px 0 0;overflow-y:auto;max-height:50vh;}
+#palette-results li{padding:10px 12px;border-radius:8px;cursor:pointer;font-size:15px;}
+#palette-results li:hover, #palette-results li[aria-selected]{background:var(--ink);color:var(--paper);}
+#palette-results li .palette-meta{font-size:12px;color:var(--text-3);margin-top:2px;}
+.palette-hint{font-size:11px;color:var(--text-3);margin-left:8px;font-family:var(--font-mono);}
+
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 14px;font-size:14px;z-index:50}
 .toast[hidden]{display:none}
 .repo-desc,.chip,.bio{overflow-wrap:anywhere}

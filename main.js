@@ -760,6 +760,74 @@ function copyEmail(){
   }
 })();
 
+/* ---------- Command palette (⌘K / Ctrl+K) ---------- */
+(function(){
+  const palette = document.getElementById("palette");
+  const input = document.getElementById("palette-search");
+  const results = document.getElementById("palette-results");
+  if(!palette || !input || !results) return;
+
+  const sections = [
+    {id:"profile", label:"Profile", url:"#tile-profile", keys:["profile","bio","availability"]},
+    {id:"now", label:"Now", url:"#tile-now", keys:["now","current"]},
+    {id:"impact", label:"Impact", url:"#tile-impact", keys:["impact","stats","metrics"]},
+    {id:"github", label:"GitHub", url:"#tile-github", keys:["github","code","repos"]},
+    {id:"experience", label:"Experience", url:"#tile-exp", keys:["experience","work","jobs"]},
+    {id:"projects", label:"Projects", url:"#work-heading", keys:["projects","work","portfolio"]},
+    {id:"stack", label:"Stack", url:"#tile-stack", keys:["stack","tech","skills"]},
+    {id:"certs", label:"Certifications", url:"#tile-certs", keys:["certs","certifications"]},
+    {id:"domains", label:"Domains", url:"#tile-domains", keys:["domains","expertise"]},
+    {id:"contact", label:"Contact", url:"#tile-contact", keys:["contact","email","hire"]}
+  ];
+
+  function open(){ palette.showModal(); input.value = ""; input.focus(); render([]); }
+  function close(){ palette.close(); }
+  function render(matches){
+    results.innerHTML = matches.map(function(m, i){
+      return "<li role=\"option\" data-url=\"" + m.url + "\" " + (i===0?"aria-selected=\"true\"":"") + ">" + m.label + "<span class=\"palette-meta\">" + m.keys.join(" \u00b7 ") + "</span></li>";
+    }).join("");
+  }
+
+  input.addEventListener("input", function(){
+    const q = input.value.toLowerCase();
+    const matches = sections.filter(function(s){
+      return s.label.toLowerCase().includes(q) || s.keys.some(function(k){ return k.includes(q); });
+    });
+    render(matches);
+  });
+
+  results.addEventListener("click", function(e){
+    const li = e.target.closest("li");
+    if(li){ window.location.hash = li.dataset.url; close(); }
+  });
+
+  document.addEventListener("keydown", function(e){
+    if((e.metaKey || e.ctrlKey) && e.key === "k"){ e.preventDefault(); open(); }
+    if(e.key === "Escape") close();
+    if(e.key === "Enter" && palette.open){
+      const sel = results.querySelector("[aria-selected=\"true\"]");
+      if(sel){ window.location.hash = sel.dataset.url; close(); }
+    }
+    if(e.key === "ArrowDown" && palette.open){
+      e.preventDefault();
+      const sel = results.querySelector("[aria-selected=\"true\"]");
+      const next = sel ? sel.nextElementSibling : results.firstElementChild;
+      if(next){ results.querySelectorAll("li").forEach(function(l){ l.removeAttribute("aria-selected"); }); next.setAttribute("aria-selected", "true"); }
+    }
+    if(e.key === "ArrowUp" && palette.open){
+      e.preventDefault();
+      const sel = results.querySelector("[aria-selected=\"true\"]");
+      const prev = sel ? sel.previousElementSibling : results.lastElementChild;
+      if(prev){ results.querySelectorAll("li").forEach(function(l){ l.removeAttribute("aria-selected"); }); prev.setAttribute("aria-selected", "true"); }
+    }
+  });
+
+  const hint = document.createElement("span");
+  hint.className = "palette-hint";
+  hint.textContent = navigator.platform.includes("Mac") ? "\u2318K" : "Ctrl+K";
+  document.querySelector(".footer-meta")?.append(hint);
+})();
+
 /* ---------- Footer magnetic letters (giant name skew on hover) ---------- */
 (function(){
   const letters = document.querySelectorAll(".footer-letter");
