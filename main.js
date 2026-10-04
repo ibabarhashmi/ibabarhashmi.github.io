@@ -84,63 +84,52 @@ document.querySelectorAll(".tile").forEach(markTile);
   nameWrap.style.cssText = "position:relative;display:inline;white-space:nowrap";
   nameWrap.textContent = fullName;
 
-  const squiggle = document.createElementNS("http://www.w3.org/2000/svg","svg");
-  squiggle.setAttribute("class","name-squiggle");
-  squiggle.setAttribute("aria-hidden","true");
-  squiggle.setAttribute("height","7");
-  squiggle.setAttribute("viewBox","0 0 120 7");
-  squiggle.setAttribute("preserveAspectRatio","none");
-  squiggle.style.cssText = "position:absolute;left:0;bottom:-2px;width:100%;height:7px;pointer-events:none";
-  squiggle.innerHTML = '<path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="0" opacity=".55">';
-  nameWrap.appendChild(squiggle);
-
-  h1.appendChild(nameWrap);
-
-  // ResizeObserver: detect wrap by checking if height > line-height
-  if("ResizeObserver" in window){
-    const ro = new ResizeObserver(function(){
-      const lineHeight = parseFloat(getComputedStyle(nameWrap).lineHeight) || 30;
-      const wrapped = nameWrap.offsetHeight > lineHeight * 1.2;
-      
-      if(wrapped && !nameWrap.dataset.wrapped){
-        nameWrap.dataset.wrapped = "1";
-        nameWrap.style.whiteSpace = "normal";
-        const text = nameWrap.firstChild.textContent.trim();
-        const parts = text.split(" ");
-        const lastName = parts.pop();
-        nameWrap.firstChild.textContent = parts.join(" ") + " ";
-        const lastSpan = document.createElement("span");
-        lastSpan.style.cssText = "position:relative;white-space:nowrap";
-        lastSpan.textContent = lastName;
-        const squiggle = nameWrap.querySelector(".name-squiggle");
-        if(squiggle) squiggle.remove();
-        lastSpan.appendChild(squiggle);
-        nameWrap.appendChild(lastSpan);
-      }else if(!wrapped && nameWrap.dataset.wrapped){
-        nameWrap.dataset.wrapped = "";
-        nameWrap.style.whiteSpace = "nowrap";
-        const lastSpan = nameWrap.querySelector("span:last-child");
-        const squiggle = lastSpan?.querySelector(".name-squiggle");
-        if(lastSpan && squiggle){
-          squiggle.remove();
-          nameWrap.style.whiteSpace = "nowrap";
-          nameWrap.textContent = SITE.name || "Babar Hashmi";
-          const newSquiggle = nameWrap.querySelector(".name-squiggle");
-          if(!newSquiggle){
-            const squiggle = document.createElementNS("http://www.w3.org/2000/svg","svg");
-            squiggle.setAttribute("class","name-squiggle");
-            squiggle.setAttribute("aria-hidden","true");
-            squiggle.setAttribute("height","7");
-            squiggle.setAttribute("viewBox","0 0 120 7");
-            squiggle.setAttribute("preserveAspectRatio","none");
-            squiggle.style.cssText = "position:absolute;left:0;bottom:-2px;width:100%;height:7px;pointer-events:none";
-            squiggle.innerHTML = '<path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="0" opacity=".55">';
-            nameWrap.appendChild(squiggle);
-          }
-        }
-      }
+  // Magnetic letter interaction (desktop only, respects reduced motion)
+  if("ResizeObserver" in window && window.matchMedia("(pointer: fine)").matches && MOTION_OK){
+    const letters = nameWrap.textContent.split("");
+    nameWrap.innerHTML = "";
+    letters.forEach((char, i) => {
+      const span = document.createElement("span");
+      span.style.cssText = "display:inline-block;position:relative;will-change:transform";
+      span.textContent = char === " " ? "\u00A0" : char;
+      span.dataset.index = i;
+      nameWrap.appendChild(span);
     });
-    ro.observe(nameWrap);
+    
+    // Magnetic spring interaction
+    const lettersEl = nameWrap.querySelectorAll("span");
+    const spring = {stiffness: 180, damping: 22, mass: 0.5};
+    const n = letters.length;
+    let mx = 0, my = 0;
+    const rx = new Array(n).fill(0), ry = new Array(n).fill(0);
+    const vx = new Array(n).fill(0), vy = new Array(n).fill(0);
+    
+    function animateLetters(){
+      lettersEl.forEach((span, i) => {
+        const rect = span.getBoundingClientRect();
+        const cx = rect.left + rect.width/2;
+        const cy = rect.top + rect.height/2;
+        const dx = mx - cx, dy = my - cy;
+        const dist = Math.hypot(dx, dy);
+        const maxDist = 100;
+        const force = Math.max(0, 1 - dist/maxDist);
+        const targetY = force * -14;
+        const targetX = (mx - (span.getBoundingClientRect().left + rect.width/2)) * force * 0.25;
+        
+        // Spring physics
+        vy[i] += (180 * (targetY - ry[i]) - 22 * vy[i]) * 0.016 / 0.5;
+        vx[i] += (180 * (targetX - rx[i]) - 22 * vx[i]) * 0.016 / 0.5;
+        ry[i] += vy[i] * 0.016;
+        rx[i] += vx[i] * 0.016;
+        
+        const skew = (mx - (span.getBoundingClientRect().left + rect.width/2)) * 0.015 * (1 - Math.min(1, Math.hypot(mx - (rect.left+rect.width/2), my - (rect.top+rect.height/2))/100));
+        span.style.transform = `translate(${rx[i]}px, ${ry[i]}px) skewX(${skew}deg)`;
+      });
+      requestAnimationFrame(animateLetters);
+    }
+    
+    document.addEventListener("pointermove", e => { mx = e.clientX; my = e.clientY; });
+    animateLetters();
   }
 
   h1.appendChild(nameWrap);
@@ -150,7 +139,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   meta.appendChild(document.createTextNode((SITE.location||"") + ", " + (SITE.relocation||"")));
   meta.appendChild(document.createTextNode(" - "));
   meta.appendChild(el("time",{class:"meta-ist",datetime:"",text:""}));
-  const badge = el("div",{class:"badge",id:"avail-badge"});
+  const badge = el("div",{class:"badge avail-badge",id:"avail-badge"});
   const dot = el("span",{class:"dot","aria-hidden":"true"});
   badge.appendChild(dot);
   badge.appendChild(document.createTextNode(SITE.availability||"Available remote - globally"));
