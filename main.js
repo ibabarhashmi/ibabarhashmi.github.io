@@ -176,13 +176,13 @@ document.querySelectorAll(".tile").forEach(markTile);
   const title = el("p",{class:"title",text:SITE.title||""});
   const meta = el("div",{class:"meta-row"});
   meta.insertAdjacentHTML("afterbegin", ICONS.pin);
-  meta.appendChild(document.createTextNode((SITE.location||"") + ", " + (SITE.relocation||"")));
-  meta.appendChild(document.createTextNode(" - "));
-  meta.appendChild(el("time",{class:"meta-ist",datetime:"",text:""}));
+  meta.appendChild(document.createTextNode((SITE.location||"") + " | " + (SITE.relocation||"")));
   const badge = el("div",{class:"badge avail-badge",id:"avail-badge"});
   const dot = el("span",{class:"dot","aria-hidden":"true"});
   badge.appendChild(dot);
   badge.appendChild(document.createTextNode(SITE.availability||"Available remote - globally"));
+  // Store reference for blinking
+  window.availBadgeDot = dot;
   const bio = el("p",{class:"bio",text:SITE.bio||""});
   const actions = el("div",{class:"actions"});
   const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn-primary";
@@ -379,7 +379,10 @@ function tickAvail(){
   if(badge){
     const inside = isOnline;
     badge.classList.toggle("off", !inside);
-    if(badgeDot) badgeDot.title = isOnline ? "Online" : "Offline";
+    if(badgeDot) {
+      badgeDot.title = isOnline ? "Online" : "Offline";
+      badgeDot.style.animation = inside ? "blink 2s steps(2,start) infinite" : "none";
+    }
   }
   const footTime = document.getElementById("foot-time");
   if(footTime){
