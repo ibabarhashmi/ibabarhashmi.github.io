@@ -744,7 +744,6 @@ function copyEmail(){
     footer.classList.add("is-revealed");
   }
 })();
-})();
 
 /* ---------- Entrance ---------- */
 (function(){
@@ -761,25 +760,37 @@ function copyEmail(){
   }
 })();
 
-/* ---------- Footer morph reveal (scroll-linked destination) ---------- */
+/* ---------- Footer magnetic letters (giant name skew on hover) ---------- */
 (function(){
-  const footer = document.querySelector(".footer-morph");
-  if(!footer) return;
-  if("IntersectionObserver" in window){
-    const trigger = document.getElementById("tile-contact");
-    if(trigger){
-      const io = new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if(e.isIntersecting){
-            footer.classList.add("is-revealed");
-            io.unobserve(trigger);
-          }
-        });
-      }, {rootMargin: "0px 0px -20% 0px", threshold: 0});
-      io.observe(trigger);
-    }
-  }else{
-    footer.classList.add("is-revealed");
+  const letters = document.querySelectorAll(".footer-letter");
+  if(!letters.length) return;
+  if(window.matchMedia("(pointer: coarse)").matches) return;
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  let mx = -9999, my = -9999;
+  document.addEventListener("pointermove", function(e){
+    mx = e.clientX; my = e.clientY;
+  });
+
+  function animate(){
+    letters.forEach(function(letter){
+      const rect = letter.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = mx - cx, dy = my - cy;
+      const dist = Math.hypot(dx, dy);
+      const maxDist = rect.width * 1.7;
+      const proximity = Math.max(0, 1 - dist / maxDist);
+      const eased = 1 - Math.pow(1 - proximity, 4);
+      const lift = eased * -12;
+      const skew = eased * -6;
+      letter.style.transform = "translateY(" + lift + "px) skewX(" + skew + "deg)";
+    });
+    requestAnimationFrame(animate);
   }
+  animate();
+})();
+
+/* ---------- Entrance ---------- */
 })();
 })();
