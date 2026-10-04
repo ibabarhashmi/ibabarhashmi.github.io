@@ -260,29 +260,6 @@ a.tile:hover,.tile-linked:hover{text-decoration:none}
   color:var(--ink);
   margin-bottom:16px;
 }
-.footer-letter{display:inline-block;will-change:transform;}
-.footer-letter[data-char=" "]{width:0.3em;}
-
-.footer-meta{
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-  font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);
-  text-align:center;
-}
-@media(min-width:640px){
-  .footer-meta{flex-direction:row;justify-content:center;gap:24px;}
-}
-
-.footer-actions{
-  display:flex;align-items:center;justify-content:center;gap:16px;
-  margin-top:16px;padding-top:16px;border-top:1px solid var(--hairline);
-}
-.palette-hint{font-size:11px;color:var(--text-3);font-family:var(--font-mono);}
-.footer-social{display:flex;gap:8px;}
-.footer-social .icon-link{width:36px;height:36px;}
-@media(max-width:639px){
-  .footer-actions{flex-direction:column;gap:12px;}
-}
-
 /* ---------- Magnetic cursor ---------- */
 .magnetic-cursor{
   position:fixed;top:0;left:0;z-index:100;

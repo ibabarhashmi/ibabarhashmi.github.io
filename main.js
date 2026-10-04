@@ -75,37 +75,12 @@ document.querySelectorAll(".tile").forEach(markTile);
   if(!root) return;
   const wrap = el("div",{class:"profile profile-statement"});
   const main = el("div",{class:"profile-main"});
-  const img = el("img",{class:"avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"168",height:"168",fetchpriority:"high",decoding:"async"});
+  const img = el("img",{class:"avatar hero-el",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"168",height:"168",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
-  const dock = el("div",{class:"avatar-dock hero-el"});
-  dock.style.setProperty("--hi","0");
-  dock.appendChild(img);
+  img.style.setProperty("--hi","0");
   const h1 = el("h1",{id:"h-name"});
-  const nameBtn = el("button",{class:"name-btn",type:"button",text:SITE.name||"Babar Hashmi"});
-  nameBtn.setAttribute("aria-expanded","false");
-  nameBtn.setAttribute("aria-controls","name-def");
-  h1.appendChild(nameBtn);
+  h1.textContent = SITE.name || "Babar Hashmi";
   h1.insertAdjacentHTML("beforeend",'<svg class="name-squiggle" aria-hidden="true" height="7" viewBox="0 0 120 7" preserveAspectRatio="none"><path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1"/></svg>');
-  const ndef = el("span",{class:"name-def",id:"name-def",role:"note"});
-  ndef.hidden = true;
-  ndef.appendChild(el("span",{class:"nd-head",text:"Babar Hashmi"}));
-  ndef.appendChild(el("span",{class:"nd-say",text:"/baabar haashmi/"}));
-  const ndUrdu = el("span",{class:"nd-dev",text:"بابر ہاشمی"});
-  ndUrdu.setAttribute("lang","ur");
-  ndef.appendChild(ndUrdu);
-  ndef.appendChild(el("span",{class:"nd-body",text:"Babar means tiger in Chagatai Turkic."}));
-  h1.appendChild(ndef);
-  nameBtn.addEventListener("click", function(){
-    const open = ndef.hidden;
-    ndef.hidden = !open;
-    nameBtn.setAttribute("aria-expanded", String(open));
-  });
-  document.addEventListener("click", function(e){
-    if(!ndef.hidden && !h1.contains(e.target)){ ndef.hidden = true; nameBtn.setAttribute("aria-expanded","false"); }
-  });
-  document.addEventListener("keydown", function(e){
-    if(e.key==="Escape" && !ndef.hidden){ ndef.hidden = true; nameBtn.setAttribute("aria-expanded","false"); nameBtn.focus(); }
-  });
   const title = el("p",{class:"title",text:SITE.title||""});
   const meta = el("div",{class:"meta-row"});
   meta.insertAdjacentHTML("afterbegin", ICONS.pin);
@@ -128,56 +103,9 @@ document.querySelectorAll(".tile").forEach(markTile);
   main.append(h1,title,meta,badge,bio,actions);
   wrap.append(main);
   const grid = el("div",{class:"hero-grid"});
-  grid.append(dock,wrap);
+  grid.append(img,wrap);
   grid.appendChild(buildAvailPanel());
   root.appendChild(grid);
-})();
-
-/* ---------- Avatar spring drag (yuvich pattern, single toy, transform-only) ---------- */
-(function(){
-  const dock = document.querySelector ? document.querySelector(".avatar-dock") : null;
-  if(!dock || !dock.dataset || !dock.style || !dock.addEventListener || dock.dataset.dragInit) return;
-  dock.dataset.dragInit = "1";
-  const calm = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
-  const W = 2*Math.sqrt(60)*.62;
-  let sx=0, sy=0, vx=0, vy=0, raf=0, dragging=false, moved=false, lx=0, ly=0, lt=0, px=0, py=0;
-  function paint(x,y){ dock.style.setProperty("--dx",x+"px"); dock.style.setProperty("--dy",y+"px"); }
-  function cur(){ return [parseFloat(dock.style.getPropertyValue("--dx"))||0, parseFloat(dock.style.getPropertyValue("--dy"))||0]; }
-  function springHome(){
-    if(calm){ paint(0,0); return; }
-    let [x,y] = cur();
-    let last = performance.now();
-    cancelAnimationFrame(raf);
-    (function step(t){
-      const dt = Math.min(.032,(t-last)/1e3); last = t;
-      vx += (-60*x - W*vx)*dt; vy += (-60*y - W*vy)*dt;
-      x += vx*dt; y += vy*dt; paint(x,y);
-      if(Math.hypot(x,y)>.3 || Math.hypot(vx,vy)>2) raf = requestAnimationFrame(step);
-      else paint(0,0);
-    })(last);
-  }
-  dock.addEventListener("pointerdown", function(e){
-    if(e.pointerType==="mouse" && e.button!==0) return;
-    cancelAnimationFrame(raf);
-    dragging = true; moved = false;
-    sx = lx = px = e.clientX; sy = ly = py = e.clientY; lt = performance.now();
-    vx = vy = 0;
-    try{ dock.setPointerCapture(e.pointerId); }catch(err){}
-    dock.classList.add("dragging");
-  });
-  dock.addEventListener("pointermove", function(e){
-    if(!dragging) return;
-    let nx = e.clientX - sx, ny = e.clientY - sy;
-    nx = Math.max(-80, Math.min(80, nx)); ny = Math.max(-60, Math.min(60, ny));
-    if(Math.abs(e.clientX-sx)>4 || Math.abs(e.clientY-sy)>4) moved = true;
-    const now = performance.now(), dt = Math.max(.001,(now-lt)/1e3);
-    vx = vx*.6 + ((e.clientX-px)/dt)*.4; vy = vy*.6 + ((e.clientY-py)/dt)*.4;
-    px = e.clientX; py = e.clientY; lt = now;
-    paint(nx,ny);
-  });
-  function up(){ if(!dragging) return; dragging = false; dock.classList.remove("dragging"); vx = Math.max(-2500,Math.min(2500,vx)); vy = Math.max(-2500,Math.min(2500,vy)); springHome(); }
-  dock.addEventListener("pointerup", up);
-  dock.addEventListener("pointercancel", up);
 })();
 
 /* ---------- Magnetic cursor (desktop, reduced-motion aware) ---------- */
@@ -827,33 +755,7 @@ function copyEmail(){
     }
   });
 
-  const hint = document.createElement("span");
-  hint.className = "palette-hint";
-  hint.textContent = navigator.platform.includes("Mac") ? "\u2318K" : "Ctrl+K";
-  document.querySelector(".footer-actions")?.prepend(hint);
-
-  const social = document.querySelector(".footer-social");
-  if(social){
-    function brandSvgLink(href,label,svg){
-      const a = el("a",{href:href,target:"_blank",rel:"noopener noreferrer"});
-      a.className="icon-link";
-      a.setAttribute("aria-label",label);
-      a.setAttribute("title",label);
-      a.insertAdjacentHTML("afterbegin",svg);
-      return a;
-    }
-    if(SITE.links.linkedin) social.appendChild(brandSvgLink(SITE.links.linkedin,"LinkedIn profile",ICONS.linkedin));
-    if(SITE.links.github) social.appendChild(brandSvgLink(SITE.links.github,"GitHub profile",ICONS.github));
-    if(SITE.links.telegram) social.appendChild(brandSvgLink(SITE.links.telegram,"Telegram chat",ICONS.telegram));
-    if(SITE.links.x) social.appendChild(brandSvgLink(SITE.links.x,"X profile",ICONS.ext));
-    const mailBtn = el("button",{class:"icon-link",type:"button"});
-    mailBtn.setAttribute("aria-label","Copy email address to clipboard");
-    mailBtn.setAttribute("title","Copy email address");
-    mailBtn.insertAdjacentHTML("afterbegin",ICONS.mail);
-    mailBtn.addEventListener("click", copyEmail);
-    social.appendChild(mailBtn);
-  }
-})();
+  })();
 
 /* ---------- Entrance ---------- */
 })();
