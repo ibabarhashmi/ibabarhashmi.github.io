@@ -237,7 +237,7 @@ document.querySelectorAll(".tile").forEach(markTile);
 
   document.addEventListener("pointermove", function(e){
     mx = e.clientX; my = e.clientY;
-    const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea, .avatar-dock, #tile-profile");
+    const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea, #tile-profile");
     overInteractive = !!target;
     cursor.classList.toggle("over-interactive", overInteractive);
     if(!raf) raf = requestAnimationFrame(step);
