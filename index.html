@@ -27,11 +27,13 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&family=Antonio:wght@700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260930g">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&family=Antonio:wght@700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&family=Antonio:wght@700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&family=Antonio:wght@700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="styles.css?v=20261004a">
 <script>document.documentElement.classList.add("js");</script>
-<script src="data.js?v=20260930g" defer></script>
-<script src="main.js?v=20260930g" defer></script>
+<script src="data.js?v=20261004a" defer></script>
+<script src="main.js?v=20261004a" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -47,7 +49,7 @@
     </div>
   </div>
 </header>
-<div class="ticker" aria-hidden="true"><div class="container ticker-inner">AVAILABLE REMOTE - BANGALORE - REPLIES WITHIN A DAY - AVAILABLE REMOTE - BANGALORE - REPLIES WITHIN A DAY</div></div>
+<div class="ticker" aria-hidden="true"><div class="container ticker-inner">AVAILABLE REMOTE · BANGALORE · REPLIES WITHIN A DAY · AVAILABLE REMOTE · BANGALORE · REPLIES WITHIN A DAY · AVAILABLE REMOTE · BANGALORE · REPLIES WITHIN A DAY · AVAILABLE REMOTE · BANGALORE · REPLIES WITHIN A DAY ·</div></div>
 <main id="main" class="container">
   <div class="grid" id="grid">
     <section class="tile span-4" id="tile-profile" aria-labelledby="h-name"></section>
@@ -64,10 +66,17 @@
     <section class="tile span-4 tile-contact" id="tile-contact" aria-labelledby="h-contact"></section>
   </div>
 </main>
-<footer class="container footer">
-  <span id="foot-copy">© Babar Hashmi</span>
-  <span id="foot-updated">Last updated October 2026</span>
+<footer class="container footer footer-morph" role="contentinfo">
+  <span id="foot-copy">© 2026 Babar Hashmi</span>
+  <span class="footer-palette-hint" aria-hidden="true" id="footer-palette-trigger" role="button" tabindex="0" aria-label="Open command palette" title="Open command palette (⌘K)">⌘K</span>
 </footer>
+<dialog id="palette" class="palette">
+  <form method="dialog">
+    <label for="palette-search">Search</label>
+    <input type="search" id="palette-search" placeholder="Type to search..." autocomplete="off">
+    <ul id="palette-results" role="listbox"></ul>
+  </form>
+</dialog>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 <noscript><div class="container"><p><strong>Babar Hashmi</strong> - Founding AI Engineer (MTS) at QuillAI Network. 3 years of applied ML: LLM fine-tuning, agent systems, computer vision. Email <a href="mailto:ibabarhashmi@yahoo.com">ibabarhashmi@yahoo.com</a> - <a href="https://calendar.app.google/eeGsWhoaFQDMm84g9">Book a call</a> - <a href="https://www.linkedin.com/in/hashmi-babar/">LinkedIn</a></p></div></noscript>
 </body>

@@ -15,6 +15,27 @@ const PRESETS = [
   ["Australia/Sydney","Sydney"]
 ];
 const avail = { tz: getVisitorTz() };
+const MOTION_OK = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function getSpring(name){
+  const root = document.documentElement;
+  return {
+    stiffness: parseFloat(getComputedStyle(root).getPropertyValue("--spring-" + name + "-stiff")) || 0,
+    damping: parseFloat(getComputedStyle(root).getPropertyValue("--spring-" + name + "-damp")) || 0,
+    mass: parseFloat(getComputedStyle(root).getPropertyValue("--spring-" + name + "-mass")) || 0
+  };
+}
+function springTo(current, target, spring, onUpdate, onComplete){
+  let v = 0, last = performance.now();
+  function step(t){
+    const dt = Math.min(0.032, (t - last) / 1000); last = t;
+    v += (spring.stiffness * (target - current) - spring.damping * v) * dt / spring.mass;
+    current += v * dt;
+    onUpdate(current);
+    if(Math.abs(v) > 0.5 || Math.abs(target - current) > 0.1) requestAnimationFrame(step);
+    else { onUpdate(target); onComplete?.(); }
+  }
+  requestAnimationFrame(step);
+}
 function el(tag, attrs, children){
   const n = document.createElement(tag);
   if(attrs) for(const k in attrs){
@@ -54,47 +75,120 @@ document.querySelectorAll(".tile").forEach(markTile);
   if(!root) return;
   const wrap = el("div",{class:"profile profile-statement"});
   const main = el("div",{class:"profile-main"});
-  const img = el("img",{class:"avatar",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"168",height:"168",fetchpriority:"high",decoding:"async"});
+  const img = el("img",{class:"avatar hero-el",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"168",height:"168",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
-  const dock = el("div",{class:"avatar-dock hero-el"});
-  dock.style.setProperty("--hi","0");
-  dock.appendChild(img);
+  img.style.setProperty("--hi","0");
   const h1 = el("h1",{id:"h-name"});
-  const nameBtn = el("button",{class:"name-btn",type:"button",text:SITE.name||"Babar Hashmi"});
-  nameBtn.setAttribute("aria-expanded","false");
-  nameBtn.setAttribute("aria-controls","name-def");
-  h1.appendChild(nameBtn);
-  h1.insertAdjacentHTML("beforeend",'<svg class="name-squiggle" aria-hidden="true" height="7" viewBox="0 0 120 7" preserveAspectRatio="none"><path d="M2 5 Q 30 1 60 4 T 118 3" pathLength="1"/></svg>');
-  const ndef = el("span",{class:"name-def",id:"name-def",role:"note"});
-  ndef.hidden = true;
-  ndef.appendChild(el("span",{class:"nd-head",text:"Babar Hashmi"}));
-  ndef.appendChild(el("span",{class:"nd-say",text:"/baabar haashmi/"}));
-  const ndUrdu = el("span",{class:"nd-dev",text:"بابر ہاشمی"});
-  ndUrdu.setAttribute("lang","ur");
-  ndef.appendChild(ndUrdu);
-  ndef.appendChild(el("span",{class:"nd-body",text:"Babar means tiger in Chagatai Turkic."}));
-  h1.appendChild(ndef);
-  nameBtn.addEventListener("click", function(){
-    const open = ndef.hidden;
-    ndef.hidden = !open;
-    nameBtn.setAttribute("aria-expanded", String(open));
-  });
-  document.addEventListener("click", function(e){
-    if(!ndef.hidden && !h1.contains(e.target)){ ndef.hidden = true; nameBtn.setAttribute("aria-expanded","false"); }
-  });
-  document.addEventListener("keydown", function(e){
-    if(e.key==="Escape" && !ndef.hidden){ ndef.hidden = true; nameBtn.setAttribute("aria-expanded","false"); nameBtn.focus(); }
-  });
+  const fullName = SITE.name || "Babar Hashmi";
+  const nameWrap = document.createElement("span");
+  nameWrap.style.cssText = "position:relative;display:inline;white-space:nowrap";
+  nameWrap.textContent = fullName;
+
+  // Professional magnetic letter interaction using variable font weight (wght axis)
+  // Each character gets its own span with font-variation-settings for wght axis (300-600)
+  if("ResizeObserver" in window && window.matchMedia("(pointer: fine)").matches && MOTION_OK){
+    // Ensure variable font is loaded before measuring
+    document.fonts.ready.then(() => {
+      const letters = nameWrap.textContent.split("");
+      nameWrap.innerHTML = "";
+      const charElements = letters.map((char, i) => {
+        const span = document.createElement("span");
+        span.style.cssText = "display:inline-block;will-change:font-variation-settings";
+        span.textContent = char === " " ? "\u00A0" : char;
+        span.dataset.index = i;
+        // Initial rest weight
+        span.style.fontVariationSettings = "'wght' 300";
+        nameWrap.appendChild(span);
+        return span;
+      });
+      
+      // Variable font weight magnetic interaction
+      const charSpans = nameWrap.querySelectorAll("span");
+      const n = charSpans.length;
+      const charRects = new Array(n);
+      
+      // Cache character positions
+      function updateCharRects(){
+        charSpans.forEach((span, i) => {
+          const rect = span.getBoundingClientRect();
+          charRects[i] = {
+            cx: rect.left + rect.width/2,
+            cy: rect.top + rect.height/2,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height
+          };
+        });
+      }
+      
+      // Initial cache
+      updateCharRects();
+      
+      // Recalculate on resize
+      const ro = new ResizeObserver(() => updateCharRects());
+      ro.observe(nameWrap);
+      
+      let mx = 0, my = 0;
+      let raf = 0;
+      
+      // Smooth weight interpolation per character
+      const currentWeights = new Array(charSpans.length).fill(300);
+      const targetWeights = new Array(charSpans.length).fill(300);
+      
+      const RADIUS = 100; // px - subtle field
+      const REST_WEIGHT = 300;
+      const PEAK_WEIGHT = 600;
+      const MAX_DIST = 100;
+      
+      function animateWeights(){
+        charSpans.forEach((span, i) => {
+          const rect = charRects[i];
+          if(!rect) return;
+          
+          const cx = rect.cx;
+          const cy = rect.cy;
+          const dx = mx - cx;
+          const dy = my - cy;
+          const dist = Math.hypot(dx, dy);
+          const maxDist = 100;
+          const force = Math.max(0, 1 - Math.pow(dist / maxDist, 2)); // quadratic falloff
+          
+          // Target weight based on proximity
+          targetWeights[i] = 300 + (600 - 300) * force;
+          
+          // Smooth interpolation (ease-out)
+          currentWeights[i] += (targetWeights[i] - currentWeights[i]) * 0.15;
+          
+          // Apply font-variation-settings
+          span.style.fontVariationSettings = "'wght' " + Math.round(currentWeights[i]);
+        });
+        
+        raf = requestAnimationFrame(animateWeights);
+      }
+      
+      // Initial position cache
+      updateCharRects();
+      animateWeights();
+
+      // Track mouse position for magnetic interaction
+      document.addEventListener("pointermove", function(e){
+        mx = e.clientX;
+        my = e.clientY;
+      });
+    });
+  }
+
+  h1.appendChild(nameWrap);
   const title = el("p",{class:"title",text:SITE.title||""});
   const meta = el("div",{class:"meta-row"});
   meta.insertAdjacentHTML("afterbegin", ICONS.pin);
-  meta.appendChild(document.createTextNode((SITE.location||"") + ", " + (SITE.relocation||"")));
-  meta.appendChild(document.createTextNode(" - "));
-  meta.appendChild(el("time",{class:"meta-ist",datetime:"",text:""}));
-  const badge = el("div",{class:"badge",id:"avail-badge"});
+  meta.appendChild(document.createTextNode((SITE.location||"") + " | " + (SITE.relocation||"")));
+  const badge = el("div",{class:"badge avail-badge",id:"avail-badge"});
   const dot = el("span",{class:"dot","aria-hidden":"true"});
   badge.appendChild(dot);
   badge.appendChild(document.createTextNode(SITE.availability||"Available remote - globally"));
+  // Store reference for blinking
+  window.availBadgeDot = dot;
   const bio = el("p",{class:"bio",text:SITE.bio||""});
   const actions = el("div",{class:"actions"});
   const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn-primary";
@@ -107,56 +201,51 @@ document.querySelectorAll(".tile").forEach(markTile);
   main.append(h1,title,meta,badge,bio,actions);
   wrap.append(main);
   const grid = el("div",{class:"hero-grid"});
-  grid.append(dock,wrap);
+  grid.append(img,wrap);
   grid.appendChild(buildAvailPanel());
   root.appendChild(grid);
 })();
 
-/* ---------- Avatar spring drag (yuvich pattern, single toy, transform-only) ---------- */
+/* ---------- Magnetic cursor (desktop, reduced-motion aware) ---------- */
 (function(){
-  const dock = document.querySelector ? document.querySelector(".avatar-dock") : null;
-  if(!dock || !dock.dataset || !dock.style || !dock.addEventListener || dock.dataset.dragInit) return;
-  dock.dataset.dragInit = "1";
-  const calm = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
-  const W = 2*Math.sqrt(60)*.62;
-  let sx=0, sy=0, vx=0, vy=0, raf=0, dragging=false, moved=false, lx=0, ly=0, lt=0, px=0, py=0;
-  function paint(x,y){ dock.style.setProperty("--dx",x+"px"); dock.style.setProperty("--dy",y+"px"); }
-  function cur(){ return [parseFloat(dock.style.getPropertyValue("--dx"))||0, parseFloat(dock.style.getPropertyValue("--dy"))||0]; }
-  function springHome(){
-    if(calm){ paint(0,0); return; }
-    let [x,y] = cur();
-    let last = performance.now();
-    cancelAnimationFrame(raf);
-    (function step(t){
-      const dt = Math.min(.032,(t-last)/1e3); last = t;
-      vx += (-60*x - W*vx)*dt; vy += (-60*y - W*vy)*dt;
-      x += vx*dt; y += vy*dt; paint(x,y);
-      if(Math.hypot(x,y)>.3 || Math.hypot(vx,vy)>2) raf = requestAnimationFrame(step);
-      else paint(0,0);
-    })(last);
+  if(window.matchMedia("(pointer: coarse)").matches) return;
+  if(!MOTION_OK) return;
+
+  const cursor = document.createElement("div");
+  cursor.className = "magnetic-cursor";
+  cursor.innerHTML = '<div class="cursor-ring"></div><div class="cursor-dot"></div>';
+  document.body.appendChild(cursor);
+
+  const ring = cursor.querySelector(".cursor-ring");
+  const dot = cursor.querySelector(".cursor-dot");
+
+  const spring = getSpring("ui");
+  let mx = -100, my = -100, rx = -100, ry = -100;
+  let raf = 0, overInteractive = false;
+
+  function step(t){
+    const dt = Math.min(0.032, (t - (step.last || t)) / 1000);
+    step.last = t;
+    const vx = (spring.stiffness * (mx - rx) - spring.damping * 0) * dt / spring.mass;
+    const vy = (spring.stiffness * (my - ry) - spring.damping * 0) * dt / spring.mass;
+    rx += vx; ry += vy;
+    ring.style.transform = "translate(" + rx + "px, " + ry + "px)";
+    dot.style.transform = "translate(" + rx + "px, " + ry + "px)";
+    
+    if(Math.abs(mx - rx) > 1 || Math.abs(my - ry) > 1) raf = requestAnimationFrame(step);
   }
-  dock.addEventListener("pointerdown", function(e){
-    if(e.pointerType==="mouse" && e.button!==0) return;
-    cancelAnimationFrame(raf);
-    dragging = true; moved = false;
-    sx = lx = px = e.clientX; sy = ly = py = e.clientY; lt = performance.now();
-    vx = vy = 0;
-    try{ dock.setPointerCapture(e.pointerId); }catch(err){}
-    dock.classList.add("dragging");
+
+  document.addEventListener("pointermove", function(e){
+    mx = e.clientX; my = e.clientY;
+    const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea, #tile-profile");
+    overInteractive = !!target;
+    cursor.classList.toggle("over-interactive", overInteractive);
+    if(!raf) raf = requestAnimationFrame(step);
   });
-  dock.addEventListener("pointermove", function(e){
-    if(!dragging) return;
-    let nx = e.clientX - sx, ny = e.clientY - sy;
-    nx = Math.max(-80, Math.min(80, nx)); ny = Math.max(-60, Math.min(60, ny));
-    if(Math.abs(e.clientX-sx)>4 || Math.abs(e.clientY-sy)>4) moved = true;
-    const now = performance.now(), dt = Math.max(.001,(now-lt)/1e3);
-    vx = vx*.6 + ((e.clientX-px)/dt)*.4; vy = vy*.6 + ((e.clientY-py)/dt)*.4;
-    px = e.clientX; py = e.clientY; lt = now;
-    paint(nx,ny);
+
+  document.addEventListener("pointerleave", function(){
+    mx = my = -9999;
   });
-  function up(){ if(!dragging) return; dragging = false; dock.classList.remove("dragging"); vx = Math.max(-2500,Math.min(2500,vx)); vy = Math.max(-2500,Math.min(2500,vy)); springHome(); }
-  dock.addEventListener("pointerup", up);
-  dock.addEventListener("pointercancel", up);
 })();
 
 /* ---------- NOW ---------- */
@@ -271,24 +360,45 @@ function tickAvail(){
   try{ sameTz = tzFmt(IST_TZ).time.format(now) === tzFmt(avail.tz).time.format(now); }catch(e){}
   const vRow = document.querySelector(".hero-avail .avail-row:nth-child(2)");
   if(vRow) vRow.hidden = sameTz;
-  const overlap = istH>=10 && istH<19 && vH>=9 && vH<18;
+
+  const istDay = new Intl.DateTimeFormat("en",{timeZone:IST_TZ,weekday:"short"}).format(now);
+  const isWeekend = istDay === "Sat" || istDay === "Sun";
+  const isWorkingHours = istH >= 10 && istH < 19;
+  const isOnline = !isWeekend && isWorkingHours;
+
+  const overlap = isOnline && vH >= 9 && vH < 18;
   const verdict = document.querySelector(".hero-avail .avail-verdict");
   const vt = document.querySelector(".hero-avail .avail-verdict-text");
-  if(verdict && vt){
+  const verdictDot = verdict?.querySelector(".dot");
+  if(verdict && vt && verdictDot){
     if(sameTz){
-      verdict.classList.remove("off");
       vt.textContent = "Same timezone - talk anytime 10-19 IST";
+      // Match badge behavior: .off class based on isOnline (IST working hours)
+      verdict.classList.toggle("off", !isOnline);
     }else{
       verdict.classList.toggle("off", !overlap);
       vt.textContent = overlap ? "Overlap now - good time to talk" : "Outside shared hours - replies within a day";
     }
+    if(verdictDot) {
+      verdictDot.title = isOnline ? "Online" : "Offline";
+      verdictDot.style.animation = isOnline ? "blink 2s steps(2,start) infinite" : "none";
+    }
   }
   const wh = SITE.workingHoursIST || [10,19];
   const badge = document.getElementById("avail-badge");
+  const badgeDot = badge?.querySelector(".dot");
   if(badge){
-    const inside = istH>=wh[0] && istH<wh[1];
+    const inside = isOnline;
     badge.classList.toggle("off", !inside);
-    badge.title = inside ? "Within IST working hours" : "Outside IST working hours - async replies";
+    if(badgeDot) {
+      badgeDot.title = isOnline ? "Online" : "Offline";
+      badgeDot.style.animation = inside ? "blink 2s steps(2,start) infinite" : "none";
+    }
+  }
+  const footTime = document.getElementById("foot-time");
+  if(footTime){
+    const f = tzFmt(IST_TZ);
+    footTime.textContent = "Bangalore \u00b7 " + f.time.format(now) + " IST";
   }
 }
 tickAvail();
@@ -660,6 +770,27 @@ function copyEmail(){
     }, { threshold: .3 });
     io.observe(tile);
   })();
+
+/* ---------- Footer morph reveal (scroll-linked destination) ---------- */
+(function(){
+  const footer = document.querySelector(".footer-morph");
+  if(!footer) return;
+  if("IntersectionObserver" in window){
+    const trigger = document.getElementById("tile-contact");
+    if(trigger){
+      const io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){
+            footer.classList.add("is-revealed");
+            io.unobserve(trigger);
+          }
+        });
+      }, {rootMargin: "0px 0px -20% 0px", threshold: 0});
+      io.observe(trigger);
+    }
+  }else{
+    footer.classList.add("is-revealed");
+  }
 })();
 
 /* ---------- Entrance ---------- */
@@ -668,12 +799,82 @@ function copyEmail(){
   if("IntersectionObserver" in window){
     const io = new IntersectionObserver(function(entries){
       entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-    }, {threshold:.1});
+    }, {threshold:0});
     tiles.forEach(t=>io.observe(t));
     /* Safety: if IO never fires (hidden tab, headless), show content. */
     setTimeout(function(){ tiles.forEach(t=>t.classList.add("in")); }, 2500);
   }else{
     tiles.forEach(t=>t.classList.add("in"));
   }
+})();
+
+/* ---------- Command palette (⌘K / Ctrl+K) ---------- */
+(function(){
+  const palette = document.getElementById("palette");
+  const input = document.getElementById("palette-search");
+  const results = document.getElementById("palette-results");
+  if(!palette || !input || !results) return;
+
+  const sections = [
+    {id:"profile", label:"Profile", url:"#tile-profile", keys:["profile","bio","availability"]},
+    {id:"now", label:"Now", url:"#tile-now", keys:["now","current"]},
+    {id:"impact", label:"Impact", url:"#tile-impact", keys:["impact","stats","metrics"]},
+    {id:"github", label:"GitHub", url:"#tile-github", keys:["github","code","repos"]},
+    {id:"experience", label:"Experience", url:"#tile-exp", keys:["experience","work","jobs"]},
+    {id:"projects", label:"Projects", url:"#work-heading", keys:["projects","work","portfolio"]},
+    {id:"stack", label:"Stack", url:"#tile-stack", keys:["stack","tech","skills"]},
+    {id:"certs", label:"Certifications", url:"#tile-certs", keys:["certs","certifications"]},
+    {id:"domains", label:"Domains", url:"#tile-domains", keys:["domains","expertise"]},
+    {id:"contact", label:"Contact", url:"#tile-contact", keys:["contact","email","hire"]}
+  ];
+
+  function open(){ palette.showModal(); input.value = ""; input.focus(); render([]); }
+  function close(){ palette.close(); }
+  // Footer palette trigger
+  const footerTrigger = document.getElementById("footer-palette-trigger");
+  if(footerTrigger) footerTrigger.addEventListener("click", open);
+  function render(matches){
+    results.innerHTML = matches.map(function(m, i){
+      return "<li role=\"option\" data-url=\"" + m.url + "\" " + (i===0?"aria-selected=\"true\"":"") + ">" + m.label + "<span class=\"palette-meta\">" + m.keys.join(" \u00b7 ") + "</span></li>";
+    }).join("");
+  }
+
+  input.addEventListener("input", function(){
+    const q = input.value.toLowerCase();
+    const matches = sections.filter(function(s){
+      return s.label.toLowerCase().includes(q) || s.keys.some(function(k){ return k.includes(q); });
+    });
+    render(matches);
+  });
+
+  results.addEventListener("click", function(e){
+    const li = e.target.closest("li");
+    if(li){ window.location.hash = li.dataset.url; close(); }
+  });
+
+  document.addEventListener("keydown", function(e){
+    if((e.metaKey || e.ctrlKey) && e.key === "k"){ e.preventDefault(); open(); }
+    if(e.key === "Escape") close();
+    if(e.key === "Enter" && palette.open){
+      const sel = results.querySelector("[aria-selected=\"true\"]");
+      if(sel){ window.location.hash = sel.dataset.url; close(); }
+    }
+    if(e.key === "ArrowDown" && palette.open){
+      e.preventDefault();
+      const sel = results.querySelector("[aria-selected=\"true\"]");
+      const next = sel ? sel.nextElementSibling : results.firstElementChild;
+      if(next){ results.querySelectorAll("li").forEach(function(l){ l.removeAttribute("aria-selected"); }); next.setAttribute("aria-selected", "true"); }
+    }
+    if(e.key === "ArrowUp" && palette.open){
+      e.preventDefault();
+      const sel = results.querySelector("[aria-selected=\"true\"]");
+      const prev = sel ? sel.previousElementSibling : results.lastElementChild;
+      if(prev){ results.querySelectorAll("li").forEach(function(l){ l.removeAttribute("aria-selected"); }); prev.setAttribute("aria-selected", "true"); }
+    }
+  });
+
+  })();
+
+/* ---------- Entrance ---------- */
 })();
 })();
