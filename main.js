@@ -78,6 +78,19 @@ document.querySelectorAll(".tile").forEach(markTile);
   const img = el("img",{class:"avatar hero-el",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"168",height:"168",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
   img.style.setProperty("--hi","0");
+
+  /* Mobile tap: brief color flash (250ms) on coarse pointer */
+  if(window.matchMedia("(pointer: coarse)").matches && MOTION_OK){
+    let tapTimer = 0;
+    function flash(){
+      img.classList.add("tapped");
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(function(){ img.classList.remove("tapped"); }, 250);
+    }
+    img.addEventListener("touchstart", flash, {passive:true});
+    img.addEventListener("click", flash); /* fallback for touch+mouse */
+  }
+
   const h1 = el("h1",{id:"h-name"});
   const fullName = SITE.name || "Babar Hashmi";
   const nameWrap = document.createElement("span");
@@ -93,7 +106,7 @@ document.querySelectorAll(".tile").forEach(markTile);
       nameWrap.innerHTML = "";
       const charElements = letters.map((char, i) => {
         const span = document.createElement("span");
-        span.style.cssText = "display:inline-block;will-change:font-variation-settings";
+        span.style.cssText = "display:inline-block";
         span.textContent = char === " " ? "\u00A0" : char;
         span.dataset.index = i;
         // Initial rest weight
@@ -130,17 +143,18 @@ document.querySelectorAll(".tile").forEach(markTile);
       
       let mx = 0, my = 0;
       let raf = 0;
+      let nearName = false;
+      const INTERACTION_RADIUS = 120; // px - only animate when mouse near name
       
       // Smooth weight interpolation per character
       const currentWeights = new Array(charSpans.length).fill(300);
       const targetWeights = new Array(charSpans.length).fill(300);
       
-      const RADIUS = 100; // px - subtle field
       const REST_WEIGHT = 300;
       const PEAK_WEIGHT = 600;
-      const MAX_DIST = 100;
       
       function animateWeights(){
+        let anyActive = false;
         charSpans.forEach((span, i) => {
           const rect = charRects[i];
           if(!rect) return;
@@ -159,21 +173,48 @@ document.querySelectorAll(".tile").forEach(markTile);
           // Smooth interpolation (ease-out)
           currentWeights[i] += (targetWeights[i] - currentWeights[i]) * 0.15;
           
+          // Track if any character is animating
+          if(Math.abs(currentWeights[i] - targetWeights[i]) > 0.5) anyActive = true;
+          
           // Apply font-variation-settings
           span.style.fontVariationSettings = "'wght' " + Math.round(currentWeights[i]);
         });
         
-        raf = requestAnimationFrame(animateWeights);
+        if(anyActive || nearName){
+          raf = requestAnimationFrame(animateWeights);
+        }else{
+          raf = 0;
+        }
+      }
+      
+      function checkProximity(x, y){
+        // Check if mouse is within interaction radius of name wrap
+        const wrapRect = nameWrap.getBoundingClientRect();
+        const cx = wrapRect.left + wrapRect.width/2;
+        const cy = wrapRect.top + wrapRect.height/2;
+        const dist = Math.hypot(x - cx, y - cy);
+        return dist <= INTERACTION_RADIUS;
       }
       
       // Initial position cache
       updateCharRects();
-      animateWeights();
-
+      
       // Track mouse position for magnetic interaction
-      document.addEventListener("pointermove", function(e){
+      function onPointerMove(e){
         mx = e.clientX;
         my = e.clientY;
+        nearName = checkProximity(mx, my);
+        
+        if(nearName && !raf){
+          animateWeights();
+        }
+      }
+      
+      document.addEventListener("pointermove", onPointerMove, {passive:true});
+      
+      // Cleanup on leave
+      document.addEventListener("pointerleave", function(){
+        nearName = false;
       });
     });
   }
@@ -191,10 +232,10 @@ document.querySelectorAll(".tile").forEach(markTile);
   window.availBadgeDot = dot;
   const bio = el("p",{class:"bio",text:SITE.bio||""});
   const actions = el("div",{class:"actions"});
-  const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn-primary";
+  const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn--primary";
   book.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↗</span>');
   actions.appendChild(book);
-  const work = el("a",{class:"btn btn-secondary",href:"#work-heading",text:"View work"});
+  const work = el("a",{class:"btn btn--ghost",href:"#work-heading",text:"View work"});
   work.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↓</span>');
   actions.appendChild(work);
   [h1,title,meta,badge,bio,actions].forEach((n,i)=>{ n.classList.add("hero-el"); n.style.setProperty("--hi",String(i+1)); });
@@ -222,6 +263,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   const spring = getSpring("ui");
   let mx = -100, my = -100, rx = -100, ry = -100;
   let raf = 0, overInteractive = false;
+  let lastMx = -100, lastMy = -100;
 
   function step(t){
     const dt = Math.min(0.032, (t - (step.last || t)) / 1000);
@@ -233,18 +275,25 @@ document.querySelectorAll(".tile").forEach(markTile);
     dot.style.transform = "translate(" + rx + "px, " + ry + "px)";
     
     if(Math.abs(mx - rx) > 1 || Math.abs(my - ry) > 1) raf = requestAnimationFrame(step);
+    else raf = 0;
   }
 
-  document.addEventListener("pointermove", function(e){
+  function onPointerMove(e){
     mx = e.clientX; my = e.clientY;
     const target = e.target.closest("a, button, [role=button], [data-cursor], input, textarea, #tile-profile");
     overInteractive = !!target;
     cursor.classList.toggle("over-interactive", overInteractive);
-    if(!raf) raf = requestAnimationFrame(step);
-  });
+    if(!raf && (mx !== lastMx || my !== lastMy)){
+      lastMx = mx; lastMy = my;
+      raf = requestAnimationFrame(step);
+    }
+  }
+
+  document.addEventListener("pointermove", onPointerMove, {passive:true});
 
   document.addEventListener("pointerleave", function(){
     mx = my = -9999;
+    if(raf){ cancelAnimationFrame(raf); raf = 0; }
   });
 })();
 
@@ -334,7 +383,7 @@ function buildAvailPanel(){
     tickAvail();
   });
   aside.appendChild(sel);
-  aside.appendChild(el("p",{class:"avail-foot",text:"Working hours 10:00-19:00 IST - replies within a day outside shared hours. IST wall-clock, no tracking."}));
+  aside.appendChild(el("p",{class:"avail-foot",text:"Working hours 10:00-19:00 IST - replies within a day outside shared hours."}));
   return aside;
 }
 function tickAvail(){
@@ -570,7 +619,7 @@ async function loadGitHub(){
   const counts = {all:(SITE.projects||[]).length,agents:0,security:0,cv:0};
   (SITE.projects||[]).forEach(p=>{ if(counts[p.cat]!=null) counts[p.cat]++; });
   filters.forEach(([v,label],i)=>{
-    const b = el("button",{class:"filter-btn",type:"button",text:label+" ("+counts[v]+")"});
+    const b = el("button",{class:"filter-btn",type:"button",text:label});
     b.dataset.filter = v;
     b.setAttribute("aria-pressed", v==="all" ? "true" : "false");
     if(v==="all") b.classList.add("on");
@@ -663,9 +712,9 @@ async function loadGitHub(){
   c.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
   c.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
   const row = el("div",{class:"actions"});
-  const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn-primary"; b1.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↗</span>'); row.appendChild(b1);
+  const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn--primary"; b1.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↗</span>'); row.appendChild(b1);
   if(SITE.resume){
-    const r = el("a",{class:"btn btn-secondary",href:SITE.resume,text:"Download CV"});
+    const r = el("a",{class:"btn btn--primary",href:SITE.resume,text:"Download CV"});
     r.setAttribute("target","_blank"); r.setAttribute("rel","noopener noreferrer");
     row.appendChild(r);
   }
