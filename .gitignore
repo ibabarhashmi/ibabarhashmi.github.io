@@ -1,3 +1,10 @@
+# OS / editor noise
 .DS_Store
 Thumbs.db
 *.log
+
+# Agent tooling / planning (local only, not deployed)
+.agents/
+.planning/
+.kilo/
+skills-lock.json
