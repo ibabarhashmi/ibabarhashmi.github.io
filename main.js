@@ -73,6 +73,7 @@ document.querySelectorAll(".tile").forEach(markTile);
 (function(){
   const root = document.getElementById("tile-profile");
   if(!root) return;
+  root.innerHTML = ""; /* prerendered static HTML ships in index; JS rebuilds full interactive version */
   const wrap = el("div",{class:"profile profile-statement"});
   const main = el("div",{class:"profile-main"});
   const img = el("img",{class:"avatar hero-el",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"168",height:"168",fetchpriority:"high",decoding:"async"});
@@ -300,6 +301,7 @@ document.querySelectorAll(".tile").forEach(markTile);
 /* ---------- NOW ---------- */
 (function(){
   const root = document.getElementById("tile-now");
+  root.innerHTML = "";
   root.appendChild(el("h2",{class:"tile-title",id:"h-now",text:"Now"}));
   root.appendChild(el("p",{text:SITE.now||""}));
   root.lastChild.style.cssText = "font-size:17px;font-weight:500;margin:0";
@@ -460,6 +462,7 @@ document.addEventListener("visibilitychange", function(){ if(!document.hidden) t
 /* ---------- Impact ---------- */
 (function(){
   const root = document.getElementById("tile-impact");
+  root.innerHTML = "";
   root.appendChild(el("h2",{class:"eyebrow",id:"h-impact",text:"IMPACT"}));
   const grid = el("div",{class:"stats"});
   (SITE.impact||[]).forEach(s=>{
@@ -469,6 +472,7 @@ document.addEventListener("visibilitychange", function(){ if(!document.hidden) t
     grid.appendChild(d);
   });
   root.appendChild(grid);
+  if(SITE.impactNote) root.appendChild(el("p",{class:"muted cached-note",text:SITE.impactNote}));
 })();
 
 /* ---------- GitHub ---------- */
@@ -524,6 +528,7 @@ async function loadGitHub(){
 }
 (function(){
   const root = document.getElementById("tile-github");
+  root.innerHTML = "";
   root.appendChild(el("h2",{class:"tile-title",id:"h-github",text:"GitHub"}));
   const sk = el("div",{id:"gh-skel"});
   for(let i=0;i<4;i++) sk.appendChild(el("div",{class:"skel"}));
@@ -544,14 +549,6 @@ async function loadGitHub(){
       const verb = d.activity.type==="PushEvent" ? "pushed to" : d.activity.type==="CreateEvent" ? "created in" : "active in";
       root.appendChild(el("div",{class:"repo-meta",text:"Latest: "+verb+" "+d.activity.repo+(when?" - "+when:"")}));
     }
-    const stats = el("div",{class:"gh-stats"});
-    [["Repos",d.public_repos],["Stars",d.stars],["Followers",d.followers]].forEach(([l,v])=>{
-      const s = el("div",{});
-      s.appendChild(el("b",{text:String(v)}));
-      s.appendChild(el("span",{text:l}));
-      stats.appendChild(s);
-    });
-    root.appendChild(stats);
     const langs = d.languages||{};
     const total = Object.values(langs).reduce((a,b)=>a+b,0) || 1;
     const bar = el("div",{class:"langbar","aria-hidden":"true"});
@@ -591,6 +588,7 @@ async function loadGitHub(){
 /* ---------- Experience ---------- */
 (function(){
   const root = document.getElementById("tile-exp");
+  root.innerHTML = "";
   root.appendChild(el("h2",{class:"tile-title",id:"h-exp",text:"Experience"}));
   const tl = el("div",{class:"timeline"});
   (SITE.experience||[]).forEach(job=>{
@@ -614,10 +612,17 @@ async function loadGitHub(){
   head.innerHTML = "";
   head.appendChild(el("h2",{class:"work-title",id:"work-title",text:"Selected work"}));
   const slot = document.getElementById("projects-slot");
+  slot.innerHTML = "";
   const filters = [["all","All"],["agents","Agents"],["security","Security"],["cv","Applied CV"]];
   const row = el("div",{class:"filter-row",role:"group","aria-label":"Filter projects"});
   const counts = {all:(SITE.projects||[]).length,agents:0,security:0,cv:0};
   (SITE.projects||[]).forEach(p=>{ if(counts[p.cat]!=null) counts[p.cat]++; });
+  const counter = el("p",{id:"filter-count",role:"status","aria-live":"polite",class:"repo-meta"});
+  function updateCount(v){
+    const n = v==="all" ? counts.all : (counts[v]||0);
+    counter.textContent = "Showing "+n+" of "+counts.all+" projects";
+  }
+  const btns = [];
   filters.forEach(([v,label],i)=>{
     const b = el("button",{class:"filter-btn",type:"button",text:label});
     b.dataset.filter = v;
@@ -630,10 +635,21 @@ async function loadGitHub(){
         const show = v==="all" || c.dataset.cat===v;
         c.hidden = !show;
       });
+      updateCount(v);
     });
+    b.addEventListener("keydown", function(e){
+      if(e.key!=="ArrowRight" && e.key!=="ArrowLeft") return;
+      e.preventDefault();
+      const d = e.key==="ArrowRight" ? 1 : -1;
+      const n = btns[(btns.indexOf(b)+d+btns.length)%btns.length];
+      n.focus(); n.click();
+    });
+    btns.push(b);
     row.appendChild(b);
   });
   head.appendChild(row);
+  head.appendChild(counter);
+  updateCount("all");
   (SITE.projects||[]).forEach((p)=>{
     let card;
     const cls = p.featured ? "tile span-4 proj proj-feat tile-linked" : "tile span-2 proj tile-linked";
@@ -651,9 +667,16 @@ async function loadGitHub(){
       s.innerHTML = ICONS.ext;
       card.appendChild(s);
     }
+    if(p.visual){
+      const fig = el("figure",{class:"proj-visual"});
+      fig.appendChild(el("img",{src:p.visual,alt:"Screenshot of "+p.name,loading:"lazy",decoding:"async"}));
+      card.appendChild(fig);
+    }
     card.appendChild(el("h3",{text:p.name}));
     card.appendChild(el("p",{class:"muted",text:p.summary}));
-    if(p.highlights && p.highlights.length){
+    if(p.featured && p.highlights && p.highlights.length){
+      card.appendChild(el("p",{class:"proj-outcome",text:p.highlights[0]}));
+    }else if(p.highlights && p.highlights.length){
       const ul = el("ul",{class:"checks"});
       p.highlights.slice(0,3).forEach(h=>ul.appendChild(el("li",{text:h})));
       card.appendChild(ul);
@@ -669,6 +692,7 @@ async function loadGitHub(){
 /* ---------- Stack ---------- */
 (function(){
   const root = document.getElementById("tile-stack");
+  root.innerHTML = "";
   root.appendChild(el("h2",{class:"tile-title",id:"h-stack",text:"Stack"}));
   root.appendChild(el("p",{class:"stack-lede",text:"PyTorch and fine-tuned LLMs up front, AWS and vLLM behind them, TypeScript holding the SDK together."}));
   Object.entries(SITE.stack||{}).forEach(([g,items])=>{
@@ -676,7 +700,8 @@ async function loadGitHub(){
     grp.appendChild(el("div",{class:"stack-name",text:g}));
     const chips = el("div",{class:"chips"});
     chips.style.margin = "0";
-    items.forEach(s=>chips.appendChild(el("span",{class:"chip",text:s})));
+    const daily = SITE.stackDaily||[];
+    items.forEach(s=>chips.appendChild(el("span",{class:"chip"+(daily.indexOf(s)>=0?" chip-accent":""),text:s})));
     grp.appendChild(chips);
     root.appendChild(grp);
   });
@@ -685,6 +710,7 @@ async function loadGitHub(){
 /* ---------- Certs ---------- */
 (function(){
   const root = document.getElementById("tile-certs");
+  root.innerHTML = "";
   root.appendChild(el("h2",{class:"tile-title",id:"h-certs",text:"Certifications"}));
   (SITE.certifications||[]).forEach(c=>{
     const r = el("div",{class:"cert-row"});
@@ -697,6 +723,7 @@ async function loadGitHub(){
 /* ---------- Domains / Vibe / Contact ---------- */
 (function(){
   const d = document.getElementById("tile-domains");
+  d.innerHTML = "";
   d.appendChild(el("h2",{class:"tile-title",id:"h-domains",text:"Domains"}));
   const chips = el("div",{class:"chips"});
   chips.style.margin = "0";
@@ -704,17 +731,18 @@ async function loadGitHub(){
   d.appendChild(chips);
 
   const v = document.getElementById("tile-vibe");
-  v.appendChild(el("h2",{class:"tile-title",id:"h-vibe",text:"Note"}));
+  v.innerHTML = "";
   v.appendChild(el("p",{class:"vibe-text",text:SITE.vibe||""}));
 
   const c = document.getElementById("tile-contact");
+  c.innerHTML = "";
   c.appendChild(el("h2",{class:"eyebrow",id:"h-contact",text:"Contact"}));
   c.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
   c.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
   const row = el("div",{class:"actions"});
   const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn--primary"; b1.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↗</span>'); row.appendChild(b1);
   if(SITE.resume){
-    const r = el("a",{class:"btn btn--primary",href:SITE.resume,text:"Download CV"});
+    const r = el("a",{class:"btn btn--ghost",href:SITE.resume,text:"Download CV"});
     r.setAttribute("target","_blank"); r.setAttribute("rel","noopener noreferrer");
     row.appendChild(r);
   }
@@ -765,28 +793,6 @@ function copyEmail(){
     window.location.href = "mailto:"+email;
   }
 }
-
-/* ---------- Theme ---------- */
-(function(){
-  const btn = document.getElementById("theme-toggle");
-  const meta = document.getElementById("meta-theme");
-  function paint(){
-    const dark = document.documentElement.dataset.theme==="dark";
-    if(btn) btn.setAttribute("aria-pressed", dark?"true":"false");
-    if(meta) meta.setAttribute("content", dark?"#0F0F0E":"#FCFBF9");
-    const icon = document.getElementById("theme-icon");
-    if(icon) icon.innerHTML = dark
-      ? '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>'
-      : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
-  }
-  paint();
-  if(btn) btn.addEventListener("click", function(){
-    const next = document.documentElement.dataset.theme==="dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
-    try{ localStorage.setItem("theme", next); }catch(e){}
-    paint();
-  });
-})();
 
 /* ---------- Delight: count-up only (tilt, spotlight, orb canvas cut) ---------- */
 (function(){
@@ -877,7 +883,7 @@ function copyEmail(){
     {id:"contact", label:"Contact", url:"#tile-contact", keys:["contact","email","hire"]}
   ];
 
-  function open(){ palette.showModal(); input.value = ""; input.focus(); render([]); }
+  function open(){ palette.showModal(); input.value = ""; input.focus(); render(sections); }
   function close(){ palette.close(); }
   // Footer palette trigger
   const footerTrigger = document.getElementById("footer-palette-trigger");

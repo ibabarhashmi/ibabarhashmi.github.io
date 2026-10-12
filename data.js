@@ -26,6 +26,8 @@ window.SITE = {
     { value: "7 axes", label: "deterministic DeFi risk scorecard" },
     { value: "100K+", label: "smart contracts analysed" }
   ],
+  impactNote: "Production numbers from the QuillAI audit pipeline: detection-model precision/recall on labelled contracts, manual-review hours before/after rollout, 100K+ contracts scanned to date.",
+  stackDaily: ["PyTorch", "LLM fine-tuning", "Open agent frameworks", "AWS", "Python"],
   experience: [
     { role: "Founding AI Engineer (MTS, Research Engineering)", org: "QuillAI Network (QuillAudits)", start: "Jul 2024", end: "Present",
       points: [
