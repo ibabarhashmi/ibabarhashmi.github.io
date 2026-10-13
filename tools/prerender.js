@@ -33,6 +33,10 @@ function yearsExp(now = new Date()) {
 const YEARS = yearsExp();
 const bioText = String(SITE.bio || '').replace('{years}', String(YEARS));
 
+// Same ext mark as main.js ICONS.ext: prerender must ship identical markup
+// so hydration swaps nothing visually.
+const EXT_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+
 // Depth-aware inner replace: works on empty shells and re-runs alike.
 function setSection(id, tag, inner) {
   const openRe = new RegExp(`<${tag}([^>]*id="${id}"[^>]*)>`, 'g');
@@ -67,7 +71,7 @@ const profile = `
   + `<div class="pill-row"><div class="badge avail-badge"><span class="dot" aria-hidden="true"></span>${esc(SITE.availability)}</div>`
   + `<p class="meta-row"><span class="loc-stack"><span class="loc-primary">${esc(SITE.location)}</span><span class="loc-sub">${esc(SITE.relocation)}</span></span></p></div>`
   + `<p class="bio">${esc(bioText)}</p>`
-  + `<div class="actions"><a class="btn btn--primary" href="${attr(SITE.links.book)}" target="_blank" rel="noopener noreferrer">Book a call<span class="btn-glyph" aria-hidden="true">↗</span></a>`
+  + `<div class="actions"><a class="btn btn--primary" href="${attr(SITE.links.book)}" target="_blank" rel="noopener noreferrer">Book a call<span class="btn-glyph" aria-hidden="true">${EXT_SVG}</span></a>`
   + (SITE.resume ? `<a class="btn btn--ghost" href="${attr(SITE.resume)}" target="_blank" rel="noopener noreferrer">Download CV</a>` : '')
   + `</div></div></div>`;
 
@@ -93,9 +97,6 @@ const exp = `<h2 class="tile-title" id="h-exp">Experience</h2><div class="timeli
 
 const counts = { all: SITE.projects.length, agents: 0, security: 0, cv: 0 };
 SITE.projects.forEach((p) => { if (counts[p.cat] != null) counts[p.cat]++; });
-// Same ext mark as main.js ICONS.ext: prerender must ship identical markup
-// so hydration swaps nothing visually.
-const EXT_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
 const filters = [['all', 'All'], ['agents', 'Agents'], ['security', 'Security'], ['cv', 'Applied CV']];
 const workHeading = `<h2 class="work-title" id="work-title">Selected work</h2>`
   + `<div class="filter-row" role="group" aria-label="Filter projects">`
@@ -136,7 +137,7 @@ const vibe = `<p class="vibe-text">${esc(SITE.vibe)}</p>`;
 
 const contact = `<h2 class="tile-title tile-title--on-ink" id="h-contact">Contact</h2><p class="contact-title">${esc(SITE.contactTitle || "Let's build something.")}</p>`
   + `<p>${esc(SITE.contactBody || '')}</p>`
-  + `<div class="actions"><a class="btn btn--primary" href="${attr(SITE.links.book)}" target="_blank" rel="noopener noreferrer">Book a call<span class="btn-glyph" aria-hidden="true">↗</span></a>`
+  + `<div class="actions"><a class="btn btn--primary" href="${attr(SITE.links.book)}" target="_blank" rel="noopener noreferrer">Book a call<span class="btn-glyph" aria-hidden="true">${EXT_SVG}</span></a>`
   + (SITE.resume ? `<a class="btn btn--ghost" href="${attr(SITE.resume)}" target="_blank" rel="noopener noreferrer">Download CV</a>` : '') + `</div>`
   + `<div class="icon-row"><a class="icon-link" href="${attr(SITE.links.linkedin)}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" title="LinkedIn profile">in</a>`
   + `<a class="icon-link" href="${attr(SITE.links.github)}" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" title="GitHub profile">gh</a>`

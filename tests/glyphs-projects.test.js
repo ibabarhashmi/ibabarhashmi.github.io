@@ -23,6 +23,33 @@ describe('glyph grammar: one external mark, down reserved for scroll', () => {
   });
 });
 
+describe('button glyphs: one shared SVG family', () => {
+  it('no bare text arrows inside btn-glyph spans (all sources)', () => {
+    for (const [name, src] of [['index.html', html], ['main.js', main], ['prerender.js', pre]]) {
+      assert.ok(!/btn-glyph"[^>]*>[↗↓]</.test(src), `${name}: btn-glyph must wrap SVG, not a text arrow`);
+    }
+  });
+  it('every btn-glyph span opens an inline SVG (main + static shell)', () => {
+    for (const [name, src] of [['index.html', html], ['main.js', main]]) {
+      const total = (src.match(/btn-glyph"[^>]*>/g) || []).length;
+      const withSvg = (src.match(/btn-glyph"[^>]*><svg/g) || []).length;
+      assert.ok(total > 0 && total === withSvg, `${name}: ${withSvg}/${total} btn-glyph spans open SVG`);
+    }
+  });
+  it('prerender buttons reuse the shared EXT_SVG const', () => {
+    const total = (pre.match(/btn-glyph"[^>]*>/g) || []).length;
+    const shared = (pre.match(/btn-glyph"[^>]*>\$\{EXT_SVG\}/g) || []).length;
+    assert.ok(total > 0 && total === shared, `prerender: ${shared}/${total} btn-glyph spans use EXT_SVG`);
+  });
+  it('View-work scroll cue is a down SVG in the same stroke family', () => {
+    assert.ok(/M12 5v14/.test(main), 'main.js must define a down-arrow path for View work');
+    assert.ok((main.match(/stroke-width="1\.75"/g) || []).length >= 2, 'down arrow must share the 1.75 icon stroke');
+  });
+  it('button glyph SVGs scale to a uniform 14px via CSS', () => {
+    assert.ok(/\.btn-glyph svg\{[^}]*14px/.test(css), 'CSS must size .btn-glyph svg uniformly');
+  });
+});
+
 describe('project names: one face, bold everywhere', () => {
   it('all proj h3 set Bodoni bold', () => {
     const rule = css.match(/\.proj h3\{[^}]*\}/);

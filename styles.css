@@ -83,6 +83,7 @@ a:hover{text-decoration-thickness:2px}
 .btn:active{transform:none}
 @media (prefers-reduced-motion: no-preference){
 .btn-glyph{display:inline-block;transition:transform var(--dur-micro) var(--ease-editorial)}
+.btn-glyph svg{width:14px;height:14px;display:block}
 .btn:hover .btn-glyph,.btn:focus-visible .btn-glyph{transform:translateX(5px);text-decoration:none}
 }
 .btn-icon{width:40px;padding:0}
