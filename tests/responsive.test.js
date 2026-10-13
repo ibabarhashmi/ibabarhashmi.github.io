@@ -19,13 +19,15 @@ describe('ticker survives every viewport', () => {
 
 describe('small phones 360-639px', () => {
   it('mobile stamp scales with viewport width to span the band', () => {
-    assert.match(css, /\.work-title\{[^}]*18vw/);
+    const m = css.match(/@media\(max-width:639px\)\{#work-heading \.work-title\{[^}]*?(\d+(?:\.\d+)?)vw/);
+    assert.ok(m, 'canonical 639px block must fluid-size the work title');
+    const vw = Number.parseFloat(m[1]);
+    assert.ok(vw >= 12 && vw <= 14, `stamp must fill band without overflowing it, got ${vw}vw`);
   });
-  it('mobile filter grid spans full band width, no inset cap', () => {
-    const rules = [...css.matchAll(/#work-heading \.filter-row\{[^}]*grid-template-columns:\s*1fr 1fr[^}]*\}/g)].map((m) => m[0]);
-    assert.ok(rules.length > 0, 'mobile 2-col grid must exist');
-    assert.ok(rules.every((r) => /width:\s*100%/.test(r)), 'grid spans full width');
-    assert.ok(rules.every((r) => !/max-width/.test(r)), 'no inset cap');
+  it('mobile filter row is one equal line, full band width', () => {
+    const rules = [...css.matchAll(/#work-heading \.filter-row\{[^}]*\}/g)].map((m) => m[0]);
+    assert.ok(rules.some((r) => /display:\s*flex/.test(r) && /flex-wrap:\s*nowrap/.test(r)), 'mobile row must be a nowrap flex line');
+    assert.ok(rules.some((r) => /width:\s*100%/.test(r) && !/max-width/.test(r)), 'single line spans the band');
   });
   it('hero and contact buttons sit side-by-side, equal halves', () => {
     assert.match(css, /max-width:\s*639px[\s\S]*?\.actions\{[^}]*flex-wrap:\s*nowrap/);
@@ -210,8 +212,8 @@ describe('mobile hero: e2e name tier', () => {
     const av = tier.filter((r) => /(^|[^\w-])\.avatar\b/.test(r[1]));
     assert.ok(av.length > 0, '639px block must place .avatar explicitly');
     assert.ok(
-      av.some((r) => /grid-row\s*:\s*1\s*\/\s*span\s*3|grid-row\s*:\s*1\s*\/\s*4/.test(r[2])),
-      '.avatar must span the name, title and pill rows',
+      av.some((r) => /grid-row\s*:\s*1\s*\/\s*span\s*2|grid-row\s*:\s*1\s*\/\s*3/.test(r[2])),
+      '.avatar must span the name and title rows (pills move to their own full-width row)',
     );
     assert.ok(
       av.some((r) => /width\s*:\s*13[02]px/.test(r[2])),
@@ -238,8 +240,8 @@ describe('mobile hero: e2e name tier', () => {
     const rows = tier.filter((r) => /(^|[},])\s*\.pill-row\b/.test(r[1]));
     assert.ok(rows.length > 0, '639px block must style .pill-row');
     assert.ok(
-      rows.some((r) => /grid-column\s*:\s*2\b/.test(r[2])),
-      '.pill-row must sit inside column 2 beside the avatar',
+      rows.some((r) => /grid-column\s*:\s*1\s*\/\s*-1/.test(r[2])),
+      '.pill-row must span full width like the action row, not squeeze into column 2',
     );
     assert.ok(
       rows.some((r) => /grid-row\s*:\s*3\b/.test(r[2]) && /display\s*:\s*flex/.test(r[2])),
@@ -250,6 +252,14 @@ describe('mobile hero: e2e name tier', () => {
     assert.ok(
       kids.every((r) => /flex\s*:\s*1(\s+1\s+0)?\b/.test(r[2])),
       'both pills must take equal halves',
+    );
+    assert.ok(
+      kids.every((r) => /min-height\s*:\s*44px/.test(r[2])),
+      'both pills must meet the 44px button floor',
+    );
+    assert.ok(
+      kids.every((r) => /font-size\s*:\s*13px/.test(r[2]) && /font-weight\s*:\s*700/.test(r[2])),
+      'both pills must read as button twins: 13px bold like the action row',
     );
     const bio = tier.filter((r) => /(^|[^\w-])\.bio\b/.test(r[1]));
     assert.ok(bio.some((r) => /grid-row\s*:\s*4\b/.test(r[2])), 'bio must follow the pill row at row 4');

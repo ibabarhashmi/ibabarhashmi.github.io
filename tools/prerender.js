@@ -53,7 +53,7 @@ const profile = `
   + `<div class="profile-main"><h1 id="h-name">${esc(SITE.name)}</h1>`
   + `<p class="title">${esc(SITE.title)}</p>`
   + `<div class="pill-row"><div class="badge avail-badge"><span class="dot" aria-hidden="true"></span>${esc(SITE.availability)}</div>`
-  + `<p class="meta-row">${esc(SITE.location)} | ${esc(SITE.relocation)}</p></div>`
+  + `<p class="meta-row"><span class="loc-stack"><span class="loc-primary">${esc(SITE.location)}</span><span class="loc-sub">${esc(SITE.relocation)}</span></span></p></div>`
   + `<p class="bio">${esc(SITE.bio)}</p>`
   + `<div class="actions"><a class="btn btn--primary" href="${attr(SITE.links.book)}" target="_blank" rel="noopener noreferrer">Book a call<span class="btn-glyph" aria-hidden="true">↗</span></a>`
   + (SITE.resume ? `<a class="btn btn--ghost" href="${attr(SITE.resume)}" target="_blank" rel="noopener noreferrer">Download CV</a>` : '')
@@ -84,8 +84,8 @@ SITE.projects.forEach((p) => { if (counts[p.cat] != null) counts[p.cat]++; });
 const filters = [['all', 'All'], ['agents', 'Agents'], ['security', 'Security'], ['cv', 'Applied CV']];
 const workHeading = `<h2 class="work-title" id="work-title">Selected work</h2>`
   + `<div class="filter-row" role="group" aria-label="Filter projects">`
-  + filters.map(([v, label]) => `<button class="filter-btn${v === 'all' ? ' on' : ''}" type="button" data-filter="${v}" aria-pressed="${v === 'all' ? 'true' : 'false'}">${label}</button>`).join('')
-  + `</div><p id="filter-count" role="status" aria-live="polite" class="repo-meta">Showing ${counts.all} of ${counts.all} projects</p>`;
+  + filters.map(([v, label]) => { const n = v === 'all' ? counts.all : (counts[v] || 0); return `<button class="filter-btn${v === 'all' ? ' on' : ''}" type="button" data-filter="${v}" aria-pressed="${v === 'all' ? 'true' : 'false'}">${label} <span class="fcount" aria-hidden="true">${n}</span></button>`; }).join('')
+  + `</div>`;
 
 const projects = SITE.projects.map((p) => {
   const cls = p.featured ? 'tile span-4 proj proj-feat tile-linked' : 'tile span-2 proj tile-linked';

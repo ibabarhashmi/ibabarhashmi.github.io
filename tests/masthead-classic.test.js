@@ -5,14 +5,14 @@ import fs from 'node:fs';
 const css = fs.readFileSync(new URL('../styles.css', import.meta.url), 'utf8');
 
 describe('masthead classic guards: no corner pins, no forced flex share', () => {
-  it('buttons size to labels, no forced equal share', () => {
-    const rules = [...css.matchAll(/#work-heading \.filter-row \.filter-btn\{[^}]*\}/g)].map((m) => m[0]);
-    assert.ok(rules.length > 0, 'button rule must exist');
-    assert.ok(rules.every((r) => !/(^|[;{])flex:\s*1/.test(r)), 'no equal-share flex');
+  it('desktop buttons size to labels, no forced equal share', () => {
+    const base = css.replace(/@media[^{]*\{((?:[^{}]*\{[^{}]*\})*[^{}]*)\}/g, '');
+    const rules = [...base.matchAll(/#work-heading \.filter-row \.filter-btn\{[^}]*\}/g)].map((m) => m[0]);
+    assert.ok(rules.length > 0, 'desktop button rule must exist');
+    assert.ok(rules.every((r) => !/(^|[;{])flex:\s*1/.test(r)), 'desktop keeps content-sized buttons; equal share is mobile-only');
   });
-  it('count stays in flow, never corner-pinned', () => {
+  it('no counter line ships anywhere', () => {
     const rules = [...css.matchAll(/#filter-count\{[^}]*\}/g)].map((m) => m[0]);
-    assert.ok(rules.length > 0, 'count rule must exist');
-    assert.ok(rules.every((r) => !/position:\s*absolute/.test(r)), 'count must stay in flow');
+    assert.equal(rules.length, 0, 'counter retired: counts live in buttons');
   });
 });
