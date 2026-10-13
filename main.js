@@ -24,18 +24,6 @@ function getSpring(name){
     mass: parseFloat(getComputedStyle(root).getPropertyValue("--spring-" + name + "-mass")) || 0
   };
 }
-function springTo(current, target, spring, onUpdate, onComplete){
-  let v = 0, last = performance.now();
-  function step(t){
-    const dt = Math.min(0.032, (t - last) / 1000); last = t;
-    v += (spring.stiffness * (target - current) - spring.damping * v) * dt / spring.mass;
-    current += v * dt;
-    onUpdate(current);
-    if(Math.abs(v) > 0.5 || Math.abs(target - current) > 0.1) requestAnimationFrame(step);
-    else { onUpdate(target); onComplete?.(); }
-  }
-  requestAnimationFrame(step);
-}
 function el(tag, attrs, children){
   const n = document.createElement(tag);
   if(attrs) for(const k in attrs){
@@ -65,9 +53,6 @@ const ICONS = {
   telegram:'<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>',
   mail:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>'
 };
-let tileIndex = 0;
-function markTile(node){ node.style.setProperty("--i", String(tileIndex++)); return node; }
-document.querySelectorAll(".tile").forEach(markTile);
 
 /* ---------- Profile ---------- */
 (function(){
@@ -75,8 +60,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   if(!root) return;
   root.innerHTML = ""; /* prerendered static HTML ships in index; JS rebuilds full interactive version */
   const wrap = el("div",{class:"profile profile-statement"});
-  const main = el("div",{class:"profile-main"});
-  const img = el("img",{class:"avatar hero-el",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"168",height:"168",fetchpriority:"high",decoding:"async"});
+  const main = el("div",{class:"profile-main"});  const img = el("img",{class:"avatar hero-el",src:SITE.avatar||SITE.avatarFallback,alt:"Portrait of "+(SITE.name||"Babar Hashmi"),width:"168",height:"168",fetchpriority:"high",decoding:"async"});
   img.onerror = function(){ img.onerror=null; if(SITE.avatarFallback) img.src=SITE.avatarFallback; };
   img.style.setProperty("--hi","0");
 
@@ -237,7 +221,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   window.availBadgeDot = dot;
   const pillRow = el("div",{class:"pill-row"});
   pillRow.append(badge, meta);
-  const bio = el("p",{class:"bio",text:SITE.bio||""});
+  const bio = el("p",{class:"bio",text:String(SITE.bio||"").replace("{years}", String(yearsExp()))});
   const actions = el("div",{class:"actions"});
   const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn--primary";
   book.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↗</span>');
@@ -249,7 +233,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   main.append(h1,title,pillRow,bio,actions);
 
   /* Width-match name to column box wall-to-wall (measured, all viewports <=1023px) */
-  const NAME_FILL = 6.0; /* mean advance of "Babar Hashmi" in Bodoni units — tune from screenshots */
+  const NAME_FILL = 6.0; /* mean advance of "Babar Hashmi" in Bodoni units - tune from screenshots */
   function textWidth(node){
     const range = document.createRange();
     range.selectNodeContents(node);
@@ -331,13 +315,22 @@ document.querySelectorAll(".tile").forEach(markTile);
   });
 })();
 
+/* Years of experience: single-sourced from SITE.careerStart (mirrors prerender). */
+function yearsExp(now){
+  const m = /^(\d{4})-(\d{2})$/.exec(SITE.careerStart||"");
+  if(!m) return 3;
+  const d = now || new Date();
+  const months = (d.getFullYear()-+m[1])*12 + (d.getMonth()+1-(+m[2]));
+  return Math.max(1, Math.floor(months/12));
+}
+
 /* ---------- NOW ---------- */
 (function(){
   const root = document.getElementById("tile-now");
   root.innerHTML = "";
   root.appendChild(el("h2",{class:"tile-title",id:"h-now",text:"Now"}));
-  root.appendChild(el("p",{text:SITE.now||""}));
-  root.lastChild.style.cssText = "font-size:17px;font-weight:500;margin:0";
+  const p = el("p",{class:"now-text",text:SITE.now||""});
+  root.appendChild(p);
 })();
 
 /* ---------- Availability: visitor tz vs IST comparator (hero panel) ---------- */
@@ -369,7 +362,7 @@ function buildAvailPanel(){
   aside.appendChild(el("p",{class:"avail-eyebrow",text:"Availability"}));
   const verdict = el("p",{class:"avail-verdict",role:"status"});
   verdict.appendChild(el("span",{class:"dot","aria-hidden":"true"}));
-  verdict.appendChild(el("span",{class:"avail-verdict-text",text:"Checking hours..."}));
+  verdict.appendChild(el("span",{class:"avail-verdict-text"}));
   aside.appendChild(verdict);
   const rows = el("div",{class:"avail-rows"});
   const istRow = el("div",{class:"avail-row"});
@@ -428,8 +421,6 @@ function tickAvail(){
   try{
     const f = tzFmt(IST_TZ);
     if(istT){ istT.textContent = f.time.format(now); istT.setAttribute("datetime", now.toISOString()); istT.setAttribute("aria-label", f.full.format(now)+" India Standard Time"); }
-    const mIst = document.querySelector(".meta-ist");
-    if(mIst){ mIst.textContent = f.time.format(now) + " IST"; mIst.setAttribute("datetime", now.toISOString()); }
   }catch(e){}
   try{
     const f = tzFmt(avail.tz);
@@ -456,7 +447,7 @@ function tickAvail(){
   const verdictDot = verdict?.querySelector(".dot");
   if(verdict && vt && verdictDot){
     if(sameTz){
-      vt.textContent = "Same timezone - talk anytime 10-19 IST";
+      vt.textContent = "Same timezone - talk anytime 10:00-19:00 IST";
       // Match badge behavior: .off class based on isOnline (IST working hours)
       verdict.classList.toggle("off", !isOnline);
     }else{
@@ -468,7 +459,6 @@ function tickAvail(){
       verdictDot.style.animation = isOnline ? "blink 2s steps(2,start) infinite" : "none";
     }
   }
-  const wh = SITE.workingHoursIST || [10,19];
   const badge = document.getElementById("avail-badge");
   const badgeDot = badge?.querySelector(".dot");
   if(badge){
@@ -478,11 +468,6 @@ function tickAvail(){
       badgeDot.title = isOnline ? "Online" : "Offline";
       badgeDot.style.animation = inside ? "blink 2s steps(2,start) infinite" : "none";
     }
-  }
-  const footTime = document.getElementById("foot-time");
-  if(footTime){
-    const f = tzFmt(IST_TZ);
-    footTime.textContent = "Bangalore \u00b7 " + f.time.format(now) + " IST";
   }
 }
 tickAvail();
@@ -496,7 +481,7 @@ document.addEventListener("visibilitychange", function(){ if(!document.hidden) t
 (function(){
   const root = document.getElementById("tile-impact");
   root.innerHTML = "";
-  root.appendChild(el("h2",{class:"eyebrow",id:"h-impact",text:"IMPACT"}));
+  root.appendChild(el("h2",{class:"tile-title",id:"h-impact",text:"Impact"}));
   const grid = el("div",{class:"stats"});
   (SITE.impact||[]).forEach(s=>{
     const d = el("div",{class:"stat"});
@@ -509,9 +494,9 @@ document.addEventListener("visibilitychange", function(){ if(!document.hidden) t
 })();
 
 /* ---------- GitHub ---------- */
-/* Dots use full-range tints; names use darker text-safe twins (all >=4.5:1 on paper). */
-const LANG_TINTS = ["#2a2722","#6b675f","#b3b3b3"];
-const LANG_TEXT = ["#2a2722","#57534c","#6b675f"];
+/* Dots use full-range tints; all pairs >=4.5:1 on paper. */
+const LANG_TINTS = ["#2a2722","#57534c","#6b675f","#3e3b36","#2a2722"];
+const LANG_TEXT = ["#2a2722","#57534c","#6b675f","#3e3b36","#2a2722"];
 async function loadGitHub(){
   const KEY="gh_cache_v2", TTL=6*3600*1000;
   function offlineFirst(){
@@ -607,12 +592,12 @@ async function loadGitHub(){
       const link = extLink(repo.url, repo.name); link.className="repo-name";
       r.appendChild(link);
       if(repo.description) r.appendChild(el("div",{class:"repo-desc",text:repo.description}));
-      const meta = [repo.language, repo.stars!=null?("Stars "+repo.stars):null].filter(Boolean).join(" - ");
+      const meta = [repo.language, repo.stars>1?("Stars "+repo.stars):null].filter(Boolean).join(" - ");
       if(meta) r.appendChild(el("div",{class:"repo-meta",text:meta}));
       root.appendChild(r);
     });
     if(d.live===false) root.appendChild(el("div",{class:"cached-note",text:d.note||"Showing cached data"}));
-    const all = extLink("https://github.com/ibabarhashmi?tab=repositories","View all on GitHub →");
+    const all = extLink("https://github.com/ibabarhashmi?tab=repositories","View all on GitHub ↗");
     all.className="view-all";
     root.appendChild(all);
   });
@@ -666,6 +651,8 @@ async function loadGitHub(){
         const show = v==="all" || c.dataset.cat===v;
         c.hidden = !show;
       });
+      const n = v==="all" ? counts.all : (counts[v]||0);
+      status.textContent = "Showing "+n+" of "+counts.all+" projects";
     });
     b.addEventListener("keydown", function(e){
       if(e.key!=="ArrowRight" && e.key!=="ArrowLeft") return;
@@ -678,6 +665,8 @@ async function loadGitHub(){
     row.appendChild(b);
   });
   head.appendChild(row);
+  const status = el("p",{id:"filter-status",class:"vh",role:"status",text:"Showing "+counts.all+" of "+counts.all+" projects"});
+  head.appendChild(status);
   (SITE.projects||[]).forEach((p)=>{
     let card;
     const cls = p.featured ? "tile span-4 proj proj-feat tile-linked" : "tile span-2 proj tile-linked";
@@ -688,7 +677,6 @@ async function loadGitHub(){
       card = el("article",{class:cls});
     }
     card.dataset.cat = p.cat||"all";
-    markTile(card);
     card.appendChild(el("p",{class:"proj-tag",text:p.tag||"Project"}));
     if(p.repo){
       const s = el("span",{class:"ext","aria-hidden":"true"});
@@ -711,7 +699,7 @@ async function loadGitHub(){
     }
     const chips = el("div",{class:"chips"});
     (p.stack||[]).forEach(s=>chips.appendChild(el("span",{class:"chip",text:s})));
-    if(!p.repo) chips.appendChild(el("span",{class:"chip chip-accent",text:"Private / work project"}));
+    if(!p.repo) chips.appendChild(el("span",{class:"chip",text:"Private / work project"}));
     card.appendChild(chips);
     slot.appendChild(card);
   });
@@ -723,11 +711,11 @@ async function loadGitHub(){
   root.innerHTML = "";
   root.appendChild(el("h2",{class:"tile-title",id:"h-stack",text:"Stack"}));
   root.appendChild(el("p",{class:"stack-lede",text:"PyTorch and fine-tuned LLMs up front, AWS and vLLM behind them, TypeScript holding the SDK together."}));
+  root.appendChild(el("p",{class:"stack-legend",text:"Black chips are daily drivers."}));
   Object.entries(SITE.stack||{}).forEach(([g,items])=>{
     const grp = el("div",{class:"stack-group"});
     grp.appendChild(el("div",{class:"stack-name",text:g}));
-    const chips = el("div",{class:"chips"});
-    chips.style.margin = "0";
+    const chips = el("div",{class:"chips chips--flush"});
     const daily = SITE.stackDaily||[];
     items.forEach(s=>chips.appendChild(el("span",{class:"chip"+(daily.indexOf(s)>=0?" chip-accent":""),text:s})));
     grp.appendChild(chips);
@@ -753,8 +741,7 @@ async function loadGitHub(){
   const d = document.getElementById("tile-domains");
   d.innerHTML = "";
   d.appendChild(el("h2",{class:"tile-title",id:"h-domains",text:"Domains"}));
-  const chips = el("div",{class:"chips"});
-  chips.style.margin = "0";
+  const chips = el("div",{class:"chips chips--flush"});
   (SITE.domains||[]).forEach(x=>chips.appendChild(el("span",{class:"chip",text:x})));
   d.appendChild(chips);
 
@@ -764,9 +751,9 @@ async function loadGitHub(){
 
   const c = document.getElementById("tile-contact");
   c.innerHTML = "";
-  c.appendChild(el("h2",{class:"eyebrow",id:"h-contact",text:"Contact"}));
-  c.appendChild(el("p",{class:"contact-title",text:"Let's build something."}));
-  c.appendChild(el("p",{text:"Available remote - globally. Based in Bangalore, open to relocation. Grab the CV or just say hi."}));
+  c.appendChild(el("h2",{class:"tile-title tile-title--on-ink",id:"h-contact",text:"Contact"}));
+  c.appendChild(el("p",{class:"contact-title",text:SITE.contactTitle||"Let's build something."}));
+  c.appendChild(el("p",{text:SITE.contactBody||""}));
   const row = el("div",{class:"actions"});
   const b1 = extLink(SITE.links.book,"Book a call"); b1.className="btn btn--primary"; b1.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↗</span>'); row.appendChild(b1);
   if(SITE.resume){
@@ -843,7 +830,8 @@ function copyEmail(){
         const t0 = performance.now(), dur = 800;
         (function frame(t){
           const k = Math.min(1, (t-t0)/dur), e = 1-Math.pow(1-k, 4);
-          n.textContent = sign + Math.round(target*e) + suffix;
+          const shown = Math.round(target*e);
+          n.textContent = (shown === 0 ? "" : sign) + shown + suffix;
           if(k < 1) requestAnimationFrame(frame);
         })(t0);
       });
@@ -931,9 +919,9 @@ function copyEmail(){
   const footerTrigger = document.getElementById("footer-palette-trigger");
   if(footerTrigger) footerTrigger.addEventListener("click", open);
   function render(matches){
-    results.innerHTML = matches.map(function(m, i){
+    results.innerHTML = matches.length ? matches.map(function(m, i){
       return "<li role=\"option\" data-url=\"" + m.url + "\" " + (i===0?"aria-selected=\"true\"":"") + ">" + m.label + "<span class=\"palette-meta\">" + m.keys.join(" \u00b7 ") + "</span></li>";
-    }).join("");
+    }).join("") : "<li aria-disabled=\"true\">No matches - try another word</li>";
   }
 
   input.addEventListener("input", function(){

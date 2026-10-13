@@ -155,3 +155,46 @@ describe('name fits column width wall-to-wall', () => {
     assert.match(main, /clientWidth/, 'fit must measure rendered column width');
   });
 });
+
+describe('phase1 copy: no restated bullets, no generic summaries', () => {
+  const data = fs.readFileSync(new URL('../data.js', import.meta.url), 'utf8');
+  it('MEP highlights add signal beyond the summary', () => {
+    assert.ok(/Live AWS inference API/.test(data), 'MEP needs an outcome-shaped highlight');
+    assert.ok(!/Open-set detection with GroundingDINO/.test(data), 'must not restate the summary');
+  });
+  it('Guardrails and Vuln-Detector summaries read specific', () => {
+    const g = (data.match(/"Guardrails"[\s\S]*?highlights/) || [''])[0];
+    const v = (data.match(/"Vuln-Detector"[\s\S]*?highlights/) || [''])[0];
+    assert.ok(/CI|firewall/i.test(g), 'Guardrails must name where it runs');
+    assert.ok(/baseline/i.test(v), 'Vuln-Detector must name its role');
+  });
+  it('contact looks forward with response time', () => {
+    const contact = (html.match(/id="tile-contact"[\s\S]*?<\/section>/) || [''])[0];
+    assert.ok(/replies within a day/i.test(contact), 'contact must set response expectation');
+    assert.ok(!/open to relocation/i.test(contact), 'contact must not echo the hero pill a third time');
+  });
+  it('stack accent carries a legend, not mystery blacks', () => {
+    const stack = (html.match(/id="tile-stack"[\s\S]*?<\/section>/) || [''])[0];
+    assert.ok(/daily driver/i.test(stack), 'stack must explain its black chips');
+    assert.match(main, /daily driver/i, 'JS builder must ship the legend');
+  });
+  it('filter changes announce through a hidden live status', () => {
+    assert.match(main, /filter-status/, 'JS must ship a live status element');
+    assert.match(main, /role.*status|status.*role/, 'status must carry its role');
+    const pre = fs.readFileSync(new URL('../tools/prerender.js', import.meta.url), 'utf8');
+    assert.match(pre, /filter-status/, 'prerender must mirror the status element');
+    assert.match(html, /filter-status/, 'static HTML must ship the status element');
+  });
+  it('fixed footer never covers page content', () => {
+    const m = css.match(/body\{[^}]*padding-bottom:\s*(\d+)px/);
+    assert.ok(m, 'body must clear the fixed footer');
+    assert.ok(Number.parseInt(m[1], 10) >= 64, 'clearance must fit footer height');
+  });
+  it('zero star counts never advertise', () => {
+    assert.ok(/stars\s*>\s*[01]/.test(main), 'JS must gate stars on nonzero (single stars hidden)');
+    const pre = fs.readFileSync(new URL('../tools/prerender.js', import.meta.url), 'utf8');
+    assert.ok(/stars\s*>\s*[01]/.test(pre), 'prerender must gate stars on nonzero');
+    assert.ok(!/Stars 0/.test(html), 'static HTML must show no zero counts');
+    assert.ok(!/Stars 1/.test(html), 'static HTML must not advertise a single star');
+  });
+});
