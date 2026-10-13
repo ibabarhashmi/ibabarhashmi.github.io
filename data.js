@@ -27,7 +27,7 @@ window.SITE = {
     { value: "100K+", label: "smart contracts analysed" }
   ],
   impactNote: "Production numbers from the QuillAI audit pipeline: detection-model precision/recall on labelled contracts, manual-review hours before/after rollout, 100K+ contracts scanned to date.",
-  stackDaily: ["PyTorch", "LLM fine-tuning", "Open agent frameworks", "AWS", "Python"],
+  stackDaily: ["PyTorch", "Devtools", "Open agent frameworks", "AWS", "Python"],
   experience: [
     { role: "Founding AI Engineer (MTS, Research Engineering)", org: "QuillAI Network (QuillAudits)", start: "Jul 2024", end: "Present",
       points: [
@@ -78,7 +78,7 @@ window.SITE = {
       stack: ["YOLOv8", "Kafka", "Streamlit", "AWS"], repo: null }
   ],
   stack: {
-    "AI / ML": ["PyTorch", "TensorFlow", "Transformers", "Open agent frameworks", "Custom agent frameworks", "LLM fine-tuning"],
+    "AI / ML": ["PyTorch", "TensorFlow", "Transformers", "Open agent frameworks", "Devtools", "LLM fine-tuning"],
     "Computer Vision": ["YOLOv8", "GroundingDINO", "OpenCV", "VLMs"],
     "MLOps & Cloud": ["AWS", "OCI", "Docker", "CI/CD", "Model monitoring", "Inference optimization", "vLLM"],
     "Engineering": ["Python", "TypeScript", "Bun", "Solidity", "SQL/NoSQL", "REST APIs", "TDD", "Agent harness design", "SDK design", "Eval and red teaming"],

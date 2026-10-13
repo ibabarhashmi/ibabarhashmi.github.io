@@ -231,6 +231,8 @@ document.querySelectorAll(".tile").forEach(markTile);
   badge.appendChild(document.createTextNode(SITE.availability||"Available remote - globally"));
   // Store reference for blinking
   window.availBadgeDot = dot;
+  const pillRow = el("div",{class:"pill-row"});
+  pillRow.append(badge, meta);
   const bio = el("p",{class:"bio",text:SITE.bio||""});
   const actions = el("div",{class:"actions"});
   const book = extLink(SITE.links.book,"Book a call"); book.className="btn btn--primary";
@@ -239,8 +241,35 @@ document.querySelectorAll(".tile").forEach(markTile);
   const work = el("a",{class:"btn btn--ghost",href:"#work-heading",text:"View work"});
   work.insertAdjacentHTML("beforeend",'<span class="btn-glyph" aria-hidden="true">↓</span>');
   actions.appendChild(work);
-  [h1,title,meta,badge,bio,actions].forEach((n,i)=>{ n.classList.add("hero-el"); n.style.setProperty("--hi",String(i+1)); });
-  main.append(h1,title,meta,badge,bio,actions);
+  [h1,title,pillRow,bio,actions].forEach((n,i)=>{ n.classList.add("hero-el"); n.style.setProperty("--hi",String(i+1)); });
+  main.append(h1,title,pillRow,bio,actions);
+
+  /* Width-match name to title text (measured, all viewports <=1023px) */
+  const NAME_FILL = 6.0; /* mean advance of "Babar Hashmi" in Bodoni units — tune from screenshots */
+  function textWidth(node){
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    return range.getBoundingClientRect().width;
+  }
+  function fitNameToTitle(){
+    if(!mqTablet.matches){ h1.style.fontSize = ""; return; }
+    const target = textWidth(title);
+    if(!(target > 0)) return;
+    const root = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const lo = 1.3 * root, hi = 4 * root;
+    let px = Math.min(hi, Math.max(lo, target / NAME_FILL));
+    h1.style.fontSize = px + "px";
+    const have = textWidth(nameWrap);
+    if(have > 0){
+      px = Math.min(hi, Math.max(lo, (px * target) / have));
+      h1.style.fontSize = px + "px";
+    }
+  }
+  const mqTablet = window.matchMedia("(max-width:1023px)");
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ requestAnimationFrame(fitNameToTitle); }); }
+  else { requestAnimationFrame(fitNameToTitle); }
+  window.addEventListener("resize", fitNameToTitle);
+  if("ResizeObserver" in window){ new ResizeObserver(fitNameToTitle).observe(title); }
   wrap.append(main);
   const grid = el("div",{class:"hero-grid"});
   grid.append(img,wrap);
@@ -861,6 +890,20 @@ function copyEmail(){
   }else{
     tiles.forEach(t=>t.classList.add("in"));
   }
+})();
+
+/* ---------- Ticker: fill wide viewports, pause offscreen ---------- */
+(function(){
+  const strip = document.querySelector(".ticker-inner");
+  if(!strip) return;
+  try{
+    let n = 0;
+    while(strip.scrollWidth < window.innerWidth*2 && n<4){ strip.innerHTML += strip.innerHTML; n++; }
+  }catch(e){}
+  if(!("IntersectionObserver" in window)) return;
+  new IntersectionObserver(function(es){
+    es.forEach(function(e){ strip.style.animationPlayState = e.isIntersecting ? "" : "paused"; });
+  }).observe(strip);
 })();
 
 /* ---------- Command palette (⌘K / Ctrl+K) ---------- */

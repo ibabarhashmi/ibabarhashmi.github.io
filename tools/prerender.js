@@ -52,7 +52,8 @@ const profile = `
 <div class="profile profile-statement"><img class="avatar" src="${attr(SITE.avatar)}" alt="Portrait of ${attr(SITE.name)}" width="168" height="168" fetchpriority="high" decoding="async">`
   + `<div class="profile-main"><h1 id="h-name">${esc(SITE.name)}</h1>`
   + `<p class="title">${esc(SITE.title)}</p>`
-  + `<p class="meta-row">${esc(SITE.location)} · ${esc(SITE.availability)}</p>`
+  + `<div class="pill-row"><div class="badge avail-badge"><span class="dot" aria-hidden="true"></span>${esc(SITE.availability)}</div>`
+  + `<p class="meta-row">${esc(SITE.location)} | ${esc(SITE.relocation)}</p></div>`
   + `<p class="bio">${esc(SITE.bio)}</p>`
   + `<div class="actions"><a class="btn btn--primary" href="${attr(SITE.links.book)}" target="_blank" rel="noopener noreferrer">Book a call<span class="btn-glyph" aria-hidden="true">↗</span></a>`
   + (SITE.resume ? `<a class="btn btn--ghost" href="${attr(SITE.resume)}" target="_blank" rel="noopener noreferrer">Download CV</a>` : '')

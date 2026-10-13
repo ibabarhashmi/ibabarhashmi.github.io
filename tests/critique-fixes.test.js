@@ -45,6 +45,25 @@ describe('P1 stack: daily-driver signal, no silent loss', () => {
   });
 });
 
+describe('stack AI/ML chips: Devtools highlighted, LLM plain, no Custom', () => {
+  const data = fs.readFileSync(new URL('../data.js', import.meta.url), 'utf8');
+  const stack = (html.match(/id="tile-stack"[\s\S]*?<\/section>/) || [])[0] || '';
+  it('data lists Devtools, drops Custom agent frameworks', () => {
+    assert.ok(/"Devtools"/.test(data), 'data must list Devtools');
+    assert.ok(!/"Custom agent frameworks"/.test(data), 'Custom agent frameworks must go');
+  });
+  it('daily set highlights Devtools, not LLM fine-tuning', () => {
+    const daily = (data.match(/stackDaily:\s*\[([^\]]*)\]/) || [])[1] || '';
+    assert.ok(/"Devtools"/.test(daily), 'Devtools must be daily (black)');
+    assert.ok(!/"LLM fine-tuning"/.test(daily), 'LLM fine-tuning must be plain white');
+  });
+  it('rendered tile accents Devtools only', () => {
+    assert.ok(/chip-accent">Devtools/.test(stack), 'Devtools chip must carry accent');
+    assert.ok(!/chip-accent">LLM fine-tuning/.test(stack), 'LLM chip must not carry accent');
+    assert.ok(!/Custom agent frameworks/.test(stack), 'stack tile must not mention Custom agent frameworks');
+  });
+});
+
 describe('P2 eyebrows only on Impact + Contact', () => {
   it('tile-title is not uppercase-tracked section grammar', () => {
     const rule = css.match(/\.tile-title\{[^}]*\}/);
@@ -61,7 +80,8 @@ describe('minors: dead code out', () => {
   });
   it('no duplicate profile title rule', () => {
     const n = (css.match(/\.profile \.title\{/g) || []).length;
-    assert.equal(n, 1, `one title rule, got ${n}`);
+    assert.ok(n <= 2, `base plus at most one responsive override, got ${n}`);
+    assert.match(css, /max-width:\s*639px[\s\S]*?\.profile \.title\{[^}]*font-size:\s*15px/);
   });
   it('palette opens with suggestions, not blank', () => {
     assert.ok(!/render\(\[\]\)/.test(main), 'open must render suggestions');
