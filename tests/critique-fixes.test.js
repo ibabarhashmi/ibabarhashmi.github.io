@@ -87,3 +87,71 @@ describe('minors: dead code out', () => {
     assert.ok(!/render\(\[\]\)/.test(main), 'open must render suggestions');
   });
 });
+
+describe('location pill: structured two-liner, no pipe slop', () => {
+  it('JS builder splits location into primary + sub spans', () => {
+    assert.match(main, /loc-primary/, 'meta-row must carry a primary span');
+    assert.match(main, /loc-sub/, 'meta-row must carry a sub span');
+    assert.ok(!/SITE\.location\|\|""\) \+ " \| " \+/.test(main), 'pipe-joined location must go');
+  });
+  it('prerender mirrors the span split for no-JS parity', () => {
+    const pre = fs.readFileSync(new URL('../tools/prerender.js', import.meta.url), 'utf8');
+    assert.match(pre, /loc-primary/);
+    assert.match(pre, /loc-sub/);
+    assert.match(html, /loc-primary/);
+    assert.match(html, /loc-sub/);
+  });
+  it('sub reads as muted caption, not twin shout', () => {
+    const rules = [...css.matchAll(/\.loc-sub\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
+    assert.ok(rules.length > 0, 'missing .loc-sub rule');
+    assert.ok(/font-size\s*:\s*11px/.test(rules), 'sub must sit at 11px caption');
+    assert.ok(/font-weight\s*:\s*400/.test(rules), 'sub must drop to regular weight');
+  });
+  it('stack keeps a gap so words never jam on desktop', () => {
+    const rules = [...css.matchAll(/\.loc-stack\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
+    assert.ok(/column-gap\s*:\s*6px|gap\s*:\s*[^;}]*6px/.test(rules), 'stack must hold primary off sub');
+  });
+  it('mobile work title fits the band, tracking button-row width', () => {
+    const m = css.match(/@media\(max-width:639px\)\{#work-heading \.work-title\{[^}]*?(\d+(?:\.\d+)?)vw/);
+    assert.ok(m, 'canonical 639px block must fluid-size the work title');
+    const vw = Number.parseFloat(m[1]);
+    assert.ok(vw >= 12 && vw <= 14, `title vw must fit band inner width, got ${vw}vw`);
+  });
+  it('mobile filter row tracks title width, not full bleed', () => {
+    const ms = [...css.matchAll(/#work-heading \.filter-row\{[^}]*\}/g)];
+    assert.ok(ms.some((m) => /display:\s*flex/.test(m[0]) && /flex-wrap:\s*nowrap/.test(m[0])), 'row must be one flex line');
+    assert.ok(ms.some((m) => /gap:\s*6px/.test(m[0])), 'single line stays tight at 6px gaps');
+  });
+  it('mobile count line retired into buttons', () => {
+    assert.ok(!/#filter-count\s*\{/.test(css), 'no counter rule may remain');
+    assert.ok(!/id="filter-count"/.test(html), 'no counter element may remain');
+  });
+  it('filter buttons carry live counts, no separate counter line', () => {
+    assert.match(main, /fcount/, 'JS buttons must embed a count span');
+    assert.ok(!/filter-count/.test(main), 'counter element must go from the builder');
+    const pre = fs.readFileSync(new URL('../tools/prerender.js', import.meta.url), 'utf8');
+    assert.match(pre, /fcount/, 'prerender must mirror button counts');
+    assert.ok(!/filter-count/.test(pre), 'prerender must drop the counter line');
+    assert.match(html, /fcount/, 'static HTML must ship button counts');
+    assert.ok(!/id="filter-count"/.test(html), 'static HTML must drop the counter line');
+  });
+  it('count span reads quiet, counter rule retired', () => {
+    const rules = [...css.matchAll(/\.fcount\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
+    assert.ok(/font-size\s*:\s*11px/.test(rules), 'count span must whisper at 11px');
+    assert.ok(!/#filter-count\s*\{/.test(css), 'no counter rule may remain');
+  });
+  it('button head and number breathe, never jam', () => {
+    const rules = [...css.matchAll(/\.filter-btn\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
+    assert.ok(/column-gap\s*:\s*[4-9]px|gap\s*:\s*[4-9]px/.test(rules), 'flex gap must separate label from count');
+  });
+  it('mobile project cards read compact', () => {
+    const ms = [...css.matchAll(/\.proj-feat h3\{[^}]*font-size:\s*(\d+)px/g)];
+    assert.ok(ms.some((m) => Number.parseInt(m[1], 10) <= 20), 'a 639px override must shrink card titles');
+  });
+});
+
+describe('name fits column width wall-to-wall', () => {
+  it('fit measures the column box, not title text', () => {
+    assert.match(main, /clientWidth/, 'fit must measure rendered column width');
+  });
+});

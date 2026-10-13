@@ -5,19 +5,23 @@ import fs from 'node:fs';
 const css = fs.readFileSync(new URL('../styles.css', import.meta.url), 'utf8');
 
 describe('Selected-work filters: symmetric on mobile, 44px everywhere', () => {
-  it('filter row is a 2x2 equal grid at 639px (no orphan wrap)', () => {
-    assert.match(css, /max-width:\s*639px[\s\S]*?\.filter-row\{[^}]*grid-template-columns:\s*1fr 1fr/);
+  it('filter row is a single-line equal flex row at 639px', () => {
+    assert.match(css, /max-width:\s*639px[\s\S]*?\.filter-row\{[^}]*display:\s*flex/);
+    assert.match(css, /max-width:\s*639px[\s\S]*?\.filter-row\{[^}]*flex-wrap:\s*nowrap/);
   });
   it('filter buttons hit 44px min-height', () => {
     const rule = css.match(/\.filter-btn\{[^}]*\}/);
     assert.ok(rule && /min-height:\s*44px/.test(rule[0]), 'buttons must match the 44px system');
   });
-  it('result count reads on the ink band (no borrowed gray)', () => {
-    const rules = [...css.matchAll(/#filter-count\{[^}]*\}/g)].map((m) => m[0]);
-    assert.ok(rules.some((r) => /color:\s*var\(--paper\)/.test(r)), 'count must be paper, not repo-meta gray');
+  it('counts read on the buttons, no separate line', () => {
+    const rules = [...css.matchAll(/\.fcount\{[^}]*\}/g)].map((m) => m[0]);
+    assert.ok(rules.some((r) => /font-size:\s*11px/.test(r)), 'button counts whisper at 11px');
+    assert.ok(!/#filter-count\s*\{/.test(css), 'counter rule retired everywhere');
   });
   it('work heading breathing room shrinks on mobile', () => {
-    assert.match(css, /max-width:\s*639px[\s\S]*?#work-heading\{[^}]*padding:\s*16px/);
+    const ms = [...css.matchAll(/max-width:\s*639px[\s\S]*?#work-heading\{[^}]*padding:\s*(\d+)px/g)];
+    assert.ok(ms.length > 0, 'mobile band must tighten padding');
+    assert.ok(ms.some((m) => Number.parseInt(m[1], 10) <= 16), 'band padding must shrink to fit title plus row');
   });
 });
 
@@ -93,6 +97,8 @@ describe('masthead: centered symmetric band', () => {
     assert.ok(/display:\s*flex/.test(rows), 'desktop row must be flex like live');
     assert.ok(/flex-wrap:\s*wrap/.test(rows), 'desktop row must wrap like live');
     assert.ok(!/display\s*:\s*grid/.test(rows), 'desktop row must not be grid');
+    const mt = rows.match(/margin-top\s*:\s*(\d+)px/);
+    assert.ok(mt && Number.parseInt(mt[1], 10) >= 12, 'desktop row needs breathing room below the loud title');
   });
 
   it('four buttons size to content, uncapped', () => {
@@ -103,13 +109,10 @@ describe('masthead: centered symmetric band', () => {
     assert.ok(!/width\s*:\s*\d+px/.test(btns), 'buttons must not use fixed px width');
   });
 
-  it('count lives only in the 639px override, plain flow on desktop', () => {
+  it('no counter element on any viewport', () => {
     const baseCounts = [...base.matchAll(/#filter-count\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
-    assert.equal(baseCounts, '', 'desktop must carry no count rule, like live');
-    const counts = [...css.matchAll(/#filter-count\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
-    assert.ok(counts.length > 0, 'missing #filter-count rule');
-    assert.ok(!/position\s*:\s*(absolute|fixed|sticky)/.test(counts), 'count must stay in normal flow');
-    assert.ok(/color\s*:\s*var\(--paper\)/.test(counts), 'count must stay dim paper');
+    assert.equal(baseCounts, '', 'desktop carries no counter rule');
+    assert.ok(!/#filter-count\s*\{/.test(css), 'mobile carries no counter rule either');
   });
 
   it('buttons keep 44px targets', () => {
@@ -120,28 +123,14 @@ describe('masthead: centered symmetric band', () => {
     );
   });
 
-  it('mobile 639px keeps centered 2x2 equal grid with count in flow', () => {
+  it('mobile 639px keeps a single centered line with count in flow', () => {
     assert.ok(media639.length > 0, 'missing 639px media block');
-    const baseHeads = [...base.matchAll(/#work-heading\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
-    const mediaHeads = [...media639.matchAll(/#work-heading\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
     const mediaRows = [...media639.matchAll(/\.filter-row\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
+    const mediaBtns = [...media639.matchAll(/\.filter-btn\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
     const mediaCounts = [...media639.matchAll(/#filter-count\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
-    const rows = mediaRows;
-    assert.ok(/display\s*:\s*grid/.test(rows), 'mobile row must stay grid');
-    const grid2 =
-      /grid-template-columns\s*:\s*repeat\(\s*2\s*,[^)]*1fr[^)]*\)/.test(rows) ||
-      /grid-template-columns\s*:\s*1fr\s+1fr/.test(rows);
-    assert.ok(grid2, 'mobile must keep 2x2 equal grid');
-    const centered =
-      /justify-content\s*:\s*center/.test(rows) ||
-      /justify-items\s*:\s*center/.test(rows) ||
-      /place-items\s*:\s*center/.test(rows) ||
-      /margin(-inline)?\s*:\s*[^;}]*auto/.test(rows) ||
-      /text-align\s*:\s*center/.test(mediaRows + mediaHeads + mediaCounts) ||
-      /text-align\s*:\s*center/.test(baseHeads) ||
-      /align-items\s*:\s*center/.test(baseHeads) ||
-      /justify-content\s*:\s*center/.test(mediaHeads);
-    assert.ok(centered, 'mobile grid must stay centered');
+    assert.ok(/display\s*:\s*flex/.test(mediaRows), 'mobile row must be flex');
+    assert.ok(/flex-wrap\s*:\s*nowrap/.test(mediaRows), 'mobile row must never stack');
+    assert.ok(/flex\s*:\s*1(\s+1\s+0)?\b/.test(mediaBtns), 'mobile buttons split one line equally');
     const counts = [...css.matchAll(/#filter-count\s*\{[^}]*\}/g)].map((m) => m[0]).join(' ');
     assert.ok(!/position\s*:\s*(absolute|fixed|sticky)/.test(counts + mediaCounts), 'mobile count must stay in flow');
   });

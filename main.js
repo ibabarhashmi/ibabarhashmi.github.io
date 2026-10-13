@@ -224,7 +224,11 @@ document.querySelectorAll(".tile").forEach(markTile);
   const title = el("p",{class:"title",text:SITE.title||""});
   const meta = el("div",{class:"meta-row"});
   meta.insertAdjacentHTML("afterbegin", ICONS.pin);
-  meta.appendChild(document.createTextNode((SITE.location||"") + " | " + (SITE.relocation||"")));
+  const locTop = el("span",{class:"loc-primary",text:SITE.location||""});
+  const locSub = el("span",{class:"loc-sub",text:SITE.relocation||""});
+  const locStack = el("span",{class:"loc-stack"});
+  locStack.append(locTop, locSub);
+  meta.append(locStack);
   const badge = el("div",{class:"badge avail-badge",id:"avail-badge"});
   const dot = el("span",{class:"dot","aria-hidden":"true"});
   badge.appendChild(dot);
@@ -244,7 +248,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   [h1,title,pillRow,bio,actions].forEach((n,i)=>{ n.classList.add("hero-el"); n.style.setProperty("--hi",String(i+1)); });
   main.append(h1,title,pillRow,bio,actions);
 
-  /* Width-match name to title text (measured, all viewports <=1023px) */
+  /* Width-match name to column box wall-to-wall (measured, all viewports <=1023px) */
   const NAME_FILL = 6.0; /* mean advance of "Babar Hashmi" in Bodoni units — tune from screenshots */
   function textWidth(node){
     const range = document.createRange();
@@ -253,7 +257,7 @@ document.querySelectorAll(".tile").forEach(markTile);
   }
   function fitNameToTitle(){
     if(!mqTablet.matches){ h1.style.fontSize = ""; return; }
-    const target = textWidth(title);
+    const target = title.clientWidth || textWidth(title);
     if(!(target > 0)) return;
     const root = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     const lo = 1.3 * root, hi = 4 * root;
@@ -646,15 +650,13 @@ async function loadGitHub(){
   const row = el("div",{class:"filter-row",role:"group","aria-label":"Filter projects"});
   const counts = {all:(SITE.projects||[]).length,agents:0,security:0,cv:0};
   (SITE.projects||[]).forEach(p=>{ if(counts[p.cat]!=null) counts[p.cat]++; });
-  const counter = el("p",{id:"filter-count",role:"status","aria-live":"polite",class:"repo-meta"});
-  function updateCount(v){
-    const n = v==="all" ? counts.all : (counts[v]||0);
-    counter.textContent = "Showing "+n+" of "+counts.all+" projects";
-  }
   const btns = [];
   filters.forEach(([v,label],i)=>{
-    const b = el("button",{class:"filter-btn",type:"button",text:label});
+    const n = v==="all" ? counts.all : (counts[v]||0);
+    const b = el("button",{class:"filter-btn",type:"button"});
     b.dataset.filter = v;
+    b.appendChild(document.createTextNode(label+" "));
+    b.appendChild(el("span",{class:"fcount","aria-hidden":"true",text:String(n)}));
     b.setAttribute("aria-pressed", v==="all" ? "true" : "false");
     if(v==="all") b.classList.add("on");
     b.addEventListener("click", function(){
@@ -664,7 +666,6 @@ async function loadGitHub(){
         const show = v==="all" || c.dataset.cat===v;
         c.hidden = !show;
       });
-      updateCount(v);
     });
     b.addEventListener("keydown", function(e){
       if(e.key!=="ArrowRight" && e.key!=="ArrowLeft") return;
@@ -677,8 +678,6 @@ async function loadGitHub(){
     row.appendChild(b);
   });
   head.appendChild(row);
-  head.appendChild(counter);
-  updateCount("all");
   (SITE.projects||[]).forEach((p)=>{
     let card;
     const cls = p.featured ? "tile span-4 proj proj-feat tile-linked" : "tile span-2 proj tile-linked";

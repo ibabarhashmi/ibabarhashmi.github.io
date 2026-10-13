@@ -49,9 +49,9 @@ describe('C: proof + filters', () => {
     assert.ok(!/testimonial.*John Doe|Jane Doe|CEO, Example/i.test(html + data),
       'must not ship placeholder testimonials');
   });
-  it('filter group announces result counts', () => {
-    assert.ok(/filter-count/.test(html) && /aria-live="polite"/.test(html),
-      'filter must expose #filter-count live region');
+  it('filter buttons announce live counts', () => {
+    assert.ok(/fcount/.test(html), 'buttons must ship count spans');
+    assert.ok(!/id="filter-count"/.test(html), 'no separate counter line');
   });
   it('filter buttons support arrow-key navigation', () => {
     assert.match(main, /ArrowRight|ArrowLeft/);
