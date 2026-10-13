@@ -93,6 +93,9 @@ const exp = `<h2 class="tile-title" id="h-exp">Experience</h2><div class="timeli
 
 const counts = { all: SITE.projects.length, agents: 0, security: 0, cv: 0 };
 SITE.projects.forEach((p) => { if (counts[p.cat] != null) counts[p.cat]++; });
+// Same ext mark as main.js ICONS.ext: prerender must ship identical markup
+// so hydration swaps nothing visually.
+const EXT_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
 const filters = [['all', 'All'], ['agents', 'Agents'], ['security', 'Security'], ['cv', 'Applied CV']];
 const workHeading = `<h2 class="work-title" id="work-title">Selected work</h2>`
   + `<div class="filter-row" role="group" aria-label="Filter projects">`
@@ -107,7 +110,7 @@ const projects = SITE.projects.map((p) => {
   const close = p.repo ? '</a>' : '</article>';
   return open
     + `<p class="proj-tag">${esc(p.tag || 'Project')}</p>`
-    + (p.repo ? '<span class="ext" aria-hidden="true">↗</span>' : '')
+    + (p.repo ? `<span class="ext" aria-hidden="true">${EXT_SVG}</span>` : '')
     + (p.visual ? `<figure class="proj-visual"><img src="${attr(p.visual)}" alt="Screenshot of ${attr(p.name)}" loading="lazy" decoding="async"></figure>` : '')
     + `<h3>${esc(p.name)}</h3><p class="muted">${esc(p.summary)}</p>`
     + (p.featured && p.highlights?.length ? `<p class="proj-outcome">${esc(p.highlights[0])}</p>`
